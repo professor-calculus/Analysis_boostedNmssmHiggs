@@ -1,0 +1,9 @@
+<flags CXXFLAGS="-std=c++11 -O2 -g -DDEBUG"/>
+
+<use name="Analysis_boostedNmssmHiggs"/>
+<use name="root"/>
+
+<include_path path="../interface"/>
+
+<!-- an example of how to compile a file -->
+<!-- <bin name="RunMatcher" file="RunMatcher.cpp"/> -->
