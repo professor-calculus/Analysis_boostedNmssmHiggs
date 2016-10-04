@@ -1,3 +1,12 @@
+# taken from the following CMSSW file: PhysicsTools/PatAlgos/test/patTuple_addBTagging_cfg.py
+# the only thing I have changed is the commenting out of: 'pfGhostTrackBJetTags' as a btag discriminator
+# it runs, adds entries to the ntuple, but does not include a discriminator for the btag objects.
+# 'pfBoostedDoubleSecondaryVertexAK8BJetTags' should be the discriminator for boosted b jets
+
+
+
+
+
 ## import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 ## switch to uncheduled mode
@@ -67,7 +76,7 @@ btagDiscriminators = [
     ,'pfCombinedInclusiveSecondaryVertexV2BJetTags'
     ,'pfPositiveCombinedInclusiveSecondaryVertexV2BJetTags'
     ,'pfNegativeCombinedInclusiveSecondaryVertexV2BJetTags'
-    ,'pfGhostTrackBJetTags'
+    # ,'pfGhostTrackBJetTags'
     ,'softPFMuonBJetTags'
     ,'softPFMuonByPtBJetTags'
     ,'softPFMuonByIP3dBJetTags'
