@@ -1,6 +1,3 @@
-<flags CXXFLAGS="-std=c++11 -O2 -g -DDEBUG"/>
-
 <use name="Analysis_boostedNmssmHiggs"/>
 <use name="root"/>
-
-<bin name="CMSDASBTaggingExerciseI" file="CMSDASBTaggingExerciseI.cc"/>
+<flags EDM_PLUGIN="1"/>
