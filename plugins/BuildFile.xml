@@ -1,3 +1,5 @@
 <use name="Analysis_boostedNmssmHiggs"/>
 <use name="root"/>
-<flags EDM_PLUGIN="1"/>
+<library file="CMSDASBTaggingExerciseI.cc" name="CMSDASBTaggingExerciseI">
+   <flags EDM_PLUGIN="1"/>
+</library>

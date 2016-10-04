@@ -3,7 +3,7 @@
 <use name="FWCore/ParameterSet"/>
 <use name="PhysicsTools/UtilAlgos"/>
 <use name="FWCore/ServiceRegistry"/>
-<include_path path="interface"/>
+<!-- <include_path path="interface"/> -->
 <export>
   <lib name="1"/>
 </export>
