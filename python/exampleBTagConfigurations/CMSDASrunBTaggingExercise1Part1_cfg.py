@@ -68,7 +68,7 @@ process.options   = cms.untracked.PSet(
 )
 
 ## Initialize analyzer
-process.bTaggingExerciseIPartI = cms.EDAnalyzer('BTaggingExerciseI',
+process.bTaggingExerciseIPartI = cms.EDAnalyzer('CMSDASBTaggingExerciseI',
     jets = cms.InputTag('slimmedJets'), # input jet collection name
     bDiscriminators = cms.vstring(      # list of b-tag discriminators to access
         'pfTrackCountingHighEffBJetTags',

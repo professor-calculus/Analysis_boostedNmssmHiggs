@@ -104,7 +104,7 @@ getattr(process,'selectedUpdatedPatJets').addTagInfos = cms.bool(True)
 #################################################
 
 ## Initialize analyzer
-process.bTaggingExerciseIPartII = cms.EDAnalyzer('BTaggingExerciseI',
+process.bTaggingExerciseIPartII = cms.EDAnalyzer('CMSDASBTaggingExerciseI',
     jets = cms.InputTag('selectedUpdatedPatJets'), # input jet collection name
     bDiscriminators = cms.vstring(          # list of b-tag discriminators to access
         'pfTrackCountingHighEffBJetTags',

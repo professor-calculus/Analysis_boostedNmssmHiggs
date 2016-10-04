@@ -3,4 +3,4 @@
 <use name="Analysis_boostedNmssmHiggs"/>
 <use name="root"/>
 
-<bin name="BTaggingExerciseI" file="BTaggingExerciseI.cc"/>
+<bin name="CMSDASBTaggingExerciseI" file="CMSDASBTaggingExerciseI.cc"/>
