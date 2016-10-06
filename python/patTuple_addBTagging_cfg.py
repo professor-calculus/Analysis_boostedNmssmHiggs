@@ -23,8 +23,7 @@ process.options.wantSummary = False
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 
-# what to leave out of the output
-# process.out.outputCommands.append( 'drop *_selectedPatJetsAK4PF_caloTowers_*' )
+# what to keep in the output
 process.out.outputCommands = cms.untracked.vstring( ['drop *',
                                                      'keep *_selectedPatJets_tagInfos_*',
                                                      # 'keep *_selectedPatJetsAK4PF_tagInfos_*',
