@@ -1,9 +1,0 @@
-<use name="Analysis_boostedNmssmHiggs"/>
-<use name="root"/>
-<!-- <include_path path="../interface"/> -->
-<!--
-an example of how to include files
-<environment>
-    <bin   file="SomeRandomFile.cc"></bin>
-</environment>
--->

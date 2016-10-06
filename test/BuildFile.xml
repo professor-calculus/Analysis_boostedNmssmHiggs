@@ -1,6 +1,1 @@
-<use name="Analysis_boostedNmssmHiggs"/>
-<use name="root"/>
-<!-- <include_path path="../interface"/> -->
-<environment>
-  <bin   file="BasicScript.cc"></bin>
-</environment>
+<bin  name="BasicScript" file="BasicScript.cc"/>
