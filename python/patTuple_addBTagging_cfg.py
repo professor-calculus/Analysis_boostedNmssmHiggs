@@ -15,7 +15,7 @@ process.source = cms.Source("PoolSource",
 # max number of events when running locally
 process.maxEvents.input = 150
 # name of output .root file
-process.out.fileName = 'patTuple_addBTagging.root'
+process.out.fileName = 'bTagPatTuple.root'
 # to suppress the long output at the end of the job
 process.options.wantSummary = False
 
@@ -24,8 +24,37 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 
 # what to leave out of the output
-process.out.outputCommands.append( 'drop *_selectedPatJetsAK4PF_caloTowers_*' )
-
+# process.out.outputCommands.append( 'drop *_selectedPatJetsAK4PF_caloTowers_*' )
+process.out.outputCommands = cms.untracked.vstring( ['drop *',
+                                                     'keep *_selectedPatJets_tagInfos_*',
+                                                     # 'keep *_selectedPatJetsAK4PF_tagInfos_*',
+                                                     'keep *_selectedPatJetsAK8PFCHS_tagInfos_*',
+                                                     # 'keep *_selectedPatJetsAK8PFCHSSoftDropSubjets_tagInfos_*',
+                                                     # 'keep *_selectedPatJets_caloTowers_*',
+                                                     # 'keep *_selectedPatJetsAK4PF_caloTowers_*',
+                                                     # 'keep *_selectedPatJetsAK8PFCHS_caloTowers_*',
+                                                     # 'keep *_selectedPatJetsAK8PFCHSSoftDropSubjets_caloTowers_*',
+                                                     'keep *_selectedPatJets__*',
+                                                     # 'keep *_selectedPatJetsAK4PF__*',
+                                                     'keep *_selectedPatJetsAK8PFCHS__*',
+                                                     # 'keep *_selectedPatJetsAK8PFCHSSoftDropSubjets__*',
+                                                     'keep *_selectedPatJets_genJets_*',
+                                                     # 'keep *_selectedPatJetsAK4PF_genJets_*',
+                                                     'keep *_selectedPatJetsAK8PFCHS_genJets_*',
+                                                     # 'keep *_selectedPatJetsAK8PFCHSSoftDropSubjets_genJets_*',
+                                                     # 'keep *_selectedPatJets_pfCandidates_*',
+                                                     # 'keep *_selectedPatJetsAK4PF_pfCandidates_*',
+                                                     # 'keep *_selectedPatJetsAK8PFCHS_pfCandidates_*',
+                                                     # 'keep *_selectedPatJetsAK8PFCHSSoftDropSubjets_pfCandidates_*',
+                                                     'keep *_patMETs__*',
+                                                     # 'keep *_patMETsAK4PF__*',
+                                                     # 'keep *_patMETsAK8PFCHS__*',
+                                                     # 'keep *_patMETsAK8PFCHSSoftDropSubjets__*',
+                                                     'keep *_selectedPatElectrons__*',
+                                                     'keep *_selectedPatMuons__*',
+                                                     'keep *_selectedPatTaus__*',
+                                                     'keep *_selectedPatPhotons__*',
+                                                     ] )
 
 # enables us to add different jet collections to the event content
 from PhysicsTools.PatAlgos.tools.jetTools import addJetCollection
