@@ -9,7 +9,7 @@ process.load("PhysicsTools.PatAlgos.selectionLayer1.selectedPatCandidates_cff")
 
 # input file for local running (requires AOD input)
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring(' /store/mc/RunIISpring16reHLT80/GluGluToRadionToHHTo2B2G_M-900_narrow_13TeV-madgraph/AODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v3/20000/4C3007FC-F83F-E611-8B27-0090FAA577A0.root'),
+    fileNames = cms.untracked.vstring('/store/mc/RunIISpring16reHLT80/GluGluToRadionToHHTo2B2G_M-900_narrow_13TeV-madgraph/AODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v3/20000/4C3007FC-F83F-E611-8B27-0090FAA577A0.root'),
 )
 
 # max number of events when running locally
@@ -25,6 +25,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 
 # what to keep in the output
 process.out.outputCommands = cms.untracked.vstring( ['drop *',
+                                                     'keep recoGenParticles_genParticles_*_*'
                                                      'keep *_selectedPatJets_tagInfos_*',
                                                      # 'keep *_selectedPatJetsAK4PF_tagInfos_*',
                                                      'keep *_selectedPatJetsAK8PFCHS_tagInfos_*',
