@@ -23,6 +23,7 @@
 #include "PhysicsTools/FWLite/interface/CommandLineParser.h"
 
 // Headers from this package
+#include "Analysis/Analysis_boostedNmssmHiggs/interface/Kinematics.h"
 
 // command to make work!
 // ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputFiles=/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple_testingv1.root 
@@ -30,9 +31,6 @@
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, const std::vector<std::string>, const std::vector<double>);
 void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, pat::Jet, reco::GenParticle, std::vector<std::string>, std::vector<double>, std::vector<double>);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, const std::string);
-double calc_dPhi(double phi1, double phi2);
-double calc_dEta(double eta1, double eta2);
-double calc_dR(double dPhi, double dEta);
 std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco::GenParticle>>);
 bool isThereAFatJetMatch(edm::Handle<std::vector<pat::Jet>>, reco::GenParticle, double, pat::Jet&);
 
@@ -65,7 +63,7 @@ int main(int argc, char* argv[])
 	// parser.stringValue  ("inputFiles" ) = {"../python/bTagPatTuple_testingv1.root"};
 // I kind of want an output directory...and the name of this controls what is going on...WORK
 
-	// parse arguments
+	// Parse arguments
 	parser.parseArguments (argc, argv);
 	int maxEvents_ = parser.integerValue("maxEvents");
 	unsigned int outputEvery_ = parser.integerValue("outputEvery");
@@ -247,32 +245,6 @@ void WriteHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F
 
 
 
-// NB: this is phi1-phi2
-double calc_dPhi(double phi1, double phi2)
-{
-	double dPhi = phi1 - phi2;
-	if (dPhi>M_PI) dPhi = dPhi - 2*M_PI;
-	if (dPhi<-M_PI) dPhi = dPhi + 2*M_PI;
-	return dPhi;
-}
-// NB: this is eta1-eta2
-double calc_dEta(double eta1, double eta2)
-{
-	double dEta = eta1 - eta2;
-	return dEta;
-}
-    
-double calc_dR(double dPhi, double dEta)
-{
-  double dR = sqrt(dPhi*dPhi + dEta*dEta);
-  return dR;
-}
-
-
-
-
-
-
 std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles)
 {
 	std::vector<reco::GenParticle> hBbGenParticles;
@@ -303,7 +275,7 @@ bool isThereAFatJetMatch(edm::Handle<std::vector<pat::Jet>> fatJetsD, reco::GenP
 	for (size_t iFJ = 0; iFJ < fatJetsD->size(); ++iFJ){
 		const pat::Jet & fatJet = (*fatJetsD)[iFJ];
 
-		double dR = calc_dR( calc_dPhi( fatJet.phi(),higssBbGenParticleD.phi() ), calc_dEta( fatJet.eta(),higssBbGenParticleD.eta() ) );
+		double dR = delR( delPhi( fatJet.phi(),higssBbGenParticleD.phi() ), delEta( fatJet.eta(),higssBbGenParticleD.eta() ) );
 		if (dR < dRMin){
 			dRMin = dR;
 			closestFatJetIndex = iFJ; 
