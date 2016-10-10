@@ -55,6 +55,134 @@ double calc_dR(double dPhi, double dEta)
 }
 
 
+// // function version...
+// std::vector<size_t> hBbGenIndices(edm::Handle<std::vector<reco::GenParticle>> genParticles)
+// {
+// 	std::vector<size_t> hBbGenIndices;
+// 	for (size_t iGen = 0; iGen < genParticles->size(); ++iGen){
+// 		const reco::GenParticle & genParticle = (*genParticles)[iGen];
+
+// 			if (genParticle.pdgId()==25){ // particle is a higgs						
+// 			if (genParticle.numberOfDaughters()==2 && abs(genParticle.daughter(0)->pdgId())==5 && abs(genParticle.daughter(1)->pdgId())==5){ // higgs decays to two b-quarks
+							
+// 							hBbGenIndices.push_back(iGen); // this vector indexes the higgs bosons of interest	
+
+
+
+
+// 						} // closes 'if' higgs decays to two b-quarks			
+// 					} // closes 'if' genParticle is a higgs
+// 				} // closes loop through genParticles
+// 				return hBbGenIndices;
+// }	
+
+
+
+
+
+
+void FillHistograms(std::map<std::string, TH1F*> & h_, std::map<std::string, TH2F*> & h2_, bool isMatch, pat::Jet fatJetMatchD, reco::GenParticle higssBbGenParticleD, std::vector<std::string> doubleBtagWPnameD, std::vector<double> doubleBtagWPD, std::vector<double> etaBinningD)
+{
+	// fill the efficiency denominators
+	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
+
+		if( abs(fatJetMatchD.eta()) >= etaBinningD[iEtaBin] && abs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1])
+		h_[Form("effDenominator_eta%f-%f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(higssBbGenParticleD.pt());
+
+	}
+
+	// fill other histograms if there is a match
+	if (isMatch){
+
+		for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPnameD.size(); ++iWP){
+			if (fatJetMatchD.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWPD[iWP]){
+
+				h2_[Form("ptScatter_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(higssBbGenParticleD.pt(), fatJetMatchD.pt());
+				h_[Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(fatJetMatchD.mass());
+
+// problems with this seg faulting
+		   		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
+		   		
+		   			if( abs(fatJetMatchD.eta()) >= etaBinningD[iEtaBin] && abs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1])
+					h_[Form("effNumerator_%sDoubleBTagWP_eta%f-%f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(higssBbGenParticleD.pt());
+				
+				} // closes loop through etaBins
+
+	   		} // closes 'if' Btag discriminator greater than WP 
+		} // closes loop through Btag WPs
+	} // closes 'if' there is a matching fatJet
+
+} // closes the function 'FillHistograms'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function version...
+std::vector<reco::GenParticle> hBbGenParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles)
+{
+	std::vector<reco::GenParticle> hBbGenParticles;
+	for (size_t iGen = 0; iGen < genParticles->size(); ++iGen){
+		const reco::GenParticle & genParticle = (*genParticles)[iGen];
+
+			if (genParticle.pdgId()==25){ // particle is a higgs						
+			if (genParticle.numberOfDaughters()==2 && abs(genParticle.daughter(0)->pdgId())==5 && abs(genParticle.daughter(1)->pdgId())==5){ // higgs decays to two b-quarks
+							
+							hBbGenParticles.push_back(genParticle); // this vector indexes the higgs bosons of interest	
+
+						} // closes 'if' higgs decays to two b-quarks			
+					} // closes 'if' genParticle is a higgs
+				} // closes loop through genParticles
+				return hBbGenParticles;
+}	
+
+
+
+
+
+
+bool isThereAFatJetMatch(edm::Handle<std::vector<pat::Jet>> fatJetsD, reco::GenParticle higssBbGenParticleD, double DRMAX, pat::Jet & fatJetMatch)
+{
+							size_t closestFatJetIndex = 999;
+							double dRMin = 999.99;
+							
+							for (size_t iFJ = 0; iFJ < fatJetsD->size(); ++iFJ){
+								const pat::Jet & fatJet = (*fatJetsD)[iFJ];
+
+								double dR = calc_dR( calc_dPhi( fatJet.phi(),higssBbGenParticleD.phi() ), calc_dEta( fatJet.eta(),higssBbGenParticleD.eta() ) );
+								if (dR < dRMin){
+
+									dRMin = dR;
+									closestFatJetIndex = iFJ; 
+								}
+
+							} // closes loop through fatJets entries for the event 
+
+							if (dRMin < DRMAX){
+
+
+								fatJetMatch = (*fatJetsD)[closestFatJetIndex]; 
+								return true; 
+
+							} 
+							else return false; // problem...
+
+}
+
+
+
+
+
+
 
 
 
@@ -91,8 +219,8 @@ void CreateHistograms(const std::vector<std::string> doubleBtagWPnameD, const st
    			   Form("effNumerator_%sDoubleBTagWP_eta%f-%f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
    			   ";p_{T} (GeV); efficiency", ptBinning.size()-1, &(ptBinning)[0]); 
 
-   			h_[Form("effDenominator_%sDoubleBTagWP_eta%f-%f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )] = new TH1F(
-   			   Form("effDenominator_%sDoubleBTagWP_eta%f-%f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
+   			h_[Form("effDenominator_eta%f-%f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )] = new TH1F(
+   			   Form("effDenominator_eta%f-%f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
    			   ";p_{T} (GeV); efficiency", ptBinning.size()-1, &(ptBinning)[0]); 
 
 
@@ -199,84 +327,126 @@ AutoLibraryLoader::enable();
 
 
 
-// could have a function that returns the indices of the higss->bbs...
-				// Loop through genParticle collection to find the h->bb
-				// std::vector<size_t> hBbGenIndices;
-				for (size_t iGen = 0; iGen < genParticles->size(); ++iGen){
-				const reco::GenParticle & genParticle = (*genParticles)[iGen];
 
-					if (genParticle.pdgId()==25){ // particle is a higgs
+// find the higgs to bb particles
+std::vector<reco::GenParticle> higssBbGenParticles = hBbGenParticles(genParticles);
+
+// loop through the higgs to bb particles
+for (size_t iHBb = 0; iHBb < higssBbGenParticles.size(); ++iHBb){
+				const reco::GenParticle higssBbGenParticle = higssBbGenParticles[iHBb];
+
+	//return matching fatJet....must have dr< drmax match
+
+pat::Jet fatJetMatch;
+bool isMatch =isThereAFatJetMatch(fatJets, higssBbGenParticle, dRMaxMatch, fatJetMatch);
+
+
+
+
+// std::cout<<logic<<std::endl;
+
+// this works (below)
+// if (isThereAFatJetMatch(fatJets, higssBbGenParticle, dRMaxMatch, fatJetMatch)){
+
+	// std::cout<<fatJetMatch.pt()<<std::endl;
+
+// }
+
+
+FillHistograms(h_, h2_, isMatch, fatJetMatch, higssBbGenParticle, doubleBtagWPname, doubleBtagWP, etaBinning);
+
+
+}// loop through HBB genParticles
+
+
+
+
+
+
+
+
+// // could have a function that returns the indices of the higss->bbs...
+// 				// Loop through genParticle collection to find the h->bb
+// 				// std::vector<size_t> hBbGenIndices;
+// 				for (size_t iGen = 0; iGen < genParticles->size(); ++iGen){
+// 				const reco::GenParticle & genParticle = (*genParticles)[iGen];
+
+// 					if (genParticle.pdgId()==25){ // particle is a higgs
 						
-						if (genParticle.numberOfDaughters()==2 && abs(genParticle.daughter(0)->pdgId())==5 && abs(genParticle.daughter(1)->pdgId())==5){ // higgs decays to two b-quarks
+// 						if (genParticle.numberOfDaughters()==2 && abs(genParticle.daughter(0)->pdgId())==5 && abs(genParticle.daughter(1)->pdgId())==5){ // higgs decays to two b-quarks
 							
-							// hBbGenIndices.push_back(iGen); // this vector indexes the higgs bosons of interest
+// 							// hBbGenIndices.push_back(iGen); // this vector indexes the higgs bosons of interest
 
 
-							// Loop through fatJet collection
-							// find closest matching jet to the higgs, check it is a match, see if it passes btag WP cuts
-							
-
-
-// could have a function that takes the jatJets object and finds the closest match, returning the closest full fatJet object...:)
-// as long as it is less than dRMAXMATCH, if it doesn't you could just return a 0
-
-
-							size_t closestFatJetIndex = 999;
-							double dRMin = 999.99;
-							for (size_t iFJ = 0; iFJ < fatJets->size(); ++iFJ){
-								const pat::Jet & fatJet = (*fatJets)[iFJ];
-
-								double dR = calc_dR( calc_dPhi( fatJet.phi(),genParticle.phi() ), calc_dEta( fatJet.eta(),genParticle.eta() ) );
-								if (dR < dRMin){
-
-									dRMin = dR;
-									closestFatJetIndex = iFJ; 
-								}
-
-							} // closes loop through fatJets entries for the event 
-
-							//now do histogram filling...
-							if (dRMin < dRMaxMatch){
-
-const pat::Jet & fatJetMatch = (*fatJets)[closestFatJetIndex];
-// // this could also be a function...call it fill histograms
-	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
-
-		if (fatJetMatch.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[iWP]){
-
-
-			std::cout << genParticle.pt() << "   " << fatJetMatch.mass() << std::endl;
-
-
-		h2_[Form("ptScatter_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str())]->Fill(genParticle.pt(), fatJetMatch.pt()); // check two-d histo filling!!
-
-		h_[Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str())]->Fill(fatJetMatch.mass());
-
-   		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
-
-   			if( abs(fatJetMatch.eta()) >= etaBinning[iEtaBin] && abs(fatJetMatch.eta()) < etaBinning[iEtaBin+1]){
-
-   			h_[Form("eff_%sDoubleBTagWP_eta%f-%f", doubleBtagWPname[iWP].c_str(), etaBinning[iEtaBin], etaBinning[iEtaBin+1] )]->Fill(fatJetMatch.pt());
-
-} // if eta in the right bin like
-}// closes loop through etaBins
-   		} //if btag discriminator 
-	} // closes loop through Btag WPs
+// 							// Loop through fatJet collection
+// 							// find closest matching jet to the higgs, check it is a match, see if it passes btag WP cuts
 
 
 
 
-// // need to do efficiencies properly, with a denom and numerator...deal with them later...
+// // could have a function that takes the jatJets object and finds the closest match, returning the closest full fatJet object...:)
+// // as long as it is less than dRMAXMATCH, if it doesn't you could just return a 0
 
 
-							}//if dr match
+// // 							size_t closestFatJetIndex = 999;
+// // 							double dRMin = 999.99;
+// // 							for (size_t iFJ = 0; iFJ < fatJets->size(); ++iFJ){
+// // 								const pat::Jet & fatJet = (*fatJets)[iFJ];
+
+// // 								double dR = calc_dR( calc_dPhi( fatJet.phi(),genParticle.phi() ), calc_dEta( fatJet.eta(),genParticle.eta() ) );
+// // 								if (dR < dRMin){
+
+// // 									dRMin = dR;
+// // 									closestFatJetIndex = iFJ; 
+// // 								}
+
+// // 							} // closes loop through fatJets entries for the event 
+
+// // 							//now do histogram filling...
+// // 							if (dRMin < dRMaxMatch){
+
+// // const pat::Jet & fatJetMatch = (*fatJets)[closestFatJetIndex];
+// // // // this could also be a function...call it fill histograms
+// 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+
+// 		if (fatJetMatch.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[iWP]){
+
+
+// 			// std::cout << genParticle.pt() << "   " << fatJetMatch.mass() << std::endl;
+
+
+// 		h2_[Form("ptScatter_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str())]->Fill(genParticle.pt(), fatJetMatch.pt()); // check two-d histo filling!!
+
+// 		h_[Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str())]->Fill(fatJetMatch.mass());
+
+// // problems with this seg faulting
+// //    		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
+
+// //    			if( abs(fatJetMatch.eta()) >= etaBinning[iEtaBin] && abs(fatJetMatch.eta()) < etaBinning[iEtaBin+1]){
+
+// //    			h_[Form("eff_%sDoubleBTagWP_eta%f-%f", doubleBtagWPname[iWP].c_str(), etaBinning[iEtaBin], etaBinning[iEtaBin+1] )]->Fill(fatJetMatch.pt());
+
+// //    			std::cout<<"testing point a" <<std::endl;
+
+// // } // if eta in the right bin like
+// // }// closes loop through etaBins
+//    		} //if btag discriminator 
+// 	} // closes loop through Btag WPs
+
+
+
+
+// // // need to do efficiencies properly, with a denom and numerator...deal with them later...
+
+
+// 							}//if dr match
 
 					
 
 
-						} // closes 'if' higgs decays to two b-quarks			
-					} // closes 'if' genParticle is a higgs
-				} // closes loop through genParticles
+// 						} // closes 'if' higgs decays to two b-quarks			
+// 					} // closes 'if' genParticle is a higgs
+// 				} // closes loop through genParticles
 
 
 
