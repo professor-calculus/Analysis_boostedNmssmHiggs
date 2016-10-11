@@ -25,7 +25,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 
 # what to keep in the output
 process.out.outputCommands = cms.untracked.vstring( ['drop *',
-                                                     'keep recoGenParticles_genParticles_*_*'
+                                                     'keep recoGenParticles_genParticles_*_*', # not sure this will work...
                                                      'keep *_selectedPatJets_tagInfos_*',
                                                      # 'keep *_selectedPatJetsAK4PF_tagInfos_*',
                                                      'keep *_selectedPatJetsAK8PFCHS_tagInfos_*',
