@@ -18,7 +18,7 @@
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/FWLite/interface/Event.h"
 #include "DataFormats/Common/interface/Handle.h"
-#include "FWCore/FWLite/interface/AutoLibraryLoader.h"
+#include "FWCore/FWLite/interface/FWLiteEnabler.h"
 #include "PhysicsTools/FWLite/interface/TFileService.h"
 #include "PhysicsTools/FWLite/interface/CommandLineParser.h"
 
@@ -26,7 +26,7 @@
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/Kinematics.h"
 
 // command to make work!
-// ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputFiles=/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple_testingv1.root 
+// ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputFiles=/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple_testingv1.root outputDirectory=testing
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, const std::vector<std::string>, const std::vector<double>);
 void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, pat::Jet, reco::GenParticle, std::vector<std::string>, std::vector<double>, std::vector<double>);
@@ -36,11 +36,10 @@ bool isThereAFatJetMatch(edm::Handle<std::vector<pat::Jet>>, reco::GenParticle, 
 
 
 
-
 int main(int argc, char* argv[]) 
 {
-	gSystem->Load("libFWCoreFWLite");//update THIS
-	AutoLibraryLoader::enable();
+	gSystem->Load("libFWCoreFWLite.so");
+	FWLiteEnabler::enable();
 	
 	// Set parameters
 	const std::vector<double> doubleBtagWP = {0.3, 0.6, 0.8, 0.9};
@@ -57,20 +56,33 @@ int main(int argc, char* argv[])
 	optutl::CommandLineParser parser ("Analyze DoubleBTagger Efficiencies");
 
 	// Set defaults
-	parser.integerValue ("maxEvents"  ) = -1;
-	parser.integerValue ("outputEvery") =   10;
-	parser.stringValue  ("outputFile" ) = "output_DoubleBTaggerEfficiencyStudies.root";
-	// parser.stringValue  ("inputFiles" ) = {"../python/bTagPatTuple_testingv1.root"};
-// I kind of want an output directory...and the name of this controls what is going on...WORK
+	parser.integerValue ("maxevents"      ) = -1;
+	parser.integerValue ("outputevery"    ) =   10;
+	parser.stringVector  ("inputfiles"     ) = {"/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple_testingv1.root"};
+	parser.stringValue  ("outputfile"     ) = "testing123/output_DoubleBTaggerEfficiencyStudies.root";
 
 	// Parse arguments
 	parser.parseArguments (argc, argv);
-	int maxEvents_ = parser.integerValue("maxEvents");
-	unsigned int outputEvery_ = parser.integerValue("outputEvery");
-	std::string outputFile_ = parser.stringValue("outputFile");
-	std::vector<std::string> inputFiles_ = parser.stringVector("inputFiles");
+	int maxEvents_ = parser.integerValue("maxevents");
+	unsigned int outputEvery_ = parser.integerValue("outputevery");
+	std::vector<std::string> inputFiles_ = parser.stringVector("inputfiles");
+	std::string outputFile_ = parser.stringValue("outputfile");
 
-
+	// Create the output directory
+	std::string outputDirectory_;
+	std::string forwardSlash = "/";
+	// strip the directory from the outputfile name
+	for (size_t c = outputFile_.size()-1; c > 0; --c){
+		if (outputFile_[c] == forwardSlash[0]){
+			outputDirectory_ = outputFile_.substr(0, c);
+			break;
+		}
+	}
+	bool makeDir = !(std::system(Form("mkdir %s",outputDirectory_.c_str())));
+	if (makeDir == false){
+		std::cout << "The chosen output directory already exists, or the parent directory does not exist: Exiting..." << std::endl;
+		return 1;
+	}
 
 	// Loop through the input files
 	int ievt=0;  
