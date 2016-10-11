@@ -24,13 +24,14 @@
 
 // Headers from this package
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/Kinematics.h"
+#include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingVersionOne.h"
 
 // command to make work!
 // ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputFiles=/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple_testingv1.root outputDirectory=testing
 
-void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, const std::vector<std::string>, const std::vector<double>);
+void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::vector<std::string>, std::vector<double>);
 void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, pat::Jet, reco::GenParticle, std::vector<std::string>, std::vector<double>, std::vector<double>);
-void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, const std::string);
+void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco::GenParticle>>);
 bool isThereAFatJetMatch(edm::Handle<std::vector<pat::Jet>>, reco::GenParticle, double, pat::Jet&);
 
@@ -42,10 +43,10 @@ int main(int argc, char* argv[])
 	FWLiteEnabler::enable();
 	
 	// Set parameters
-	const std::vector<double> doubleBtagWP = {0.3, 0.6, 0.8, 0.9};
-	const std::vector<std::string> doubleBtagWPname = {"loose", "medium", "tight", "veryTight"};
-	const double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
-	const std::vector<double> etaBinning = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
+	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.8, 0.9}; // these WP vectors must correspond to one-another
+	std::vector<std::string> doubleBtagWPname = {"loose", "medium", "tight", "veryTight"};
+	double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
+	std::vector<double> etaBinning = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
 
 	// Create histograms, they are accessed by eg: h_["fatJetMass_loose"]->Fill(125.0);
 	std::map<std::string, TH1F*> h_;
@@ -74,7 +75,7 @@ int main(int argc, char* argv[])
 	// strip the directory from the outputfile name
 	for (size_t c = outputFile_.size()-1; c > 0; --c){
 		if (outputFile_[c] == forwardSlash[0]){
-			outputDirectory_ = outputFile_.substr(0, c);
+			outputDirectory_ = outputFile_.substr(0, c+1);
 			break;
 		}
 	}
@@ -146,6 +147,8 @@ int main(int argc, char* argv[])
 
 WriteHistograms(h_, h2_, outputFile_.c_str());
 
+PlottingVersionOne createPlots(outputFile_.c_str(), doubleBtagWPname, etaBinning);
+
 return 0;
 } // closes the 'main' function
 
@@ -154,7 +157,7 @@ return 0;
 
 
 
-void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, const std::vector<std::string> doubleBtagWPnameD, const std::vector<double> etaBinningD)
+void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, std::vector<std::string> doubleBtagWPnameD, std::vector<double> etaBinningD)
 {
 	// set the binning for histograms
     std::vector<double> ptBinning;
@@ -184,12 +187,12 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 
    			h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )] = new TH1F(
    			   Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
-   			   ";p_{T} (GeV); efficiency", ptBinning.size()-1, &(ptBinning)[0]); 
+   			   ";p_{T} (GeV); matchCount", ptBinning.size()-1, &(ptBinning)[0]); 
 
    			if (iWP==0) // so we only create the denominators once
    			h_[Form("effDenominator_eta%.2f-%.2f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )] = new TH1F(
    			   Form("effDenominator_eta%.2f-%.2f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
-   			   ";p_{T} (GeV); efficiency", ptBinning.size()-1, &(ptBinning)[0]); 
+   			   ";p_{T} (GeV); totalCount", ptBinning.size()-1, &(ptBinning)[0]); 
 
 
    		} // closes loop through etaBins
@@ -239,7 +242,7 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 
 
 
-void WriteHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, const std::string outputFileD)
+void WriteHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, std::string outputFileD)
 {
    TFile * outFile = new TFile(outputFileD.c_str(),"RECREATE");
    for ( auto & h : h_ ){
