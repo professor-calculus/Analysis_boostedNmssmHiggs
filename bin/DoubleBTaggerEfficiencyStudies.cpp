@@ -58,8 +58,8 @@ int main(int argc, char* argv[])
 	// Set defaults
 	parser.integerValue ("maxevents"      ) = -1;
 	parser.integerValue ("outputevery"    ) =   10;
-	parser.stringVector  ("inputfiles"     ) = {"/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple_testingv1.root"};
-	parser.stringValue  ("outputfile"     ) = "testing123/output_DoubleBTaggerEfficiencyStudies.root";
+	// parser.stringVector  ("inputfiles"     ) = {"/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple.root"};
+	parser.stringValue  ("outputfile"     ) = "output_DoubleBTaggerEfficiencyStudies_testing/output_DoubleBTaggerEfficiencyStudies.root";
 
 	// Parse arguments
 	parser.parseArguments (argc, argv);
