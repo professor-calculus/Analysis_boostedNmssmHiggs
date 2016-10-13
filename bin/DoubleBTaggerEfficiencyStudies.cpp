@@ -157,11 +157,11 @@ return 0;
 
 
 
-void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, std::vector<std::string> doubleBtagWPnameD, std::vector<double> etaBinningD)
+void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, std::vector<std::string> doubleBtagWPnameD, const std::vector<double> etaBinningD)
 {
 	// set the binning for histograms
     std::vector<double> ptBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 800.1; binLowerEdge+= 20.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 800.1; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
 
     std::vector<double> ptScatXBinning;
     for(double binLowerEdge=  0.0; binLowerEdge< 800.1; binLowerEdge+= 20.0) ptScatXBinning.push_back(binLowerEdge);
