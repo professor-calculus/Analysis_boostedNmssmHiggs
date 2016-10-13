@@ -13,6 +13,8 @@
 #include <TROOT.h>
 #include <TFile.h>
 #include <TSystem.h>
+#include <TStyle.h>
+#include <TLatex.h>
 
 // CMSSW headers
 
@@ -48,6 +50,11 @@ private:
 	void effComparingEta();
 	void effComparingEtaDraw(std::vector<TEfficiency> hEffD, std::vector<TH1F*> hDivD, std::string saveNameD);
 
+	TStyle * TDRStyle();
+	TLatex * latex = new TLatex();
+
+	    // TLatex * latex(new TLatex());
+
 };
 
 ////////////////////////////////
@@ -72,12 +79,20 @@ PlottingVersionOne::PlottingVersionOne(std::string inputHistoFile, std::vector<s
 			break;
 		}
 	}
+	// set the TStyle for the plots
+	TDRStyle();
+	gROOT->SetStyle("tdrStyle");
+
+	// set the latex defaults
+	latex->SetNDC();
+	latex->SetTextFont(42);
+	// latex->SetTextAlign(31);
+
 	// make the .pdfs
  	hBbMassDist();
  	fatJetVsHBbDist();
  	effComparingWPs();
  	effComparingEta();
-
 }
 
 //-----------public-----------//
@@ -92,9 +107,13 @@ void PlottingVersionOne::hBbMassDist()
 		TH1F * h = (TH1F*)f->Get(Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
 		std::string saveName = Form("fatJetMass_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
 
-		// SETUP HOW YOU WOULD LIKE THE PLOT
-		h->SetLineWidth(4);
-	
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		h->SetLineWidth(2);
+		// h->SetLineColor(2);
+		// h->GetXaxis()->SetTitle("");
+		h->GetXaxis()->SetTitleSize(0.06);	
+		// h->GetYaxis()->SetTitle("");
+		h->GetYaxis()->SetTitleSize(0.06);
 
 		// make plot with complimentary function
 		hBbMassDistDraw(h, saveName);
@@ -104,8 +123,13 @@ void PlottingVersionOne::hBbMassDist()
 
 void PlottingVersionOne::hBbMassDistDraw(TH1F * hD, std::string saveNameD)
 {
-    TCanvas* c=new TCanvas("c","c",650,600);
+    TCanvas* c=new TCanvas("c","c");    
 	hD->Draw();
+	latex->SetTextAlign(11); // do i wrap the basics up in a function
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->DrawLatex(0.20, 0.80, "WPtesting");
+	latex->SetTextAlign(31);
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
 	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveNameD.c_str()));
 	c->Close();
 }
@@ -121,20 +145,25 @@ void PlottingVersionOne::fatJetVsHBbDist()
 		TH2F * h2 = (TH2F*)f->Get(Form("ptScatter_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
 		std::string saveName = Form("fatJetVsHBbPtScatter_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
 
-		// SETUP HOW YOU WOULD LIKE THE PLOT
-		// h2->SetLineWidth(4);
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		// h2->GetXaxis()->SetTitle("");
+		h2->GetXaxis()->SetTitleSize(0.06);
+		h2->GetXaxis()->SetLabelSize(0.05);	
+		// h2->GetYaxis()->SetTitle("");
+		h2->GetYaxis()->SetTitleSize(0.06);
+		h2->GetYaxis()->SetLabelSize(0.05);	
 		
-
 		// make plot with complimentary function
 		fatJetVsHBbDistDraw(h2, saveName);
 
 	} // closes loop through Btag WP labels
 } // closes the function 'fatJetVsHBbDist'
 
-void PlottingVersionOne::fatJetVsHBbDistDraw(TH2F * h2D, std::string saveNameD)
+void PlottingVersionOne::fatJetVsHBbDistDraw(TH2F * h2D, std::string saveNameD) 
 {
-    TCanvas* c=new TCanvas("c","c",650,600);
+    TCanvas* c=new TCanvas("c","c");
 	h2D->Draw("colz");
+	// put a draw line in here up the diagnol
 	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveNameD.c_str()));
 	c->Close();
 }
@@ -163,8 +192,14 @@ void PlottingVersionOne::effComparingWPs()
 
 			// SETUP HOW YOU WOULD LIKE THE PLOT
 			hEff[iWP].SetLineColor(iWP+1);
-			hDiv[iWP]->SetLineColor(iWP+1);
+			hDiv[iWP]->SetMarkerColor(iWP+1);
+			hEff[iWP].SetLineWidth(2);
 
+			// hDiv[iWP]->GetXaxis()->SetTitle("");
+			hDiv[iWP]->GetXaxis()->SetTitleSize(0.06);	
+
+			hDiv[iWP]->GetYaxis()->SetTitle("Efficiency");
+			hDiv[iWP]->GetYaxis()->SetTitleSize(0.06);
 			// WILL NEED A LEGEND DESPERATELY
 
 		} // closes loop through WPs
@@ -178,8 +213,7 @@ void PlottingVersionOne::effComparingWPs()
 
 void PlottingVersionOne::effComparingWPsDraw(std::vector<TEfficiency> hEffD, std::vector<TH1F*> hDivD, std::string saveNameD)
 {
-    TCanvas* c=new TCanvas("c","c",650,600);
-	
+    TCanvas* c=new TCanvas("c","c");
     for (size_t iEff=0; iEff<hEffD.size(); ++iEff){
 	    hDivD[iEff]->Draw("same, P");
 		hEffD[iEff].Draw("same");
@@ -225,8 +259,7 @@ void PlottingVersionOne::effComparingEta()
 
 void PlottingVersionOne::effComparingEtaDraw(std::vector<TEfficiency> hEffD, std::vector<TH1F*> hDivD, std::string saveNameD)
 {
-    TCanvas* c=new TCanvas("c","c",650,600);
-	
+    TCanvas* c=new TCanvas("c","c");
     for (size_t iEff=0; iEff<hEffD.size(); ++iEff){
 	    hDivD[iEff]->Draw("same, P");
 		hEffD[iEff].Draw("same");
@@ -234,6 +267,167 @@ void PlottingVersionOne::effComparingEtaDraw(std::vector<TEfficiency> hEffD, std
 	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveNameD.c_str()));
 	c->Close();
 }
+
+
+
+
+
+
+TStyle * PlottingVersionOne::TDRStyle()
+{
+	TStyle * tdrStyle = new TStyle("tdrStyle","");
+
+	//tdrStyle->SetPalette(palette);
+
+	// For the canvas:
+	tdrStyle->SetCanvasBorderMode(0);
+	tdrStyle->SetCanvasColor(kWhite);
+	tdrStyle->SetCanvasDefH(600); //Height of canvas
+	tdrStyle->SetCanvasDefW(800); //Width of canvas
+	tdrStyle->SetCanvasDefX(0);   //POsition on screen
+	tdrStyle->SetCanvasDefY(0);
+
+	// For the Pad:
+	tdrStyle->SetPadBorderMode(0);
+	// tdrStyle->SetPadBorderSize(Width_t size = 1);
+	tdrStyle->SetPadColor(kWhite);
+	tdrStyle->SetPadGridX(false);
+	tdrStyle->SetPadGridY(false);
+	tdrStyle->SetGridColor(0);
+	tdrStyle->SetGridStyle(3);
+	tdrStyle->SetGridWidth(1);
+	tdrStyle->SetPadGridX(false);
+	tdrStyle->SetPadGridY(false);
+
+	// For the frame:
+	tdrStyle->SetFrameBorderMode(0);
+	tdrStyle->SetFrameBorderSize(1);
+	tdrStyle->SetFrameFillColor(0);
+	tdrStyle->SetFrameFillStyle(0);
+	tdrStyle->SetFrameLineColor(1);
+	tdrStyle->SetFrameLineStyle(1);
+	tdrStyle->SetFrameLineWidth(1);
+
+	// For the histo:
+	// tdrStyle->SetHistFillColor(1);
+	// tdrStyle->SetHistFillStyle(0);
+	tdrStyle->SetHistLineColor(1);
+	tdrStyle->SetHistLineStyle(0);
+	tdrStyle->SetHistLineWidth(1);
+	// tdrStyle->SetLegoInnerR(Float_t rad = 0.5);
+	// tdrStyle->SetNumberContours(Int_t number = 20);
+
+	tdrStyle->SetEndErrorSize(2);
+	//  tdrStyle->SetErrorMarker(20);
+	tdrStyle->SetErrorX(0.);
+
+	tdrStyle->SetMarkerStyle(20);
+
+	//For the legend
+	tdrStyle->SetLegendBorderSize(0);
+	tdrStyle->SetLegendFillColor(0);
+	tdrStyle->SetLegendFont(42);
+	tdrStyle->SetLegendTextSize(0.05);
+
+	//For the fit/function:
+	tdrStyle->SetOptFit(0);
+	tdrStyle->SetFitFormat("5.4g");
+	tdrStyle->SetFuncColor(2);
+	tdrStyle->SetFuncStyle(1);
+	tdrStyle->SetFuncWidth(1);
+
+	//For the date:
+	tdrStyle->SetOptDate(0);
+	// tdrStyle->SetDateX(Float_t x = 0.01);
+	// tdrStyle->SetDateY(Float_t y = 0.01);
+
+	// For the statistics box:
+	tdrStyle->SetOptFile(0);
+	tdrStyle->SetOptStat(0); // To display the mean and RMS:   SetOptStat("mr");
+	tdrStyle->SetStatColor(kWhite);
+	tdrStyle->SetStatFont(42);
+	tdrStyle->SetStatFontSize(0.025);
+	tdrStyle->SetStatTextColor(1);
+	tdrStyle->SetStatFormat("6.4g");
+	tdrStyle->SetStatBorderSize(1);
+	tdrStyle->SetStatH(0.1);
+	tdrStyle->SetStatW(0.15);
+	// tdrStyle->SetStatStyle(Style_t style = 1001);
+	// tdrStyle->SetStatX(Float_t x = 0);
+	// tdrStyle->SetStatY(Float_t y = 0);
+
+	// Margins:
+	//tdrStyle->SetPadTopMargin(0.05);
+	tdrStyle->SetPadTopMargin(0.10);
+	tdrStyle->SetPadBottomMargin(0.13);
+	//tdrStyle->SetPadLeftMargin(0.16);
+	tdrStyle->SetPadLeftMargin(0.14);
+	//tdrStyle->SetPadRightMargin(0.02);
+	tdrStyle->SetPadRightMargin(0.07);
+
+	// For the Global title:
+	tdrStyle->SetOptTitle(0);
+	tdrStyle->SetTitleFont(42);
+	tdrStyle->SetTitleColor(1);
+	tdrStyle->SetTitleTextColor(1);
+	tdrStyle->SetTitleFillColor(10);
+	tdrStyle->SetTitleFontSize(0.05);
+	// tdrStyle->SetTitleH(0); // Set the height of the title box
+	// tdrStyle->SetTitleW(0); // Set the width of the title box
+	// tdrStyle->SetTitleX(0); // Set the position of the title box
+	// tdrStyle->SetTitleY(0.985); // Set the position of the title box
+	// tdrStyle->SetTitleStyle(Style_t style = 1001);
+	// tdrStyle->SetTitleBorderSize(2);
+
+	// For the axis titles:
+	tdrStyle->SetTitleColor(1, "XYZ");
+	tdrStyle->SetTitleFont(42, "XYZ");
+	tdrStyle->SetTitleSize(0.06, "XYZ"); //EDITFROM 0.06
+	// tdrStyle->SetTitleXSize(Float_t size = 0.02); // Another way to set the size?
+	// tdrStyle->SetTitleYSize(Float_t size = 0.02);
+	tdrStyle->SetTitleXOffset(0.95);//EDITFROM 0.9
+	tdrStyle->SetTitleYOffset(1.25);
+	// tdrStyle->SetTitleOffset(1.1, "Y"); // Another way to set the Offset
+
+	// For the axis labels:
+	tdrStyle->SetLabelColor(1, "XYZ");
+	tdrStyle->SetLabelFont(42, "XYZ");
+	tdrStyle->SetLabelOffset(0.007, "XYZ");
+	tdrStyle->SetLabelSize(0.06, "XYZ"); //EDITFROM 0.05 
+
+	// For the axis:
+	tdrStyle->SetAxisColor(1, "XYZ");
+	tdrStyle->SetStripDecimals(kTRUE);
+	tdrStyle->SetTickLength(0.03, "XYZ");
+	tdrStyle->SetNdivisions(510, "XYZ");
+	tdrStyle->SetPadTickX(1);  // To get tick marks on the opposite side of the frame
+	tdrStyle->SetPadTickY(1);
+
+	// Change for log plots:
+	tdrStyle->SetOptLogx(0);
+	tdrStyle->SetOptLogy(0);
+	tdrStyle->SetOptLogz(0);
+
+	// Postscript options:
+	tdrStyle->SetPaperSize(20.,20.);
+	// tdrStyle->SetLineScalePS(Float_t scale = 3);
+	// tdrStyle->SetLineStyleString(Int_t i, const char* text);
+	// tdrStyle->SetHeaderPS(const char* header);
+	// tdrStyle->SetTitlePS(const char* pstitle);
+
+	// tdrStyle->SetBarOffset(Float_t baroff = 0.5);
+	// tdrStyle->SetBarWidth(Float_t barwidth = 0.5);
+	// tdrStyle->SetPaintTextFormat(const char* format = "g");
+	// tdrStyle->SetPalette(Int_t ncolors = 0, Int_t* colors = 0);
+	// tdrStyle->SetTimeOffset(Double_t toffset);
+	// tdrStyle->SetHistMinimumZero(kTRUE);
+
+	//tdrStyle->cd();
+	return tdrStyle;
+}
+
+
+
 
 
 #endif
