@@ -13,7 +13,7 @@ process.source = cms.Source("PoolSource",
 )
 
 # max number of events when running locally
-process.maxEvents.input = 150
+process.maxEvents.input = 1000
 # name of output .root file
 process.out.fileName = 'bTagPatTuple.root'
 # to suppress the long output at the end of the job

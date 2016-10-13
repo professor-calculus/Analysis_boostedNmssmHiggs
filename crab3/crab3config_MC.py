@@ -1,7 +1,9 @@
 from CRABClient.UserUtilities import config
 config = config()
 
-uniqueName = 'boostedHiggsMC_commitHash' # name for this ntuple production (include commit hash so it is unique and can be traced) 
+# submit, from crab directory, with $ crab submit -c crab3config_MC.py
+
+uniqueName = 'boostedHiggsMC_25e777' # name for this ntuple production (include commit hash so it is unique and can be traced) 
 config.General.requestName = uniqueName # name of the crab job project (eg on dashboard)
 config.Data.outputDatasetTag = uniqueName # name for storage directory beneath /hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/<dataset>/
 
@@ -13,7 +15,7 @@ config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../python/patTuple_addBTagging_cfg.py'
 
 # DATASETS
-# for testing the X->bb tagger on single boosted higgs (use 1 unitsPerJob)
+# for testing the X->bb tagger on single boosted higgs (use 1 unitsPerJob, 1unit here ~=9k files)
 config.Data.inputDataset = '/GluGluToRadionToHHTo2B2G_M-900_narrow_13TeV-madgraph/RunIISpring16reHLT80-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v3/AODSIM'
 
 config.Data.unitsPerJob = 1 # depends on the dataset ~1-10 (will list recommendation for datasets previously used)
