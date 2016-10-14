@@ -177,7 +177,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPnameD.size(); ++iWP){
 
 		h2_[Form("ptScatter_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH2F(
-			Form("ptScatter_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";Higgs p_{T} (GeV); doubleBTagJet p_{T} (GeV)",
+			Form("ptScatter_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";MC Higgs p_{T} (GeV); doubleBTagJet p_{T} (GeV)",
 			ptScatXBinning.size()-1, &(ptScatXBinning)[0], ptScatYBinning.size()-1, &(ptScatYBinning)[0]);
 
 		h_[Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
@@ -187,12 +187,12 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 
    			h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )] = new TH1F(
    			   Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
-   			   ";Higgs p_{T} (GeV); matchCount", ptBinning.size()-1, &(ptBinning)[0]); 
+   			   ";MC Higgs p_{T} (GeV); matchCount", ptBinning.size()-1, &(ptBinning)[0]); 
 
    			if (iWP==0) // so we only create the denominators once
    			h_[Form("effDenominator_eta%.2f-%.2f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )] = new TH1F(
    			   Form("effDenominator_eta%.2f-%.2f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
-   			   ";Higgs p_{T} (GeV); totalCount", ptBinning.size()-1, &(ptBinning)[0]); 
+   			   ";MC Higgs p_{T} (GeV); totalCount", ptBinning.size()-1, &(ptBinning)[0]); 
 
 
    		} // closes loop through etaBins
@@ -210,7 +210,7 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 	// fill the efficiency denominators
 	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 
-		if( abs(fatJetMatchD.eta()) >= etaBinningD[iEtaBin] && abs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1])
+		if( abs(higssBbGenParticleD.eta()) >= etaBinningD[iEtaBin] && abs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1])
 		h_[Form("effDenominator_eta%.2f-%.2f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(higssBbGenParticleD.pt());
 
 	}
@@ -226,7 +226,7 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 
 		   		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 		   		
-		   			if( abs(fatJetMatchD.eta()) >= etaBinningD[iEtaBin] && abs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1])
+		   			if( abs(higssBbGenParticleD.eta()) >= etaBinningD[iEtaBin] && abs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1])
 					h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(higssBbGenParticleD.pt());
 				
 				} // closes loop through etaBins
