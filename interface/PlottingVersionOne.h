@@ -180,10 +180,7 @@ void PlottingVersionOne::effComparingWPs()
 	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
 	
 	    TCanvas* c=new TCanvas("c","c");
-
-		// get the denominator for this eta bin
 		TH1F * hDen = (TH1F*)f->Get( Form("effDenominator_eta%.2f-%.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
-
 
 		for (std::vector<std:: string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 	
@@ -195,10 +192,8 @@ void PlottingVersionOne::effComparingWPs()
 			hEff->SetLineColor(iWP+1);
 			hNum->SetMarkerColor(iWP+1);
 			hEff->SetLineWidth(2);
-
 			// hNum->GetXaxis()->SetTitle("");
 			hNum->GetXaxis()->SetTitleSize(0.06);	
-
 			hNum->GetYaxis()->SetTitle("Efficiency");
 			hNum->GetYaxis()->SetTitleSize(0.06);
 			// WILL NEED A LEGEND DESPERATELY
@@ -206,30 +201,20 @@ void PlottingVersionOne::effComparingWPs()
 			hNum->Draw("same, P");
 			hEff->Draw("same");
 
-
-
 		} // closes loop through WPs
 
-	// kind of want an eta label for the plot
-
-
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		if (iEtaBin==0) latex->DrawLatex(0.20,0.70, Form("|#eta| < %.2f", etaBinning[iEtaBin+1]));
+		else latex->DrawLatex(0.20,0.70, Form("%.2f #leq |#eta| < %.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]));
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
 
 		std::string saveName = Form("efficiency_eta%.2f-%.2f.pdf", etaBinning[iEtaBin], etaBinning[iEtaBin+1]);
-		// make plot with complimentary function
-	
-	// stamps and legend
-			latex->SetTextAlign(11);
-			latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
-			latex->SetTextAlign(31);
-			latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
-
-	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
-	c->Close();
-
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
 
 	} // closes loop through eta bins 
-
-
 } // closes the function effComparingWPs
 
 
@@ -250,37 +235,30 @@ void PlottingVersionOne::effComparingEta()
 			TH1F * hDen = (TH1F*)f->Get( Form("effDenominator_eta%.2f-%.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
 			TH1F * hNum = (TH1F*)f->Get( Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPname[iWP].c_str(), etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );		
 
-
 			TEfficiency * hEff = new TEfficiency(*hNum,*hDen);
 			hNum->Divide(hDen); // hNum is also now the efficiency
 
-
 			// SETUP HOW YOU WOULD LIKE THE PLOT			
-			hEff->SetLineColor(iEtaBin); // or maybe do same line style...
+			hEff->SetLineColor(iEtaBin);
 			hNum->SetLineColor(iEtaBin);
 
 			// WILL NEED A LEGEND DESPERATELY
 
 
-		hNum->Draw("same, P");
-		hEff->Draw("same");
-
+			hNum->Draw("same, P");
+			hEff->Draw("same");
 
 		} // closes loop through eta bins 
 
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->DrawLatex(0.20,0.70, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		
 		std::string saveName = Form("efficiency_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
-	
-
-	// kind of want an WP label for the plot
-			latex->SetTextAlign(11);
-			latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
-			latex->SetTextAlign(31);
-			latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
-
-
-	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
-	c->Close();	
-
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();	
 
 	} // closes loop through WPs
 } // closes the function effComparingEta
