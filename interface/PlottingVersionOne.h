@@ -15,6 +15,8 @@
 #include <TSystem.h>
 #include <TStyle.h>
 #include <TLatex.h>
+#include <TLine.h>
+#include <TLegend.h>
 
 // CMSSW headers
 
@@ -41,7 +43,7 @@ private:
 	void hBbMassDist();
 	// void hBbMassDistDraw(TH1F *, std::string);
 
- 	void fatJetVsHBbDist();
+ 	void fatJetVsHBbPtDist();
  	// void fatJetVsHBbDistDraw(TH2F *, std::string);
 
  	void effComparingWPs();
@@ -91,7 +93,7 @@ PlottingVersionOne::PlottingVersionOne(std::string inputHistoFile, std::vector<s
 
 	// make the .pdfs
  	hBbMassDist();
- 	fatJetVsHBbDist();
+ 	fatJetVsHBbPtDist();
  	effComparingWPs();
  	effComparingEta();
 }
@@ -103,6 +105,9 @@ PlottingVersionOne::PlottingVersionOne(std::string inputHistoFile, std::vector<s
 
 void PlottingVersionOne::hBbMassDist()
 {
+	std::vector<TH1F*> vecHistos;
+    TLegend * legend = new TLegend(0.20, 0.60, 0.45, 0.85); //(xmin, ymin, xmax, ymax)
+
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 		
 	    TCanvas* c=new TCanvas("c","c"); 	
@@ -113,22 +118,47 @@ void PlottingVersionOne::hBbMassDist()
 		// h->SetLineColor(2);
 		// h->GetXaxis()->SetTitle("");
 		h->GetXaxis()->SetTitleSize(0.06);	
+		h->GetXaxis()->SetLabelSize(0.05);
 		// h->GetYaxis()->SetTitle("");
 		h->GetYaxis()->SetTitleSize(0.06);
+		h->GetYaxis()->SetLabelSize(0.05);
 
 		h->Draw();
 		// Add stamps
-		latex->SetTextAlign(11);
+		latex->SetTextAlign(11); // align from left
 		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
-		latex->DrawLatex(0.25, 0.70, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
-		latex->SetTextAlign(31);
+		latex->DrawLatex(0.22, 0.72, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+		latex->SetTextAlign(31); // align from right
 		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
 
 		std::string saveName = Form("fatJetMass_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
 		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
 		c->Close();
+
+		// for the combined plot
+		vecHistos.push_back(h);
+		vecHistos[iWP]->SetLineColor(iWP+1);
+		Double_t norm = vecHistos[iWP]->GetEntries();
+		vecHistos[iWP]->Scale(1/norm);
+		legend->AddEntry(h, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
 	} // closes loop through Btag WP labels
 	
+	// put all of them on the same entry
+    TCanvas* c=new TCanvas("c","c");
+    for (int iMass=vecHistos.size()-1; iMass>=0; --iMass){
+	    vecHistos[iMass]->Draw("same");
+	    // if (iMass==0) break;
+	}
+	legend->Draw();
+	// Add stamps
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->SetTextAlign(31); // align from right
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%sfatJetMass_allDoubleBTagWPNormalised.pdf", outputDirectory.c_str()));
+	c->Close();
 } // closes the function 'hBbMassDist'
 
 
@@ -136,7 +166,7 @@ void PlottingVersionOne::hBbMassDist()
 
 
 
-void PlottingVersionOne::fatJetVsHBbDist()
+void PlottingVersionOne::fatJetVsHBbPtDist()
 {
 	double defaultParam = tdrStyle->GetPadRightMargin();
 	tdrStyle->SetPadRightMargin(0.10);
@@ -154,12 +184,19 @@ void PlottingVersionOne::fatJetVsHBbDist()
 		h2->GetYaxis()->SetLabelSize(0.05);	
 		
 		h2->Draw("colz");
+
+		// Add diagnol line		
+		c->Update();
+		TLine *line = new TLine(0,0,gPad->GetUxmax(),gPad->GetUymax());
+		line->SetLineStyle(2);
+		line->SetLineWidth(2);
+		line->Draw();
 		// Add stamps
 		latex->SetTextAlign(11);
 		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
-		latex->DrawLatex(0.25, 0.70, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
 		latex->SetTextAlign(31);
 		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		latex->DrawLatex(0.85, 0.20, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
 
 		std::string saveName = Form("fatJetVsHBbPtScatter_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
 		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
@@ -180,6 +217,9 @@ void PlottingVersionOne::effComparingWPs()
 	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
 	
 	    TCanvas* c=new TCanvas("c","c");
+	    TLegend * legend = new TLegend(0.6, 0.15, 0.91, 0.30); //(xmin, ymin, xmax, ymax)
+	    legend->SetLineColor(0);
+	    legend-> SetNColumns(2);
 		TH1F * hDen = (TH1F*)f->Get( Form("effDenominator_eta%.2f-%.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
 
 		for (std::vector<std:: string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
@@ -190,25 +230,37 @@ void PlottingVersionOne::effComparingWPs()
 
 			// SETUP HOW YOU WOULD LIKE THE PLOT
 			hEff->SetLineColor(iWP+1);
+			hEff->SetMarkerColor(iWP+1);
 			hNum->SetMarkerColor(iWP+1);
 			hEff->SetLineWidth(2);
+			hNum->GetXaxis()->SetLabelSize(0.05);
+			hNum->GetYaxis()->SetLabelSize(0.05);
 			// hNum->GetXaxis()->SetTitle("");
 			hNum->GetXaxis()->SetTitleSize(0.06);	
 			hNum->GetYaxis()->SetTitle("Efficiency");
 			hNum->GetYaxis()->SetTitleSize(0.06);
-			// WILL NEED A LEGEND DESPERATELY
+			hNum->GetYaxis()->SetRangeUser(0,1.11);
 
 			hNum->Draw("same, P");
 			hEff->Draw("same");
+			legend->AddEntry(hEff, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
 
 		} // closes loop through WPs
 
+		legend->Draw();
+		// Add Stamps
 		latex->SetTextAlign(11);
 		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
-		if (iEtaBin==0) latex->DrawLatex(0.20,0.70, Form("|#eta| < %.2f", etaBinning[iEtaBin+1]));
-		else latex->DrawLatex(0.20,0.70, Form("%.2f #leq |#eta| < %.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]));
+		if (iEtaBin==0) latex->DrawLatex(0.18,0.84, Form("|#eta| < %.2f", etaBinning[iEtaBin+1]));
+		else latex->DrawLatex(0.18,0.84, Form("%.2f #leq |#eta| < %.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]));
 		latex->SetTextAlign(31);
 		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		// Add line across max efficiency		
+		c->Update();
+		TLine *line = new TLine(0,1,gPad->GetUxmax(),1);
+		line->SetLineStyle(2);
+		line->SetLineWidth(2);
+		line->Draw();
 
 		std::string saveName = Form("efficiency_eta%.2f-%.2f.pdf", etaBinning[iEtaBin], etaBinning[iEtaBin+1]);
 		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
@@ -229,6 +281,9 @@ void PlottingVersionOne::effComparingEta()
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 
     TCanvas* c=new TCanvas("c","c");
+    TLegend * legend = new TLegend(0.6, 0.16, 0.91, 0.28); //(xmin, ymin, xmax, ymax)
+    legend->SetLineColor(0);
+    legend-> SetNColumns(2);
 
 		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
 
@@ -239,23 +294,34 @@ void PlottingVersionOne::effComparingEta()
 			hNum->Divide(hDen); // hNum is also now the efficiency
 
 			// SETUP HOW YOU WOULD LIKE THE PLOT			
-			hEff->SetLineColor(iEtaBin);
-			hNum->SetLineColor(iEtaBin);
-
-			// WILL NEED A LEGEND DESPERATELY
-
+			hEff->SetLineColor(iEtaBin+1);
+			hEff->SetMarkerColor(iWP+1);
+			hNum->SetLineColor(iEtaBin+1);
+			hNum->GetXaxis()->SetLabelSize(0.05);
+			hNum->GetYaxis()->SetLabelSize(0.05);  
 
 			hNum->Draw("same, P");
 			hEff->Draw("same");
+			if (iEtaBin==0) legend->AddEntry(hEff, Form("|#eta| < %.2f", etaBinning[iEtaBin+1]), "L");
+			else legend->AddEntry(hEff, Form("%.2f #leq |#eta| < %.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]), "L");
 
 		} // closes loop through eta bins 
 
+		legend->Draw();
+
+		// Add Stamps
 		latex->SetTextAlign(11);
 		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
-		latex->DrawLatex(0.20,0.70, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
 		latex->SetTextAlign(31);
 		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
-		
+		latex->DrawLatex(0.15,0.58, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+		// Add line across max efficiency		
+		c->Update();
+		TLine *line = new TLine(0,1,gPad->GetUxmax(),1);
+		line->SetLineStyle(2);
+		line->SetLineWidth(2);
+		line->Draw();
+
 		std::string saveName = Form("efficiency_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
 		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
 		c->Close();	
