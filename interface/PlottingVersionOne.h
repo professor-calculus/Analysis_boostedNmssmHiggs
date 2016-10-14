@@ -39,18 +39,19 @@ private:
 	std::string outputDirectory;
 
 	void hBbMassDist();
-	void hBbMassDistDraw(TH1F *, std::string);
+	// void hBbMassDistDraw(TH1F *, std::string);
 
  	void fatJetVsHBbDist();
- 	void fatJetVsHBbDistDraw(TH2F *, std::string);
+ 	// void fatJetVsHBbDistDraw(TH2F *, std::string);
 
  	void effComparingWPs();
  	void effComparingWPsDraw(std::vector<TEfficiency>, std::vector<TH1F*>, std::string);
 
 	void effComparingEta();
-	void effComparingEtaDraw(std::vector<TEfficiency> hEffD, std::vector<TH1F*> hDivD, std::string saveNameD);
+void effComparingEtaDraw(std::vector<TEfficiency> hEffD, std::vector<TH1F*> hDivD, std::string saveNameD);
 
 	TStyle * TDRStyle();
+	TStyle * tdrStyle;
 	TLatex * latex = new TLatex();
 
 	    // TLatex * latex(new TLatex());
@@ -80,7 +81,7 @@ PlottingVersionOne::PlottingVersionOne(std::string inputHistoFile, std::vector<s
 		}
 	}
 	// set the TStyle for the plots
-	TDRStyle();
+	tdrStyle = TDRStyle();
 	gROOT->SetStyle("tdrStyle");
 
 	// set the latex defaults
@@ -104,8 +105,8 @@ void PlottingVersionOne::hBbMassDist()
 {
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 		
+	    TCanvas* c=new TCanvas("c","c"); 	
 		TH1F * h = (TH1F*)f->Get(Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
-		std::string saveName = Form("fatJetMass_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
 
 		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
 		h->SetLineWidth(2);
@@ -115,24 +116,21 @@ void PlottingVersionOne::hBbMassDist()
 		// h->GetYaxis()->SetTitle("");
 		h->GetYaxis()->SetTitleSize(0.06);
 
-		// make plot with complimentary function
-		hBbMassDistDraw(h, saveName);
+		h->Draw();
+		// Add stamps
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->DrawLatex(0.25, 0.70, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
 
+		std::string saveName = Form("fatJetMass_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
 	} // closes loop through Btag WP labels
+	
 } // closes the function 'hBbMassDist'
 
-void PlottingVersionOne::hBbMassDistDraw(TH1F * hD, std::string saveNameD)
-{
-    TCanvas* c=new TCanvas("c","c");    
-	hD->Draw();
-	latex->SetTextAlign(11); // do i wrap the basics up in a function
-	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
-	latex->DrawLatex(0.20, 0.80, "WPtesting");
-	latex->SetTextAlign(31);
-	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
-	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveNameD.c_str()));
-	c->Close();
-}
 
 
 
@@ -140,10 +138,12 @@ void PlottingVersionOne::hBbMassDistDraw(TH1F * hD, std::string saveNameD)
 
 void PlottingVersionOne::fatJetVsHBbDist()
 {
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 		
+		TCanvas* c=new TCanvas("c","c");
 		TH2F * h2 = (TH2F*)f->Get(Form("ptScatter_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
-		std::string saveName = Form("fatJetVsHBbPtScatter_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
 
 		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
 		// h2->GetXaxis()->SetTitle("");
@@ -153,20 +153,22 @@ void PlottingVersionOne::fatJetVsHBbDist()
 		h2->GetYaxis()->SetTitleSize(0.06);
 		h2->GetYaxis()->SetLabelSize(0.05);	
 		
-		// make plot with complimentary function
-		fatJetVsHBbDistDraw(h2, saveName);
+		h2->Draw("colz");
+		// Add stamps
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->DrawLatex(0.25, 0.70, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+		std::string saveName = Form("fatJetVsHBbPtScatter_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
 
 	} // closes loop through Btag WP labels
+	tdrStyle->SetPadRightMargin(defaultParam);
 } // closes the function 'fatJetVsHBbDist'
 
-void PlottingVersionOne::fatJetVsHBbDistDraw(TH2F * h2D, std::string saveNameD) 
-{
-    TCanvas* c=new TCanvas("c","c");
-	h2D->Draw("colz");
-	// put a draw line in here up the diagnol
-	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveNameD.c_str()));
-	c->Close();
-}
 
 
 
@@ -177,50 +179,60 @@ void PlottingVersionOne::effComparingWPs()
 {
 	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
 	
-		std::vector<TEfficiency> hEff;
-		std::vector<TH1F*> hDiv;
+	    TCanvas* c=new TCanvas("c","c");
 
 		// get the denominator for this eta bin
 		TH1F * hDen = (TH1F*)f->Get( Form("effDenominator_eta%.2f-%.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
 
-		for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+
+		for (std::vector<std:: string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 	
-			TH1F * hNum = (TH1F*)f->Get( Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPname[iWP].c_str(), etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );		
-			hEff.push_back(TEfficiency(*hNum,*hDen));
-			hNum->Divide(hDen);
-			hDiv.push_back(hNum);
+			TH1F * hNum = (TH1F*)f->Get( Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPname[iWP].c_str(), etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
+			TEfficiency * hEff = new TEfficiency(*hNum,*hDen);
+			hNum->Divide(hDen); // hNum is also now the efficiency
 
 			// SETUP HOW YOU WOULD LIKE THE PLOT
-			hEff[iWP].SetLineColor(iWP+1);
-			hDiv[iWP]->SetMarkerColor(iWP+1);
-			hEff[iWP].SetLineWidth(2);
+			hEff->SetLineColor(iWP+1);
+			hNum->SetMarkerColor(iWP+1);
+			hEff->SetLineWidth(2);
 
-			// hDiv[iWP]->GetXaxis()->SetTitle("");
-			hDiv[iWP]->GetXaxis()->SetTitleSize(0.06);	
+			// hNum->GetXaxis()->SetTitle("");
+			hNum->GetXaxis()->SetTitleSize(0.06);	
 
-			hDiv[iWP]->GetYaxis()->SetTitle("Efficiency");
-			hDiv[iWP]->GetYaxis()->SetTitleSize(0.06);
+			hNum->GetYaxis()->SetTitle("Efficiency");
+			hNum->GetYaxis()->SetTitleSize(0.06);
 			// WILL NEED A LEGEND DESPERATELY
+
+			hNum->Draw("same, P");
+			hEff->Draw("same");
+
+
 
 		} // closes loop through WPs
 
+	// kind of want an eta label for the plot
+
+
+
 		std::string saveName = Form("efficiency_eta%.2f-%.2f.pdf", etaBinning[iEtaBin], etaBinning[iEtaBin+1]);
 		// make plot with complimentary function
-		effComparingWPsDraw(hEff, hDiv, saveName);
+	
+	// stamps and legend
+			latex->SetTextAlign(11);
+			latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+			latex->SetTextAlign(31);
+			latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();
+
 
 	} // closes loop through eta bins 
+
+
 } // closes the function effComparingWPs
 
-void PlottingVersionOne::effComparingWPsDraw(std::vector<TEfficiency> hEffD, std::vector<TH1F*> hDivD, std::string saveNameD)
-{
-    TCanvas* c=new TCanvas("c","c");
-    for (size_t iEff=0; iEff<hEffD.size(); ++iEff){
-	    hDivD[iEff]->Draw("same, P");
-		hEffD[iEff].Draw("same");
-	}
-	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveNameD.c_str()));
-	c->Close();
-}
+
 
 
 
@@ -231,42 +243,47 @@ void PlottingVersionOne::effComparingEta()
 {
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 
-		std::vector<TEfficiency> hEff;
-		std::vector<TH1F*> hDiv;
+    TCanvas* c=new TCanvas("c","c");
 
 		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
 
 			TH1F * hDen = (TH1F*)f->Get( Form("effDenominator_eta%.2f-%.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
 			TH1F * hNum = (TH1F*)f->Get( Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPname[iWP].c_str(), etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );		
-			hEff.push_back(TEfficiency(*hNum,*hDen));
-			hNum->Divide(hDen);
-			hDiv.push_back(hNum);
+
+
+			TEfficiency * hEff = new TEfficiency(*hNum,*hDen);
+			hNum->Divide(hDen); // hNum is also now the efficiency
+
 
 			// SETUP HOW YOU WOULD LIKE THE PLOT			
-			hEff[iEtaBin].SetLineColor(iEtaBin); // or maybe do same line style...
-			hDiv[iEtaBin]->SetLineColor(iEtaBin);
+			hEff->SetLineColor(iEtaBin); // or maybe do same line style...
+			hNum->SetLineColor(iEtaBin);
 
 			// WILL NEED A LEGEND DESPERATELY
+
+
+		hNum->Draw("same, P");
+		hEff->Draw("same");
+
 
 		} // closes loop through eta bins 
 
 		std::string saveName = Form("efficiency_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
-		// make plot with complimentary function
-		effComparingEtaDraw(hEff, hDiv, saveName);
+	
+
+	// kind of want an WP label for the plot
+			latex->SetTextAlign(11);
+			latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+			latex->SetTextAlign(31);
+			latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();	
+
 
 	} // closes loop through WPs
 } // closes the function effComparingEta
-
-void PlottingVersionOne::effComparingEtaDraw(std::vector<TEfficiency> hEffD, std::vector<TH1F*> hDivD, std::string saveNameD)
-{
-    TCanvas* c=new TCanvas("c","c");
-    for (size_t iEff=0; iEff<hEffD.size(); ++iEff){
-	    hDivD[iEff]->Draw("same, P");
-		hEffD[iEff].Draw("same");
-	}
-	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveNameD.c_str()));
-	c->Close();
-}
 
 
 
@@ -360,10 +377,11 @@ TStyle * PlottingVersionOne::TDRStyle()
 	//tdrStyle->SetPadTopMargin(0.05);
 	tdrStyle->SetPadTopMargin(0.10);
 	tdrStyle->SetPadBottomMargin(0.13);
-	//tdrStyle->SetPadLeftMargin(0.16);
+	// tdrStyle->SetPadLeftMargin(0.16);
 	tdrStyle->SetPadLeftMargin(0.14);
-	//tdrStyle->SetPadRightMargin(0.02);
+	// tdrStyle->SetPadRightMargin(0.02);
 	tdrStyle->SetPadRightMargin(0.07);
+	// tdrStyle->SetPadRightMargin(0.10); // only really want to be changing this for the scatters
 
 	// For the Global title:
 	tdrStyle->SetOptTitle(0);
@@ -382,7 +400,7 @@ TStyle * PlottingVersionOne::TDRStyle()
 	// For the axis titles:
 	tdrStyle->SetTitleColor(1, "XYZ");
 	tdrStyle->SetTitleFont(42, "XYZ");
-	tdrStyle->SetTitleSize(0.06, "XYZ"); //EDITFROM 0.06
+	tdrStyle->SetTitleSize(0.06, "XYZ");
 	// tdrStyle->SetTitleXSize(Float_t size = 0.02); // Another way to set the size?
 	// tdrStyle->SetTitleYSize(Float_t size = 0.02);
 	tdrStyle->SetTitleXOffset(0.95);//EDITFROM 0.9
@@ -393,7 +411,8 @@ TStyle * PlottingVersionOne::TDRStyle()
 	tdrStyle->SetLabelColor(1, "XYZ");
 	tdrStyle->SetLabelFont(42, "XYZ");
 	tdrStyle->SetLabelOffset(0.007, "XYZ");
-	tdrStyle->SetLabelSize(0.06, "XYZ"); //EDITFROM 0.05 
+	// tdrStyle->SetLabelSize(0.05, "XYZ");
+	tdrStyle->SetLabelSize(0.06, "XYZ");
 
 	// For the axis:
 	tdrStyle->SetAxisColor(1, "XYZ");
