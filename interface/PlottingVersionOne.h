@@ -39,25 +39,20 @@ private:
 	std::vector<double> etaBinning;
 	std::vector<std::string> doubleBtagWPname;
 	std::string outputDirectory;
+	std::vector<int> colorPalette;
+	std::vector<int> colorPaletteSubtle;
 
 	void hBbMassDist();
-	// void hBbMassDistDraw(TH1F *, std::string);
-
+	void deltaRMatchDist();
+ 	void fatJetEtaDist();
  	void fatJetVsHBbPtDist();
- 	// void fatJetVsHBbDistDraw(TH2F *, std::string);
-
  	void effComparingWPs();
- 	void effComparingWPsDraw(std::vector<TEfficiency>, std::vector<TH1F*>, std::string);
-
 	void effComparingEta();
-void effComparingEtaDraw(std::vector<TEfficiency> hEffD, std::vector<TH1F*> hDivD, std::string saveNameD);
 
+	int SetColor(int position, int maxColors);
 	TStyle * TDRStyle();
 	TStyle * tdrStyle;
 	TLatex * latex = new TLatex();
-
-	    // TLatex * latex(new TLatex());
-
 };
 
 ////////////////////////////////
@@ -93,6 +88,8 @@ PlottingVersionOne::PlottingVersionOne(std::string inputHistoFile, std::vector<s
 
 	// make the .pdfs
  	hBbMassDist();
+ 	deltaRMatchDist();
+ 	fatJetEtaDist();
  	fatJetVsHBbPtDist();
  	effComparingWPs();
  	effComparingEta();
@@ -166,6 +163,133 @@ void PlottingVersionOne::hBbMassDist()
 
 
 
+
+void PlottingVersionOne::deltaRMatchDist()
+{
+	std::vector<TH1F*> vecHistos;
+    TLegend * legend = new TLegend(0.60, 0.60, 0.85, 0.85); //(xmin, ymin, xmax, ymax)
+
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+		
+	    TCanvas* c=new TCanvas("c","c"); 	
+		TH1F * h = (TH1F*)f->Get(Form("deltaR_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		h->SetLineWidth(2);
+		// h->SetLineColor(2);
+		// h->GetXaxis()->SetTitle("");
+		h->GetXaxis()->SetTitleSize(0.06);	
+		h->GetXaxis()->SetLabelSize(0.05);
+		// h->GetYaxis()->SetTitle("");
+		h->GetYaxis()->SetTitleSize(0.06);
+		h->GetYaxis()->SetLabelSize(0.05);
+
+		h->Draw();
+		// Add stamps
+		latex->SetTextAlign(11); // align from left
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->SetTextAlign(31); // align from right
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		latex->DrawLatex(0.85, 0.72, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+
+		std::string saveName = Form("deltaR_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
+
+		// for the combined plot
+		vecHistos.push_back(h);
+		vecHistos[iWP]->SetLineColor(iWP+1);
+		Double_t norm = vecHistos[iWP]->GetEntries();
+		vecHistos[iWP]->Scale(1/norm);
+		legend->AddEntry(h, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
+	} // closes loop through Btag WP labels
+	
+	// put all of them on the same entry
+    TCanvas* c=new TCanvas("c","c");
+    for (int iDR=vecHistos.size()-1; iDR>=0; --iDR){
+	    vecHistos[iDR]->Draw("same");
+	}
+	legend->Draw();
+	// Add stamps
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->SetTextAlign(31); // align from right
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%sdeltaR_allDoubleBTagWPNormalised.pdf", outputDirectory.c_str()));
+	c->Close();
+} // closes the function 'deltaRMatchDist'
+
+
+
+
+
+
+
+void PlottingVersionOne::fatJetEtaDist()
+{
+	std::vector<TH1F*> vecHistos;
+    TLegend * legend = new TLegend(0.20, 0.60, 0.42, 0.85); //(xmin, ymin, xmax, ymax)
+
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+		
+	    TCanvas* c=new TCanvas("c","c"); 	
+		TH1F * h = (TH1F*)f->Get(Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		h->SetLineWidth(2);
+		// h->SetLineColor(2);
+		// h->GetXaxis()->SetTitle("");
+		h->GetXaxis()->SetTitleSize(0.06);	
+		h->GetXaxis()->SetLabelSize(0.05);
+		// h->GetYaxis()->SetTitle("");
+		h->GetYaxis()->SetTitleSize(0.06);
+		h->GetYaxis()->SetLabelSize(0.05);
+
+		h->Draw();
+		// Add stamps
+		latex->SetTextAlign(11); // align from left
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->DrawLatex(0.17, 0.80, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+		latex->SetTextAlign(31); // align from right
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+		std::string saveName = Form("fatJetEta_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
+
+		// for the combined plot
+		vecHistos.push_back(h);
+		vecHistos[iWP]->SetLineColor(iWP+1);
+		Double_t norm = vecHistos[iWP]->GetEntries();
+		vecHistos[iWP]->Scale(1/norm);
+		legend->AddEntry(h, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
+	} // closes loop through Btag WP labels
+	
+	// put all of them on the same entry
+    TCanvas* c=new TCanvas("c","c");
+    for (int iDR=vecHistos.size()-1; iDR>=0; --iDR){
+	    vecHistos[iDR]->Draw("same");
+	}
+	legend->Draw();
+	// Add stamps
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->SetTextAlign(31); // align from right
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%sfatJetEta_allDoubleBTagWPNormalised.pdf", outputDirectory.c_str()));
+	c->Close();
+} // closes the function 'fatJetEtaDist'
+
+
+
+
+
+
+
 void PlottingVersionOne::fatJetVsHBbPtDist()
 {
 	double defaultParam = tdrStyle->GetPadRightMargin();
@@ -225,23 +349,25 @@ void PlottingVersionOne::effComparingWPs()
 		for (std::vector<std:: string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 	
 			TH1F * hNum = (TH1F*)f->Get( Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPname[iWP].c_str(), etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
-			TEfficiency * hEff = new TEfficiency(*hNum,*hDen);
-			hNum->Divide(hDen); // hNum is also now the efficiency
+			TEfficiency * hEff = new TEfficiency(*hNum,*hDen);		
+			TH1F *hEffHist = (TH1F*) hNum->Clone();
+			hEffHist->Divide(hDen);
 
 			// SETUP HOW YOU WOULD LIKE THE PLOT
-			hEff->SetLineColor(iWP+1);
-			hEff->SetMarkerColor(iWP+1);
-			hNum->SetMarkerColor(iWP+1);
+			int colour = SetColor(iWP, doubleBtagWPname.size());
+			hEff->SetLineColor(colour);
+			hEff->SetMarkerColor(colour);
+			hEffHist->SetMarkerColor(colour);
 			hEff->SetLineWidth(2);
-			hNum->GetXaxis()->SetLabelSize(0.05);
-			hNum->GetYaxis()->SetLabelSize(0.05);
-			// hNum->GetXaxis()->SetTitle("");
-			hNum->GetXaxis()->SetTitleSize(0.06);	
-			hNum->GetYaxis()->SetTitle("Efficiency");
-			hNum->GetYaxis()->SetTitleSize(0.06);
-			hNum->GetYaxis()->SetRangeUser(0,1.11);
+			hEffHist->GetXaxis()->SetLabelSize(0.05);
+			hEffHist->GetYaxis()->SetLabelSize(0.05);
+			// hEffHist->GetXaxis()->SetTitle("");
+			hEffHist->GetXaxis()->SetTitleSize(0.06);	
+			hEffHist->GetYaxis()->SetTitle("Efficiency");
+			hEffHist->GetYaxis()->SetTitleSize(0.06);
+			hEffHist->GetYaxis()->SetRangeUser(0,1.11);
 
-			hNum->Draw("same, P");
+			hEffHist->Draw("same, P");
 			hEff->Draw("same");
 			legend->AddEntry(hEff, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
 
@@ -281,40 +407,53 @@ void PlottingVersionOne::effComparingEta()
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 
     TCanvas* c=new TCanvas("c","c");
-    TLegend * legend = new TLegend(0.6, 0.16, 0.91, 0.28); //(xmin, ymin, xmax, ymax)
+    TLegend * legend = new TLegend(0.30, 0.20, 0.61, 0.36); //(xmin, ymin, xmax, ymax)
     legend->SetLineColor(0);
-    legend-> SetNColumns(2);
+    // legend-> SetNColumns(2);
 
 		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
 
 			TH1F * hDen = (TH1F*)f->Get( Form("effDenominator_eta%.2f-%.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
 			TH1F * hNum = (TH1F*)f->Get( Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPname[iWP].c_str(), etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );		
-
 			TEfficiency * hEff = new TEfficiency(*hNum,*hDen);
-			hNum->Divide(hDen); // hNum is also now the efficiency
+			TH1F *hEffHist = (TH1F*) hNum->Clone();
+			hEffHist->Divide(hDen);
 
 			// SETUP HOW YOU WOULD LIKE THE PLOT			
-			hEff->SetLineColor(iEtaBin+1);
-			hEff->SetMarkerColor(iWP+1);
-			hNum->SetLineColor(iEtaBin+1);
-			hNum->GetXaxis()->SetLabelSize(0.05);
-			hNum->GetYaxis()->SetLabelSize(0.05);  
+			int colour = SetColor(iEtaBin, etaBinning.size());
+			hEff->SetLineColor(colour);
+			hEff->SetMarkerColor(colour);
+			hEffHist->SetMarkerColor(colour);
+			hEff->SetLineWidth(2);
+			hEffHist->GetXaxis()->SetLabelSize(0.05);
+			hEffHist->GetYaxis()->SetLabelSize(0.05);
+			hEffHist->GetXaxis()->SetTitleSize(0.06);	
+			hEffHist->GetYaxis()->SetTitle("Efficiency");
+			hEffHist->GetYaxis()->SetTitleSize(0.06);
 
-			hNum->Draw("same, P");
+			hEffHist->GetYaxis()->SetRangeUser(0,1.11);
+
+			hEffHist->Draw("same, P");
 			hEff->Draw("same");
 			if (iEtaBin==0) legend->AddEntry(hEff, Form("|#eta| < %.2f", etaBinning[iEtaBin+1]), "L");
 			else legend->AddEntry(hEff, Form("%.2f #leq |#eta| < %.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]), "L");
 
 		} // closes loop through eta bins 
 
+		if (iWP>1){
+		legend->SetX1(0.18);
+		legend->SetX2(0.49);
+		legend->SetY1(0.6);
+		legend->SetY2(0.75);
+		}
 		legend->Draw();
 
 		// Add Stamps
 		latex->SetTextAlign(11);
 		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->DrawLatex(0.18,0.84, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
 		latex->SetTextAlign(31);
 		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
-		latex->DrawLatex(0.15,0.58, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
 		// Add line across max efficiency		
 		c->Update();
 		TLine *line = new TLine(0,1,gPad->GetUxmax(),1);
@@ -329,6 +468,35 @@ void PlottingVersionOne::effComparingEta()
 	} // closes loop through WPs
 } // closes the function effComparingEta
 
+
+
+
+
+int PlottingVersionOne::SetColor(int posititon, int maxColors)
+{
+// the plot has 'maxColors' number of colours involved
+// this function gives you a colour for the nth histogram
+
+	// the smaller the modifer value the greater the contrast
+	// double modifier = 0.05;
+	// double modifier = 0.10;
+    // double modifier = 0.15;
+    // double modifier = 0.20;
+	// double modifier = 0.25;	
+    double modifier = 0.30;
+    double colorIndex;
+    int colour(1);
+    double fraction = (double)(posititon)/(double)(maxColors-1);
+
+    if( posititon > maxColors-1 || posititon < 0 || maxColors < 0 ) colour = 1;
+    else
+    {
+    	// colorIndex = fraction * gStyle->GetNumberOfColors();
+        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
+        colour = gStyle->GetColorPalette(colorIndex);
+    }
+    return colour;
+}
 
 
 
@@ -488,9 +656,5 @@ TStyle * PlottingVersionOne::TDRStyle()
 	//tdrStyle->cd();
 	return tdrStyle;
 }
-
-
-
-
 
 #endif

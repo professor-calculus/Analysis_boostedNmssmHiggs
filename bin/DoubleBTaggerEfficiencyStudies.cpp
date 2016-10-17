@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.8, 0.9}; // these WP vectors must correspond to one-another
 	std::vector<std::string> doubleBtagWPname = {"loose", "medium", "tight", "veryTight"};
 	double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
-	std::vector<double> etaBinning = {0.00, 0.50, 1.00, 1.50, 2.00, 2.50, 3.00};
+	std::vector<double> etaBinning = {0.00, 0.80, 1.60, 2.40};
 
 	// Create histograms, they are accessed by eg: h_["fatJetMass_loose"]->Fill(125.0);
 	std::map<std::string, TH1F*> h_;
@@ -61,6 +61,7 @@ int main(int argc, char* argv[])
 	parser.integerValue ("outputevery"    ) =   1000;
 	// parser.stringVector  ("inputfiles"     ) = {"/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple.root"};
 	parser.stringValue  ("outputfile"     ) = "output_DoubleBTaggerEfficiencyStudies_testing/output_DoubleBTaggerEfficiencyStudies.root";
+	parser.boolValue    ("orderedsecondaryfiles") = false;
 
 	// Parse arguments
 	parser.parseArguments (argc, argv);
@@ -68,6 +69,7 @@ int main(int argc, char* argv[])
 	unsigned int outputEvery_ = parser.integerValue("outputevery");
 	std::vector<std::string> inputFiles_ = parser.stringVector("inputfiles");
 	std::string outputFile_ = parser.stringValue("outputfile");
+	bool justDoPlotting_ = parser.boolValue("orderedsecondaryfiles");
 
 	// Create the output directory TODO:put this in a function
 	std::string outputDirectory_;
@@ -80,14 +82,17 @@ int main(int argc, char* argv[])
 		}
 	}
 	bool makeDir = !(std::system(Form("mkdir %s",outputDirectory_.c_str())));
-	if (makeDir == false){
-		std::cout << "The chosen output directory already exists, or the parent directory does not exist: Exiting..." << std::endl;
+	if (justDoPlotting_ == false && makeDir == false){
+		std::cout << "The chosen output directory already exists, or the parent directory does not exist:" << std::endl;
+		std::cout << "Do not wish to overwrite ROOT file: Exiting..." << std::endl;
 		return 1;
 	}
 
-
 	// Loop through the input files
-	int ievt=0;  
+	int ievt=0;
+	// but we are just doing the plotting goto the end
+	if (justDoPlotting_) goto plottingLabel;
+
 	for(unsigned int iFile=0; iFile<inputFiles_.size(); ++iFile){
 	    
 	    // Open input file
@@ -144,7 +149,14 @@ int main(int argc, char* argv[])
 	} // closes loop through files
 
 	WriteHistograms(h_, h2_, outputFile_.c_str());
-	PlottingVersionOne createPlots(outputFile_.c_str(), doubleBtagWPname, etaBinning);
+
+	plottingLabel:
+	if (std::system(Form("test -e %s",outputFile_.c_str())) == 0) // check the file exists
+		PlottingVersionOne createPlots(outputFile_.c_str(), doubleBtagWPname, etaBinning);
+	else{
+			std::cout << "the folling output root file does not exist to make plots from:" << std::endl;
+			std::cout << outputFile_ << std::endl;
+		}
 
 return 0;
 } // closes the 'main' function
@@ -158,7 +170,10 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 {
 	// set the binning for histograms
     std::vector<double> ptBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 800.1; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 150.0; binLowerEdge+= 150.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  150.0; binLowerEdge< 500.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  500.0; binLowerEdge< 600.0; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  600.0; binLowerEdge< 800.1; binLowerEdge+= 200.0) ptBinning.push_back(binLowerEdge);
 
     std::vector<double> ptScatXBinning;
     for(double binLowerEdge=  0.0; binLowerEdge< 800.1; binLowerEdge+= 5.0) ptScatXBinning.push_back(binLowerEdge);
@@ -168,6 +183,12 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 
     std::vector<double> massBinning;
     for(double binLowerEdge=  0.0; binLowerEdge< 200.1; binLowerEdge+= 5.0) massBinning.push_back(binLowerEdge);
+
+    std::vector<double> etaDistBinning;
+    for(double binLowerEdge=  -4.00; binLowerEdge< 4.0001; binLowerEdge+= 0.20) etaDistBinning.push_back(binLowerEdge);    
+
+    std::vector<double> deltaRDistBinning;
+    for(double binLowerEdge=  0.0; binLowerEdge< 0.8001; binLowerEdge+= 0.02) deltaRDistBinning.push_back(binLowerEdge); 
 
 
     // create the histograms
@@ -179,6 +200,12 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 
 		h_[Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
 		   Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";mass_doubleBTagJet (GeV); a.u.", massBinning.size()-1, &(massBinning)[0]);
+
+		h_[Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
+		   Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";doubleBTagJet #eta; a.u.", etaDistBinning.size()-1, &(etaDistBinning)[0]);
+
+		h_[Form("deltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
+		   Form("deltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR_match; a.u.", deltaRDistBinning.size()-1, &(deltaRDistBinning)[0]);
 
    		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 
@@ -208,6 +235,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 
 
 
+
 void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, bool isMatch, pat::Jet fatJetMatchD, reco::GenParticle higssBbGenParticleD, std::vector<std::string> doubleBtagWPnameD, std::vector<double> doubleBtagWPD, std::vector<double> etaBinningD)
 {
 	// fill the efficiency denominators
@@ -228,11 +256,15 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 
 				// if (iWP==0){
 				// 	h_["DEBUG_higgsBbEtaDistMatchWithBTagLoose"]->Fill(higssBbGenParticleD.eta());
-				// 	h_["DEBUG_fatJetEtaDistMatchWithBTagLoose"]->Fill(fatJetMatchD.eta());					
+					// h_["DEBUG_fatJetEtaDistMatchWithBTagLoose"]->Fill(fatJetMatchD.eta());					
 				// }
 
 				h2_[Form("ptScatter_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(higssBbGenParticleD.pt(), fatJetMatchD.pt());
 				h_[Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(fatJetMatchD.mass());
+				h_[Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(fatJetMatchD.eta());
+
+				double dR = delR( delPhi( fatJetMatchD.phi(),higssBbGenParticleD.phi() ), delEta( fatJetMatchD.eta(),higssBbGenParticleD.eta() ) );
+				h_[Form("deltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dR);				
 
 		   		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 		   		
