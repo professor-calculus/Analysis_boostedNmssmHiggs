@@ -26,6 +26,7 @@ this then give us executables in CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis
 run with
 $ executable options
 (it runs with respect to where you are when you execute)
+(the executable is just the script name without the .cpp extension)
 
 All the code utilises the FWLite command parser.
 Mandatory Options:
@@ -34,7 +35,10 @@ inputfiles=file1.root,file2.root,file3.root (needs to be comma seperated without
 
 outputfile=outputfile.root
 this should be the full path and include a new directory (which the code creates) where the file will go.
-The new directory should include useful info about what you were doing.
+The new directory should include useful info about what you were doing. The directory should also be unique
+eg "output_DoubleBTaggerEfficiencyStudies_boostedHiggsToBB/histos.root"
+
+(typically use full paths to inputs and outputs)
 
 Other options (don't need to explicitly write):
 maxevents=-1 can set the max events (-1 is all of them)
@@ -49,7 +53,12 @@ eg.1 STANDARD
 $ ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputfiles=XYZ_1.root,XYZ_2.root outputfile=ABC/out.root
 
 eg.2 REMAKE THE PLOTS
-$ ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies outputfile=ABC/out.root
+$ ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies outputfile=ABC/histos.root
+
+NOTE THAT THIS CODE MAKES A COPY OF ITSELF AND PUTS IT IN THE OUTPUT DIRECTORY
+BUT IF YOU HAVE MADE CHANGES AFTER COMPILATION THIS WILL BE OUT OF SYNC...WATCH OUT
+IT ALSO MAKES A COPY OF THE PARSER VALUES IN A SEPERATE TEXT FILE (this will be in sync)
+-together, along with non-lazy directory, you should have decent records of what you have done:)
 
 
 

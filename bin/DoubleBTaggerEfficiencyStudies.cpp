@@ -27,7 +27,7 @@
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingDoubleBTaggerEfficiencyStudies.h"
 
 // preliminary running, compile with scram b and then
-// ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputfiles=XYZ outputfile=ABC
+// $ $CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputfiles=XYZ outputfile=ABC
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::vector<std::string>, std::vector<double>);
 void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, pat::Jet, reco::GenParticle, std::vector<std::string>, std::vector<double>, std::vector<double>);
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 	// parser.stringValue  ("outputfile"     ) = "output_DoubleBTaggerEfficiencyStudies_testing/output_DoubleBTaggerEfficiencyStudies.root";
 	parser.boolValue    ("orderedsecondaryfiles") = false;
 
-	// Parse arguments
+	// Parse arguments_
 	parser.parseArguments (argc, argv);
 	int maxEvents_ = parser.integerValue("maxevents");
 	unsigned int outputEvery_ = parser.integerValue("outputevery");
@@ -87,6 +87,23 @@ int main(int argc, char* argv[])
 		std::cout << "Do not wish to overwrite ROOT file: Exiting..." << std::endl;
 		return 1;
 	}
+
+	// copy the code used to make the histogram ROOT file into the same directory (this could be out of sync if you edit after compilation)
+	// also copy the parser values that were used to a .txt file (ie the input data used)
+	if (justDoPlotting_ == false){
+		
+		std::system(Form("cp $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies.cpp %s",outputDirectory_.c_str()));
+		
+		std::ofstream parserRecord;
+		parserRecord.open(Form("%soptionsUsed.txt",outputDirectory_.c_str()));
+		parserRecord << "MaxEvents: " << maxEvents_ << "\n";
+		parserRecord << "InputFiles: " << "\n";
+		for(unsigned int iFile=0; iFile<inputFiles_.size(); ++iFile){
+			parserRecord << inputFiles_[iFile] << "\n";
+		}
+		parserRecord.close();
+	}
+
 
 	// Loop through the input files
 	int ievt=0;
