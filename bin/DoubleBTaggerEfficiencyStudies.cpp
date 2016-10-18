@@ -108,9 +108,10 @@ int main(int argc, char* argv[])
 				if(maxEvents_>0 ? ievt+1>maxEvents_ : false) break;
 				
 				// event counter
-				if(outputEvery_!=0 ? (ievt>0 && ievt%outputEvery_==0) : false) 
-				std::cout << "  processing event: " << ievt << std::endl;
-
+				if(outputEvery_!=0 ? (ievt>0 && ievt%outputEvery_==0) : false){
+					std::cout << "   File " << iFile+1 << " of " << inputFiles_.size() << ":";
+					std::cout << "  processing event: " << ievt << std::endl;
+				}
 
 				// Handle to the fatJet collection
 				edm::Handle<std::vector<pat::Jet>> fatJets;
@@ -170,8 +171,8 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 {
 	// set the binning for histograms
     std::vector<double> ptBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 150.0; binLowerEdge+= 150.0) ptBinning.push_back(binLowerEdge);
-    for(double binLowerEdge=  150.0; binLowerEdge< 500.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 100.0; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  100.0; binLowerEdge< 500.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  500.0; binLowerEdge< 600.0; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  600.0; binLowerEdge< 800.1; binLowerEdge+= 200.0) ptBinning.push_back(binLowerEdge);
 
