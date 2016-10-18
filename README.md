@@ -37,6 +37,7 @@ outputfile=outputfile.root
 this should be the full path and include a new directory (which the code creates) where the file will go.
 The new directory should include useful info about what you were doing. The directory should also be unique
 eg "output_DoubleBTaggerEfficiencyStudies_boostedHiggsToBB/histos.root"
+GOOD IDEA TO USE THE NAME OF THE DIR WHERE YOU GOT THE NTUPLES
 
 (typically use full paths to inputs and outputs)
 
@@ -65,4 +66,10 @@ IT ALSO MAKES A COPY OF THE PARSER VALUES IN A SEPERATE TEXT FILE (this will be 
 'bin/DoubleBTaggerEfficiencyStudies.cpp'
 To run on boosted higgs mc samples. It looks at the effiency and properties of the boosted h->bb tagger.
 it uses the class 'interface/PlottingDoubleBTaggerEfficiencyStudies.h' to create the plots
+
+$CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies
+inputFiles=/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/GluGluToRadionToHHTo2B2G_M-900_narrow_13TeV-madgraph/boostedHiggsMC_25e777/161011_112815/0000/bTagPatTuple_1.root,/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/GluGluToRadionToHHTo2B2G_M-900_narrow_13TeV-madgraph/boostedHiggsMC_25e777/161011_112815/0000/bTagPatTuple_2.root,/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/GluGluToRadionToHHTo2B2G_M-900_narrow_13TeV-madgraph/boostedHiggsMC_25e777/161011_112815/0000/bTagPatTuple_3.root,/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/GluGluToRadionToHHTo2B2G_M-900_narrow_13TeV-madgraph/boostedHiggsMC_25e777/161011_112815/0000/bTagPatTuple_5.root,/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/GluGluToRadionToHHTo2B2G_M-900_narrow_13TeV-madgraph/boostedHiggsMC_25e777/161011_112815/0000/bTagPatTuple_6.root
+outputfile=~/local_Analysis_boostedNmssmHiggs/output_DoubleBTaggerEfficiencyStudies_boostedHiggsMC_25e777/histos.root
+orderedsecondaryfiles=0
+
 
