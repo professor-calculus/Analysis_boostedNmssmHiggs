@@ -24,10 +24,10 @@
 
 // Headers from this package
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/Kinematics.h"
-#include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingVersionOne.h"
+#include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingDoubleBTaggerEfficiencyStudies.h"
 
 // preliminary running, compile with scram b and then
-// ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputFiles=/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple_testingv1.root
+// ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputfiles=XYZ outputfile=ABC
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::vector<std::string>, std::vector<double>);
 void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, pat::Jet, reco::GenParticle, std::vector<std::string>, std::vector<double>, std::vector<double>);
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 	parser.integerValue ("maxevents"      ) = -1;
 	parser.integerValue ("outputevery"    ) =   1000;
 	// parser.stringVector  ("inputfiles"     ) = {"/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple.root"};
-	parser.stringValue  ("outputfile"     ) = "output_DoubleBTaggerEfficiencyStudies_testing/output_DoubleBTaggerEfficiencyStudies.root";
+	// parser.stringValue  ("outputfile"     ) = "output_DoubleBTaggerEfficiencyStudies_testing/output_DoubleBTaggerEfficiencyStudies.root";
 	parser.boolValue    ("orderedsecondaryfiles") = false;
 
 	// Parse arguments
@@ -153,10 +153,10 @@ int main(int argc, char* argv[])
 
 	plottingLabel:
 	if (std::system(Form("test -e %s",outputFile_.c_str())) == 0) // check the file exists
-		PlottingVersionOne createPlots(outputFile_.c_str(), doubleBtagWPname, etaBinning);
+		PlottingDoubleBTaggerEfficiencyStudies createPlots(outputFile_.c_str(), doubleBtagWPname, etaBinning);
 	else{
-			std::cout << "the folling output root file does not exist to make plots from:" << std::endl;
-			std::cout << outputFile_ << std::endl;
+		std::cout << "the folling output root file does not exist to make plots from:" << std::endl;
+		std::cout << outputFile_ << std::endl;
 		}
 
 return 0;

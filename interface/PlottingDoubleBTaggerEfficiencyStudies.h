@@ -1,5 +1,5 @@
-#ifndef Analysis_Analysis_boostedNmssmHiggs_PlottingVersionOne_h
-#define Analysis_Analysis_boostedNmssmHiggs_PlottingVersionOne_h
+#ifndef Analysis_Analysis_boostedNmssmHiggs_PlottingDoubleBTaggerEfficiencyStudies_h
+#define Analysis_Analysis_boostedNmssmHiggs_PlottingDoubleBTaggerEfficiencyStudies_h
 
 // CPP headers
 #include <string>
@@ -24,13 +24,13 @@
 
 
 
-class PlottingVersionOne
+class PlottingDoubleBTaggerEfficiencyStudies
 {
 
 public:
 
 	// constructor
-	PlottingVersionOne(std::string, std::vector<std::string>, std::vector<double>);
+	PlottingDoubleBTaggerEfficiencyStudies(std::string, std::vector<std::string>, std::vector<double>);
 
 private:
 
@@ -62,7 +62,7 @@ private:
 
 //--------constructor---------//
 
-PlottingVersionOne::PlottingVersionOne(std::string inputHistoFile, std::vector<std::string> doubleBtagWPnameD, std::vector<double> etaBinningD)
+PlottingDoubleBTaggerEfficiencyStudies::PlottingDoubleBTaggerEfficiencyStudies(std::string inputHistoFile, std::vector<std::string> doubleBtagWPnameD, std::vector<double> etaBinningD)
 {
 	// open input .root file containing the histograms
  	f = TFile::Open(inputHistoFile.c_str());
@@ -100,7 +100,7 @@ PlottingVersionOne::PlottingVersionOne(std::string inputHistoFile, std::vector<s
 
 //-----------private----------//
 
-void PlottingVersionOne::hBbMassDist()
+void PlottingDoubleBTaggerEfficiencyStudies::hBbMassDist()
 {
 	std::vector<TH1F*> vecHistos;
     TLegend * legend = new TLegend(0.20, 0.60, 0.45, 0.85); //(xmin, ymin, xmax, ymax)
@@ -164,7 +164,7 @@ void PlottingVersionOne::hBbMassDist()
 
 
 
-void PlottingVersionOne::deltaRMatchDist()
+void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist()
 {
 	std::vector<TH1F*> vecHistos;
     TLegend * legend = new TLegend(0.60, 0.60, 0.85, 0.85); //(xmin, ymin, xmax, ymax)
@@ -227,7 +227,7 @@ void PlottingVersionOne::deltaRMatchDist()
 
 
 
-void PlottingVersionOne::fatJetEtaDist()
+void PlottingDoubleBTaggerEfficiencyStudies::fatJetEtaDist()
 {
 	std::vector<TH1F*> vecHistos;
     TLegend * legend = new TLegend(0.20, 0.60, 0.42, 0.85); //(xmin, ymin, xmax, ymax)
@@ -290,7 +290,7 @@ void PlottingVersionOne::fatJetEtaDist()
 
 
 
-void PlottingVersionOne::fatJetVsHBbPtDist()
+void PlottingDoubleBTaggerEfficiencyStudies::fatJetVsHBbPtDist()
 {
 	double defaultParam = tdrStyle->GetPadRightMargin();
 	tdrStyle->SetPadRightMargin(0.10);
@@ -336,7 +336,7 @@ void PlottingVersionOne::fatJetVsHBbPtDist()
 
 
 
-void PlottingVersionOne::effComparingWPs()
+void PlottingDoubleBTaggerEfficiencyStudies::effComparingWPs()
 {
 	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
 	
@@ -402,7 +402,7 @@ void PlottingVersionOne::effComparingWPs()
 
 
 
-void PlottingVersionOne::effComparingEta()
+void PlottingDoubleBTaggerEfficiencyStudies::effComparingEta()
 {
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 
@@ -472,7 +472,7 @@ void PlottingVersionOne::effComparingEta()
 
 
 
-int PlottingVersionOne::SetColor(int posititon, int maxColors)
+int PlottingDoubleBTaggerEfficiencyStudies::SetColor(int posititon, int maxColors)
 {
 // the plot has 'maxColors' number of colours involved
 // this function gives you a colour for the nth histogram
@@ -502,7 +502,7 @@ int PlottingVersionOne::SetColor(int posititon, int maxColors)
 
 
 
-TStyle * PlottingVersionOne::TDRStyle()
+TStyle * PlottingDoubleBTaggerEfficiencyStudies::TDRStyle()
 {
 	TStyle * tdrStyle = new TStyle("tdrStyle","");
 
