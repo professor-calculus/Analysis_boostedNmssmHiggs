@@ -407,7 +407,7 @@ void PlottingVersionOne::effComparingEta()
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 
     TCanvas* c=new TCanvas("c","c");
-    TLegend * legend = new TLegend(0.30, 0.20, 0.61, 0.36); //(xmin, ymin, xmax, ymax)
+    TLegend * legend = new TLegend(0.530, 0.20, 0.82, 0.36); //(xmin, ymin, xmax, ymax)
     legend->SetLineColor(0);
     // legend-> SetNColumns(2);
 
