@@ -29,8 +29,8 @@
 // preliminary running, compile with scram b and then
 // $ $CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputfiles=XYZ outputfile=ABC orderedsecondaryfiles=0
 
-void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::vector<std::string>, std::vector<double>);
-void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, pat::Jet, reco::GenParticle, double, std::vector<std::string>, std::vector<double>, std::vector<double>);
+void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::vector<std::string>, std::vector<double>, int);
+void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, pat::Jet, reco::GenParticle, double, std::vector<std::string>, std::vector<double>, std::vector<double>, int);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco::GenParticle>>, std::vector<double> &);
 bool isThereAFatJetMatch(edm::Handle<std::vector<pat::Jet>>, reco::GenParticle, double, pat::Jet&);
@@ -47,11 +47,12 @@ int main(int argc, char* argv[])
 	std::vector<std::string> doubleBtagWPname = {"loose", "medium", "tight", "veryTight"};
 	double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
 	std::vector<double> etaBinning = {0.00, 0.80, 1.60, 2.40};
+	int massCut = 100; // some plots must have mass above this value
 
 	// Create histograms, they are accessed by eg: h_["fatJetMass_loose"]->Fill(125.0);
 	std::map<std::string, TH1F*> h_;
 	std::map<std::string, TH2F*> h2_;
-	CreateHistograms(h_, h2_, doubleBtagWPname, etaBinning);
+	CreateHistograms(h_, h2_, doubleBtagWPname, etaBinning, massCut);
 
 	// Initialize command line parser
 	optutl::CommandLineParser parser ("Analyze DoubleBTagger Efficiencies");
@@ -152,7 +153,7 @@ int main(int argc, char* argv[])
 					// See if there is a fatJet that matches to the higgsBb (closest in dR, must have dR<dRMaxMatch)
 					pat::Jet fatJetMatch; // if there is a matching fatJet, this object will contain it
 					bool isMatch =isThereAFatJetMatch(fatJets, higgsBbParticle, dRMaxMatch, fatJetMatch);
-					FillHistograms(h_, h2_, isMatch, fatJetMatch, higgsBbParticle, dRbbVec[iH] ,doubleBtagWPname, doubleBtagWP, etaBinning);
+					FillHistograms(h_, h2_, isMatch, fatJetMatch, higgsBbParticle, dRbbVec[iH] ,doubleBtagWPname, doubleBtagWP, etaBinning, massCut);
 
 				} // closes loop through higgsBb Particles
 				// ------------------------------------------------------------------------------------------------------------//
@@ -171,7 +172,7 @@ int main(int argc, char* argv[])
 
 	plottingLabel:
 	if (std::system(Form("test -e %s",outputFile_.c_str())) == 0) // check the file exists
-		PlottingDoubleBTaggerEfficiencyStudies createPlots(outputFile_.c_str(), doubleBtagWPname, etaBinning);
+		PlottingDoubleBTaggerEfficiencyStudies createPlots(outputFile_.c_str(), doubleBtagWPname, etaBinning, massCut);
 	else{
 		std::cout << "the folling output root file does not exist to make plots from:" << std::endl;
 		std::cout << outputFile_ << std::endl;
@@ -185,7 +186,7 @@ return 0;
 
 
 
-void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, std::vector<std::string> doubleBtagWPnameD, const std::vector<double> etaBinningD)
+void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, std::vector<std::string> doubleBtagWPnameD, const std::vector<double> etaBinningD, int massCutD)
 {
 	// set the binning for histograms
     std::vector<double> ptBinning;
@@ -219,11 +220,14 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
     for(double binLowerEdge=  1.70; binLowerEdge< 2.501; binLowerEdge+= 0.40) dREffBinning.push_back(binLowerEdge);
 
 
-    // create the histograms
+    // create the histograms (includes histograms with a fat jet mass cut)
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPnameD.size(); ++iWP){
 
 		h2_[Form("ptScatter_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH2F(
 			Form("ptScatter_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";MC Higgs p_{T} (GeV); doubleBTagJet p_{T} (GeV)",
+			ptScatXBinning.size()-1, &(ptScatXBinning)[0], ptScatYBinning.size()-1, &(ptScatYBinning)[0]);
+		h2_[Form("ptScatter_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD)] = new TH2F(
+			Form("ptScatter_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD), ";MC Higgs p_{T} (GeV); doubleBTagJet p_{T} (GeV)",
 			ptScatXBinning.size()-1, &(ptScatXBinning)[0], ptScatYBinning.size()-1, &(ptScatYBinning)[0]);
 
 		h_[Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
@@ -231,23 +235,26 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 
 		h_[Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
 		   Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";doubleBTagJet #eta; a.u.", etaDistBinning.size()-1, &(etaDistBinning)[0]);
+		h_[Form("fatJetEta_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD)] = new TH1F(
+		   Form("fatJetEta_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD), ";doubleBTagJet #eta; a.u.", etaDistBinning.size()-1, &(etaDistBinning)[0]);
 
 		h_[Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
 		   Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR_match; a.u.", matchDeltaRDistBinning.size()-1, &(matchDeltaRDistBinning)[0]);
+		h_[Form("matchDeltaR_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD)] = new TH1F(
+		   Form("matchDeltaR_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD), ";dR_match; a.u.", matchDeltaRDistBinning.size()-1, &(matchDeltaRDistBinning)[0]);
 
 		h_[Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
 		   Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";MC dR_bb; a.u.", bbDeltaRDistBinning.size()-1, &(bbDeltaRDistBinning)[0]);
-
-		h_[Form("bbDeltaR_%sDoubleBTagWP_massLessThan80", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
-		   Form("bbDeltaR_%sDoubleBTagWP_massLessThan80", doubleBtagWPnameD[iWP].c_str()), ";MC dR_bb; a.u.", bbDeltaRDistBinning.size()-1, &(bbDeltaRDistBinning)[0]);	
-
-		h_[Form("bbDeltaR_%sDoubleBTagWP_massMoreThan100", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
-		   Form("bbDeltaR_%sDoubleBTagWP_massMoreThan100", doubleBtagWPnameD[iWP].c_str()), ";MC dR_bb; a.u.", bbDeltaRDistBinning.size()-1, &(bbDeltaRDistBinning)[0]);	
+		h_[Form("bbDeltaR_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD)] = new TH1F(
+		   Form("bbDeltaR_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD), ";MC dR_bb; a.u.", bbDeltaRDistBinning.size()-1, &(bbDeltaRDistBinning)[0]);	
 
    		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 
    			h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )] = new TH1F(
    			   Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
+   			   ";MC Higgs p_{T} (GeV); matchCount", ptBinning.size()-1, &(ptBinning)[0]);
+   			h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1], massCutD)] = new TH1F(
+   			   Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1], massCutD),
    			   ";MC Higgs p_{T} (GeV); matchCount", ptBinning.size()-1, &(ptBinning)[0]); 
 
    			if (iWP==0) // so we only create the denominators once
@@ -258,6 +265,9 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
    			// same as above but as a function of dr rather than pt 
    			h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_fcnDR", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )] = new TH1F(
    			   Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_fcnDR", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
+   			   ";MC dR_bb; matchCount", dREffBinning.size()-1, &(dREffBinning)[0]);
+   			h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_fcnDR_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1], massCutD )] = new TH1F(
+   			   Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_fcnDR_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1], massCutD ),
    			   ";MC dR_bb; matchCount", dREffBinning.size()-1, &(dREffBinning)[0]); 
 
    			if (iWP==0) // so we only create the denominators once
@@ -279,7 +289,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 
 
 
-void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, bool isMatch, pat::Jet fatJetMatchD, reco::GenParticle higssBbGenParticleD, double dRbb, std::vector<std::string> doubleBtagWPnameD, std::vector<double> doubleBtagWPD, std::vector<double> etaBinningD)
+void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, bool isMatch, pat::Jet fatJetMatchD, reco::GenParticle higssBbGenParticleD, double dRbb, std::vector<std::string> doubleBtagWPnameD, std::vector<double> doubleBtagWPD, std::vector<double> etaBinningD, int massCutD)
 {
 	// fill the efficiency denominators
 	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
@@ -301,13 +311,9 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 				h2_[Form("ptScatter_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(higssBbGenParticleD.pt(), fatJetMatchD.pt());
 				h_[Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(fatJetMatchD.mass());
 				h_[Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(fatJetMatchD.eta());
-
+				h_[Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dRbb);
 				double dRmatch = delR( delPhi( fatJetMatchD.phi(),higssBbGenParticleD.phi() ), delEta( fatJetMatchD.eta(),higssBbGenParticleD.eta() ) );
 				h_[Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dRmatch);				
-
-				h_[Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dRbb);	
-				if (fatJetMatchD.mass()<80.0) h_[Form("bbDeltaR_%sDoubleBTagWP_massLessThan80", doubleBtagWPnameD[iWP].c_str())]->Fill(dRbb);	
-				if (fatJetMatchD.mass()>100.0) h_[Form("bbDeltaR_%sDoubleBTagWP_massMoreThan100", doubleBtagWPnameD[iWP].c_str())]->Fill(dRbb);	
 
 		   		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 
@@ -319,6 +325,28 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 
 	   		} // closes 'if' Btag discriminator greater than WP 
 		} // closes loop through Btag WPs
+
+		if (fatJetMatchD.mass()>massCutD){
+			for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPnameD.size(); ++iWP){
+				if (fatJetMatchD.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWPD[iWP]){
+					h2_[Form("ptScatter_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD)]->Fill(higssBbGenParticleD.pt(), fatJetMatchD.pt());
+					h_[Form("fatJetEta_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD)]->Fill(fatJetMatchD.eta());
+					h_[Form("bbDeltaR_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD)]->Fill(dRbb);
+					double dRmatch = delR( delPhi( fatJetMatchD.phi(),higssBbGenParticleD.phi() ), delEta( fatJetMatchD.eta(),higssBbGenParticleD.eta() ) );
+					h_[Form("matchDeltaR_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), massCutD)]->Fill(dRmatch);				
+
+			   		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
+
+			   			if( fabs(higssBbGenParticleD.eta()) >= etaBinningD[iEtaBin] && fabs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1]){
+							h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1], massCutD)]->Fill(higssBbGenParticleD.pt());
+							h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_fcnDR_massMoreThan%d", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1], massCutD)]->Fill(dRbb);
+						} // closes 'if' the eta within the set bin
+					} // closes loop through etaBins
+
+		   		} // closes 'if' Btag discriminator greater than WP 
+			} // closes loop through Btag WPs
+		} // closes 'if' fat jet mass greater than the mass cut
+
 	} // closes 'if' there is a matching fatJet
 
 } // closes the function 'FillHistograms'
