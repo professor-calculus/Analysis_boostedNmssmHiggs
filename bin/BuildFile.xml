@@ -9,5 +9,4 @@
 <use   name="PhysicsTools/FWLite"/>
 <use   name="PhysicsTools/Utilities"/>
 <use   name="PhysicsTools/SelectorUtils"/>
-<bin  name="FWLiteHistograms" file="FWLiteHistograms.cc"/>
 <bin  name="DoubleBTaggerEfficiencyStudies" file="DoubleBTaggerEfficiencyStudies.cpp"/>

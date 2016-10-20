@@ -44,6 +44,7 @@ private:
 
 	void hBbMassDist();
 	void deltaRMatchDist();
+	void deltaRbbDist();
  	void fatJetEtaDist();
  	void fatJetVsHBbPtDist();
  	void effComparingWPs();
@@ -89,6 +90,7 @@ PlottingDoubleBTaggerEfficiencyStudies::PlottingDoubleBTaggerEfficiencyStudies(s
 	// make the .pdfs
  	hBbMassDist();
  	deltaRMatchDist();
+ 	deltaRbbDist();	
  	fatJetEtaDist();
  	fatJetVsHBbPtDist();
  	effComparingWPs();
@@ -172,7 +174,7 @@ void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist()
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 		
 	    TCanvas* c=new TCanvas("c","c"); 	
-		TH1F * h = (TH1F*)f->Get(Form("deltaR_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
+		TH1F * h = (TH1F*)f->Get(Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
 
 		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
 		h->SetLineWidth(2);
@@ -192,7 +194,7 @@ void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist()
 		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
 		latex->DrawLatex(0.85, 0.72, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
 
-		std::string saveName = Form("deltaR_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		std::string saveName = Form("matchDeltaR_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
 		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
 		c->Close();
 
@@ -217,9 +219,72 @@ void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist()
 	latex->SetTextAlign(31); // align from right
 	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
 
-	c->SaveAs(Form("%sdeltaR_allDoubleBTagWPNormalised.pdf", outputDirectory.c_str()));
+	c->SaveAs(Form("%smatchDeltaR_allDoubleBTagWPNormalised.pdf", outputDirectory.c_str()));
 	c->Close();
 } // closes the function 'deltaRMatchDist'
+
+
+
+
+
+
+
+void PlottingDoubleBTaggerEfficiencyStudies::deltaRbbDist()
+{
+	std::vector<TH1F*> vecHistos;
+    TLegend * legend = new TLegend(0.60, 0.60, 0.85, 0.85); //(xmin, ymin, xmax, ymax)
+
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+		
+	    TCanvas* c=new TCanvas("c","c"); 	
+		TH1F * h = (TH1F*)f->Get(Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		h->SetLineWidth(2);
+		// h->SetLineColor(2);
+		// h->GetXaxis()->SetTitle("");
+		h->GetXaxis()->SetTitleSize(0.06);	
+		h->GetXaxis()->SetLabelSize(0.05);
+		// h->GetYaxis()->SetTitle("");
+		h->GetYaxis()->SetTitleSize(0.06);
+		h->GetYaxis()->SetLabelSize(0.05);
+
+		h->Draw();
+		// Add stamps
+		latex->SetTextAlign(11); // align from left
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->SetTextAlign(31); // align from right
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		latex->DrawLatex(0.85, 0.72, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+
+		std::string saveName = Form("bbDeltaR_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
+
+		// for the combined plot
+		vecHistos.push_back(h);
+		vecHistos[iWP]->SetLineColor(iWP+1);
+		Double_t norm = vecHistos[iWP]->GetEntries();
+		vecHistos[iWP]->Scale(1/norm);
+		legend->AddEntry(h, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
+	} // closes loop through Btag WP labels
+	
+	// put all of them on the same entry
+    TCanvas* c=new TCanvas("c","c");
+    for (int iDR=vecHistos.size()-1; iDR>=0; --iDR){
+	    vecHistos[iDR]->Draw("same");
+	}
+	legend->Draw();
+	// Add stamps
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->SetTextAlign(31); // align from right
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%sbbDeltaR_allDoubleBTagWPNormalised.pdf", outputDirectory.c_str()));
+	c->Close();
+} // closes the function 'deltaRbbDist'
 
 
 

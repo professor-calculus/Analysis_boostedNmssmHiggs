@@ -30,9 +30,9 @@
 // $ $CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputfiles=XYZ outputfile=ABC orderedsecondaryfiles=0
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::vector<std::string>, std::vector<double>);
-void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, pat::Jet, reco::GenParticle, std::vector<std::string>, std::vector<double>, std::vector<double>);
+void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, pat::Jet, reco::GenParticle, double, std::vector<std::string>, std::vector<double>, std::vector<double>);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
-std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco::GenParticle>>);
+std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco::GenParticle>>, std::vector<double> &);
 bool isThereAFatJetMatch(edm::Handle<std::vector<pat::Jet>>, reco::GenParticle, double, pat::Jet&);
 
 
@@ -142,16 +142,18 @@ int main(int argc, char* argv[])
 				// A N A L Y S I S
 				// ------------------------------------------------------------------------------------------------------------//
 				// Find the higgs to bb particles, store the objects in a vector
-				std::vector<reco::GenParticle> higgsBbParticles = higgsBbGenParticles(genParticles);
+				std::vector<double> dRbbVec; // gets updated by 'higgsBbGenParticles' function
+				std::vector<reco::GenParticle> higgsBbParticles = higgsBbGenParticles(genParticles, dRbbVec);
 
 				// Loop through the higgsBb particles
 				for (size_t iH = 0; iH < higgsBbParticles.size(); ++iH){
+
 					const reco::GenParticle higgsBbParticle = higgsBbParticles[iH];
 
 					// See if there is a fatJet that matches to the higgsBb (closest in dR, must have dR<dRMaxMatch)
 					pat::Jet fatJetMatch; // if there is a matching fatJet, this object will contain it
 					bool isMatch =isThereAFatJetMatch(fatJets, higgsBbParticle, dRMaxMatch, fatJetMatch);
-					FillHistograms(h_, h2_, isMatch, fatJetMatch, higgsBbParticle, doubleBtagWPname, doubleBtagWP, etaBinning);
+					FillHistograms(h_, h2_, isMatch, fatJetMatch, higgsBbParticle, dRbbVec[iH] ,doubleBtagWPname, doubleBtagWP, etaBinning);
 
 				} // closes loop through higgsBb Particles
 				// ------------------------------------------------------------------------------------------------------------//
@@ -205,9 +207,11 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
     std::vector<double> etaDistBinning;
     for(double binLowerEdge=  -4.00; binLowerEdge< 4.0001; binLowerEdge+= 0.20) etaDistBinning.push_back(binLowerEdge);    
 
-    std::vector<double> deltaRDistBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 0.8001; binLowerEdge+= 0.02) deltaRDistBinning.push_back(binLowerEdge); 
+    std::vector<double> matchDeltaRDistBinning;
+    for(double binLowerEdge=  0.0; binLowerEdge< 0.8001; binLowerEdge+= 0.02) matchDeltaRDistBinning.push_back(binLowerEdge); 
 
+    std::vector<double> bbDeltaRDistBinning;
+    for(double binLowerEdge=  0.0; binLowerEdge< 2.501; binLowerEdge+= 0.05) bbDeltaRDistBinning.push_back(binLowerEdge); 
 
     // create the histograms
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPnameD.size(); ++iWP){
@@ -222,8 +226,11 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 		h_[Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
 		   Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";doubleBTagJet #eta; a.u.", etaDistBinning.size()-1, &(etaDistBinning)[0]);
 
-		h_[Form("deltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
-		   Form("deltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR_match; a.u.", deltaRDistBinning.size()-1, &(deltaRDistBinning)[0]);
+		h_[Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
+		   Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR_match; a.u.", matchDeltaRDistBinning.size()-1, &(matchDeltaRDistBinning)[0]);
+
+		h_[Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
+		   Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR_bb; a.u.", bbDeltaRDistBinning.size()-1, &(bbDeltaRDistBinning)[0]);
 
    		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 
@@ -241,10 +248,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	} // closes loop through Btag WPs 
 
 	// create the debugging histograms
-	// h_["DEBUG_higgsBbEtaDistMatch"] = new TH1F("DEBUG_higgsBbEtaDistMatch", ";eta,a.u.", 100, -5.0, 5.0);
-	// h_["DEBUG_higgsBbEtaDistMatchWithBTagLoose"] = new TH1F("DEBUG_higgsBbEtaDistMatchWithBTag", ";eta,a.u.", 100, -5.0, 5.0);
-	// h_["DEBUG_fatJetEtaDistMatch"] = new TH1F("DEBUG_fatJetEtaDistMatch", ";eta,a.u.", 100, -5.0, 5.0);
-	// h_["DEBUG_fatJetEtaDistMatchWithBTagLoose"] = new TH1F("DEBUG_fatJetEtaDistMatchWithBTag", ";eta,a.u.", 100, -5.0, 5.0);
+	h_["DEBUG_higgsBbDR"] = new TH1F("DEBUG_higgsBbDR", ";dR_bb,a.u.", 50, 0, 2.50);
 
 } //closes the function 'CreateHistograms'
 
@@ -254,7 +258,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 
 
 
-void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, bool isMatch, pat::Jet fatJetMatchD, reco::GenParticle higssBbGenParticleD, std::vector<std::string> doubleBtagWPnameD, std::vector<double> doubleBtagWPD, std::vector<double> etaBinningD)
+void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, bool isMatch, pat::Jet fatJetMatchD, reco::GenParticle higssBbGenParticleD, double dRbb, std::vector<std::string> doubleBtagWPnameD, std::vector<double> doubleBtagWPD, std::vector<double> etaBinningD)
 {
 	// fill the efficiency denominators
 	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
@@ -266,23 +270,19 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 	// fill other histograms if there is a match
 	if (isMatch){
 
-		// h_["DEBUG_higgsBbEtaDistMatch"]->Fill(higssBbGenParticleD.eta());
-		// h_["DEBUG_fatJetEtaDistMatch"]->Fill(fatJetMatchD.eta());
+		h_["DEBUG_higgsBbDR"]->Fill(dRbb);
 
 		for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPnameD.size(); ++iWP){
 			if (fatJetMatchD.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWPD[iWP]){
-
-				// if (iWP==0){
-				// 	h_["DEBUG_higgsBbEtaDistMatchWithBTagLoose"]->Fill(higssBbGenParticleD.eta());
-					// h_["DEBUG_fatJetEtaDistMatchWithBTagLoose"]->Fill(fatJetMatchD.eta());					
-				// }
 
 				h2_[Form("ptScatter_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(higssBbGenParticleD.pt(), fatJetMatchD.pt());
 				h_[Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(fatJetMatchD.mass());
 				h_[Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(fatJetMatchD.eta());
 
-				double dR = delR( delPhi( fatJetMatchD.phi(),higssBbGenParticleD.phi() ), delEta( fatJetMatchD.eta(),higssBbGenParticleD.eta() ) );
-				h_[Form("deltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dR);				
+				double dRmatch = delR( delPhi( fatJetMatchD.phi(),higssBbGenParticleD.phi() ), delEta( fatJetMatchD.eta(),higssBbGenParticleD.eta() ) );
+				h_[Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dRmatch);				
+
+				h_[Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dRbb);	
 
 		   		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 		   		
@@ -320,16 +320,20 @@ void WriteHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F
 
 
 
-std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles)
+std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles, std::vector<double> & dRbbVec)
 {
+	// this is a vector containing the h->bb higgs'
 	std::vector<reco::GenParticle> hBbGenParticles;
+
 	for (size_t iGen = 0; iGen < genParticles->size(); ++iGen){
+
 		const reco::GenParticle & genParticle = (*genParticles)[iGen];
 
 			if (genParticle.pdgId()==25){ // particle is a higgs						
 				if (genParticle.numberOfDaughters()==2 && abs(genParticle.daughter(0)->pdgId())==5 && abs(genParticle.daughter(1)->pdgId())==5){ // higgs decays to two b-quarks
-							
-					hBbGenParticles.push_back(genParticle); // this vector indexes the higgs bosons of interest	
+
+					hBbGenParticles.push_back(genParticle);
+					dRbbVec.push_back( delR( delPhi( genParticle.daughter(0)->phi(),genParticle.daughter(1)->phi() ), delEta( genParticle.daughter(0)->eta(),genParticle.daughter(1)->eta() ) ) );
 
 				} // closes 'if' higgs decays to two b-quarks			
 			} // closes 'if' genParticle is a higgs
