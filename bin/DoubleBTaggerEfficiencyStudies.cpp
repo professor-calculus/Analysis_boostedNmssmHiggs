@@ -143,8 +143,7 @@ int main(int argc, char* argv[])
 				// ------------------------------------------------------------------------------------------------------------//
 				// Find the higgs to bb particles, store the objects in a vector
 				std::vector<double> dRbbVec; // gets updated by 'higgsBbGenParticles' function
-				std::vector<reco::GenParticle> higgsBbParticles = higgsBbGenParticles(genParticles, dRbbVec);
-
+				std::vector<reco::GenParticle> higgsBbParticles = higgsBbGenParticles(genParticles, dRbbVec); 
 				// Loop through the higgsBb particles
 				for (size_t iH = 0; iH < higgsBbParticles.size(); ++iH){
 
@@ -213,6 +212,13 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
     std::vector<double> bbDeltaRDistBinning;
     for(double binLowerEdge=  0.0; binLowerEdge< 2.501; binLowerEdge+= 0.05) bbDeltaRDistBinning.push_back(binLowerEdge); 
 
+    std::vector<double> dREffBinning;
+    for(double binLowerEdge=  0.0; binLowerEdge< 0.40; binLowerEdge+= 0.40) dREffBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.40; binLowerEdge< 1.10; binLowerEdge+= 0.10) dREffBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  1.10; binLowerEdge< 1.70; binLowerEdge+= 0.20) dREffBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  1.70; binLowerEdge< 2.501; binLowerEdge+= 0.40) dREffBinning.push_back(binLowerEdge);
+
+
     // create the histograms
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPnameD.size(); ++iWP){
 
@@ -230,7 +236,13 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 		   Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR_match; a.u.", matchDeltaRDistBinning.size()-1, &(matchDeltaRDistBinning)[0]);
 
 		h_[Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
-		   Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR_bb; a.u.", bbDeltaRDistBinning.size()-1, &(bbDeltaRDistBinning)[0]);
+		   Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";MC dR_bb; a.u.", bbDeltaRDistBinning.size()-1, &(bbDeltaRDistBinning)[0]);
+
+		h_[Form("bbDeltaR_%sDoubleBTagWP_massLessThan80", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
+		   Form("bbDeltaR_%sDoubleBTagWP_massLessThan80", doubleBtagWPnameD[iWP].c_str()), ";MC dR_bb; a.u.", bbDeltaRDistBinning.size()-1, &(bbDeltaRDistBinning)[0]);	
+
+		h_[Form("bbDeltaR_%sDoubleBTagWP_massMoreThan100", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
+		   Form("bbDeltaR_%sDoubleBTagWP_massMoreThan100", doubleBtagWPnameD[iWP].c_str()), ";MC dR_bb; a.u.", bbDeltaRDistBinning.size()-1, &(bbDeltaRDistBinning)[0]);	
 
    		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 
@@ -243,12 +255,21 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
    			   Form("effDenominator_eta%.2f-%.2f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
    			   ";MC Higgs p_{T} (GeV); totalCount", ptBinning.size()-1, &(ptBinning)[0]); 
 
+   			// same as above but as a function of dr rather than pt 
+   			h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_fcnDR", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )] = new TH1F(
+   			   Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_fcnDR", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
+   			   ";MC dR_bb; matchCount", dREffBinning.size()-1, &(dREffBinning)[0]); 
+
+   			if (iWP==0) // so we only create the denominators once
+   			h_[Form("effDenominator_eta%.2f-%.2f_fcnDR", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )] = new TH1F(
+   			   Form("effDenominator_eta%.2f-%.2f_fcnDR", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] ),
+   			   ";MC dR_bb; totalCount", dREffBinning.size()-1, &(dREffBinning)[0]); 
 
    		} // closes loop through etaBins
 	} // closes loop through Btag WPs 
 
 	// create the debugging histograms
-	h_["DEBUG_higgsBbDR"] = new TH1F("DEBUG_higgsBbDR", ";dR_bb,a.u.", 50, 0, 2.50);
+	h_["DEBUG_higgsBbDRpreMatching"] = new TH1F("DEBUG_higgsBbDRpreMatching", ";dR_bb,a.u.", 50, 0, 2.50);
 
 } //closes the function 'CreateHistograms'
 
@@ -263,14 +284,16 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 	// fill the efficiency denominators
 	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 
-		if( fabs(higssBbGenParticleD.eta()) >= etaBinningD[iEtaBin] && fabs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1])
-		h_[Form("effDenominator_eta%.2f-%.2f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(higssBbGenParticleD.pt());
+		if( fabs(higssBbGenParticleD.eta()) >= etaBinningD[iEtaBin] && fabs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1]){
+			h_[Form("effDenominator_eta%.2f-%.2f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(higssBbGenParticleD.pt());
+			h_[Form("effDenominator_eta%.2f-%.2f_fcnDR", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(dRbb);
+		} // closes 'if' eta within the set bin
 	}
 
 	// fill other histograms if there is a match
 	if (isMatch){
 
-		h_["DEBUG_higgsBbDR"]->Fill(dRbb);
+		h_["DEBUG_higgsBbDRpreMatching"]->Fill(dRbb);
 
 		for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPnameD.size(); ++iWP){
 			if (fatJetMatchD.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWPD[iWP]){
@@ -283,12 +306,15 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 				h_[Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dRmatch);				
 
 				h_[Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dRbb);	
+				if (fatJetMatchD.mass()<80.0) h_[Form("bbDeltaR_%sDoubleBTagWP_massLessThan80", doubleBtagWPnameD[iWP].c_str())]->Fill(dRbb);	
+				if (fatJetMatchD.mass()>100.0) h_[Form("bbDeltaR_%sDoubleBTagWP_massMoreThan100", doubleBtagWPnameD[iWP].c_str())]->Fill(dRbb);	
 
 		   		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
-		   		
-		   			if( fabs(higssBbGenParticleD.eta()) >= etaBinningD[iEtaBin] && fabs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1])
-					h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(higssBbGenParticleD.pt());
-				
+
+		   			if( fabs(higssBbGenParticleD.eta()) >= etaBinningD[iEtaBin] && fabs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1]){
+						h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(higssBbGenParticleD.pt());
+						h_[Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_fcnDR", doubleBtagWPnameD[iWP].c_str(), etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(dRbb);
+					} // closes 'if' the eta within the set bin
 				} // closes loop through etaBins
 
 	   		} // closes 'if' Btag discriminator greater than WP 
