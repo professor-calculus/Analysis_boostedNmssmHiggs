@@ -54,7 +54,7 @@ eg.1 STANDARD
 $ ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputfiles=XYZ_1.root,XYZ_2.root outputfile=ABC/out.root
 
 eg.2 REMAKE THE PLOTS
-$ ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies outputfile=ABC/histos.root
+$ ~/CMSSW_8_0_20/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies outputfile=ABC/histos.root orderedsecondaryfiles=1
 
 NOTE THAT THIS CODE MAKES A COPY OF ITSELF AND PUTS IT IN THE OUTPUT DIRECTORY
 BUT IF YOU HAVE MADE CHANGES AFTER COMPILATION THIS WILL BE OUT OF SYNC...WATCH OUT

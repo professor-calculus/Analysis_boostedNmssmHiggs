@@ -420,7 +420,7 @@ void PlottingDoubleBTaggerEfficiencyStudies::effComparingEta()
 			hEffHist->Divide(hDen);
 
 			// SETUP HOW YOU WOULD LIKE THE PLOT			
-			int colour = SetColor(iEtaBin, etaBinning.size());
+			int colour = SetColor(iEtaBin+1, etaBinning.size());
 			hEff->SetLineColor(colour);
 			hEff->SetMarkerColor(colour);
 			hEffHist->SetMarkerColor(colour);
@@ -476,23 +476,29 @@ int PlottingDoubleBTaggerEfficiencyStudies::SetColor(int posititon, int maxColor
 {
 // the plot has 'maxColors' number of colours involved
 // this function gives you a colour for the nth histogram
+	
+	gStyle->SetPalette(55); // sets what sort of colours we will use (this number could be changed)
+	
+	// nice for four inputs
+	// for three inputs use 'position+1' and 'size+1' for best outputs
 
-	// the smaller the modifer value the greater the contrast
+	// modifier is an offset in the colour spectrum
+	double modifier = 0.00;
 	// double modifier = 0.05;
 	// double modifier = 0.10;
     // double modifier = 0.15;
     // double modifier = 0.20;
 	// double modifier = 0.25;	
-    double modifier = 0.30;
+    // double modifier = 0.30;
     double colorIndex;
     int colour(1);
-    double fraction = (double)(posititon)/(double)(maxColors-1);
+    // double fraction = (double)(posititon)/(double)(maxColors-1);
+    double fraction = (double)(posititon)/(double)(maxColors);
 
-    if( posititon > maxColors-1 || posititon < 0 || maxColors < 0 ) colour = 1;
+    if( posititon > maxColors || posititon < 0 || maxColors < 0 ) colour = 1;
     else
     {
-    	// colorIndex = fraction * gStyle->GetNumberOfColors();
-        colorIndex = (fraction * (1.0-2.0*modifier) + modifier) * gStyle->GetNumberOfColors();
+        colorIndex = (fraction + modifier) * gStyle->GetNumberOfColors();
         colour = gStyle->GetColorPalette(colorIndex);
     }
     return colour;
