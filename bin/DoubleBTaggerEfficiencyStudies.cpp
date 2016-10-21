@@ -191,7 +191,9 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	// set the binning for histograms
     std::vector<double> ptBinning;
     for(double binLowerEdge=  0.0; binLowerEdge< 100.0; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
-    for(double binLowerEdge=  100.0; binLowerEdge< 500.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  100.0; binLowerEdge< 200.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  200.0; binLowerEdge< 350.0; binLowerEdge+= 25.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  350.0; binLowerEdge< 500.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);    	
     for(double binLowerEdge=  500.0; binLowerEdge< 600.0; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  600.0; binLowerEdge< 800.1; binLowerEdge+= 200.0) ptBinning.push_back(binLowerEdge);
 
@@ -214,8 +216,10 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
     for(double binLowerEdge=  0.0; binLowerEdge< 2.501; binLowerEdge+= 0.05) bbDeltaRDistBinning.push_back(binLowerEdge); 
 
     std::vector<double> dREffBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 0.40; binLowerEdge+= 0.40) dREffBinning.push_back(binLowerEdge);
-    for(double binLowerEdge=  0.40; binLowerEdge< 1.10; binLowerEdge+= 0.10) dREffBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 0.40; binLowerEdge+= 0.20) dREffBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.40; binLowerEdge< 0.70; binLowerEdge+= 0.10) dREffBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.70; binLowerEdge< 1.00; binLowerEdge+= 0.05) dREffBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  1.00; binLowerEdge< 1.10; binLowerEdge+= 0.10) dREffBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  1.10; binLowerEdge< 1.70; binLowerEdge+= 0.20) dREffBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  1.70; binLowerEdge< 2.501; binLowerEdge+= 0.40) dREffBinning.push_back(binLowerEdge);
 
@@ -279,7 +283,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	} // closes loop through Btag WPs 
 
 	// create the debugging histograms
-	h_["DEBUG_higgsBbDRpreMatching"] = new TH1F("DEBUG_higgsBbDRpreMatching", ";dR_bb,a.u.", 50, 0, 2.50);
+	h_["DEBUG_higgsBbDRpreMatching"] = new TH1F("DEBUG_higgsBbDRpreMatching", ";dR_bb;a.u.", 50, 0, 2.50);
 
 } //closes the function 'CreateHistograms'
 

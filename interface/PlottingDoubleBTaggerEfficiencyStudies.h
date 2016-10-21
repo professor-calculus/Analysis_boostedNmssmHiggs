@@ -39,17 +39,17 @@ private:
 	std::vector<double> etaBinning;
 	std::vector<std::string> doubleBtagWPname;
 	std::string outputDirectory;
-	std::vector<int> colorPalette;
-	std::vector<int> colorPaletteSubtle;
+	int massCut;
 
 	void hBbMassDist();
-	void deltaRMatchDist(int);
-	void deltaRbbDist(int);
- 	void fatJetEtaDist(int);
- 	void fatJetVsHBbPtDist(int);
- 	void effComparingWPs(int);
- 	void effComparingWPsFncDR(int);
-	void effComparingEta(int);
+	void deltaRMatchDist();
+	void deltaRbbDist();
+ 	void fatJetEtaDist();
+ 	void fatJetVsHBbPtDist();
+ 	void effComparingWPs();
+ 	void effComparingWPsFncDR();
+	void effComparingEta();
+	void higgsBbDRdist();
 
 	int SetColor(int position, int maxColors);
 	TStyle * TDRStyle();
@@ -64,13 +64,15 @@ private:
 
 //--------constructor---------//
 
-PlottingDoubleBTaggerEfficiencyStudies::PlottingDoubleBTaggerEfficiencyStudies(std::string inputHistoFile, std::vector<std::string> doubleBtagWPnameD, std::vector<double> etaBinningD, int massCut)
+PlottingDoubleBTaggerEfficiencyStudies::PlottingDoubleBTaggerEfficiencyStudies(std::string inputHistoFile, std::vector<std::string> doubleBtagWPnameD, std::vector<double> etaBinningD, int massCutD)
 {
 	// open input .root file containing the histograms
  	f = TFile::Open(inputHistoFile.c_str());
  	// load the binning conventions
  	doubleBtagWPname = doubleBtagWPnameD;
  	etaBinning = etaBinningD;
+	// load the mass cut
+	massCut = massCutD;
  	// get the name of directory holding the .root file, so we can save .pdfs here also
 	for (size_t c = inputHistoFile.size()-1; c > 0; --c){
 		std::string forwardSlash = "/";
@@ -90,13 +92,14 @@ PlottingDoubleBTaggerEfficiencyStudies::PlottingDoubleBTaggerEfficiencyStudies(s
 
 	// make the .pdfs
  	hBbMassDist();
- 	deltaRMatchDist(massCut);
- 	deltaRbbDist(massCut);
- 	fatJetEtaDist(massCut);
- 	fatJetVsHBbPtDist(massCut);
- 	effComparingWPs(massCut);
-	effComparingWPsFncDR(massCut);
- 	effComparingEta(massCut);
+ 	deltaRMatchDist();
+ 	deltaRbbDist();
+ 	fatJetEtaDist();
+ 	fatJetVsHBbPtDist();
+ 	effComparingWPs();
+	effComparingWPsFncDR();
+ 	effComparingEta();
+	higgsBbDRdist();
 }
 
 //-----------public-----------//
@@ -168,11 +171,12 @@ void PlottingDoubleBTaggerEfficiencyStudies::hBbMassDist()
 
 
 
-void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist(int massCut)
+void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist()
 {
 	std::vector<TH1F*> vecHistos;
+	std::vector<TH1F*> vecHistosMassCut;
     TLegend * legend = new TLegend(0.60, 0.60, 0.85, 0.85); //(xmin, ymin, xmax, ymax)
-
+	TLegend * legendMassCut = new TLegend(0.60, 0.60, 0.85, 0.85); //(xmin, ymin, xmax, ymax)
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 		
 	    TCanvas* c=new TCanvas("c","c"); 	
@@ -187,14 +191,32 @@ void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist(int massCut)
 		// h->GetYaxis()->SetTitle("");
 		h->GetYaxis()->SetTitleSize(0.06);
 		h->GetYaxis()->SetLabelSize(0.05);
-
 		h->Draw();
+
+		TH1F * hMassCut = (TH1F*)f->Get(Form("matchDeltaR_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPname[iWP].c_str(), massCut));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		hMassCut->SetLineWidth(2);
+		hMassCut->SetLineColor(2);
+		// hMassCut->GetXaxis()->SetTitle("");
+		hMassCut->GetXaxis()->SetTitleSize(0.06);	
+		hMassCut->GetXaxis()->SetLabelSize(0.05);
+		// hMassCut->GetYaxis()->SetTitle("");
+		hMassCut->GetYaxis()->SetTitleSize(0.06);
+		hMassCut->GetYaxis()->SetLabelSize(0.05);
+
+		hMassCut->Draw("same");
 		// Add stamps
 		latex->SetTextAlign(11); // align from left
 		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
 		latex->SetTextAlign(31); // align from right
 		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
-		latex->DrawLatex(0.85, 0.72, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+		latex->DrawLatex(0.88, 0.66, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+
+        TLegend * legend2 = new TLegend(0.53, 0.75, 0.80, 0.86); //(xmin, ymin, xmax, ymax)	
+		legend2->AddEntry(h, "No mass cut", "L");
+		legend2->AddEntry(hMassCut, Form("Jet mass > %d GeV", massCut), "L");
+		legend2->Draw();
 
 		std::string saveName = Form("matchDeltaR_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
 		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
@@ -206,6 +228,12 @@ void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist(int massCut)
 		Double_t norm = vecHistos[iWP]->GetEntries();
 		vecHistos[iWP]->Scale(1/norm);
 		legend->AddEntry(h, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
+		vecHistosMassCut.push_back(hMassCut);
+		vecHistosMassCut[iWP]->SetLineColor(iWP+1);
+		Double_t normMassCut = vecHistosMassCut[iWP]->GetEntries();
+		vecHistosMassCut[iWP]->Scale(1/normMassCut);
+		legendMassCut->AddEntry(hMassCut, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
 
 	} // closes loop through Btag WP labels
 	
@@ -223,6 +251,25 @@ void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist(int massCut)
 
 	c->SaveAs(Form("%smatchDeltaR_allDoubleBTagWPNormalised.pdf", outputDirectory.c_str()));
 	c->Close();
+
+
+    TCanvas* cMassCut=new TCanvas("c","c");
+    for (int iDR=vecHistosMassCut.size()-1; iDR>=0; --iDR){
+	    vecHistosMassCut[iDR]->Draw("same");
+	}
+
+	legendMassCut->Draw();
+	// Add stamps
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->SetTextAlign(31); // align from right
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+	latex->DrawLatex(0.88,0.50,Form("Jet mass > %d GeV", massCut));
+
+	cMassCut->SaveAs(Form("%smatchDeltaR_allDoubleBTagWPNormalised_withMassCut.pdf", outputDirectory.c_str()));
+	cMassCut->Close();
+
+
 } // closes the function 'deltaRMatchDist'
 
 
@@ -231,10 +278,13 @@ void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist(int massCut)
 
 
 
-void PlottingDoubleBTaggerEfficiencyStudies::deltaRbbDist(int massCut)
+void PlottingDoubleBTaggerEfficiencyStudies::deltaRbbDist()
 {
+	
 	std::vector<TH1F*> vecHistos;
+	std::vector<TH1F*> vecHistosMassCut;
     TLegend * legend = new TLegend(0.60, 0.60, 0.85, 0.85); //(xmin, ymin, xmax, ymax)
+    TLegend * legendMassCut = new TLegend(0.60, 0.60, 0.85, 0.85); //(xmin, ymin, xmax, ymax)    
 
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 		
@@ -270,21 +320,27 @@ void PlottingDoubleBTaggerEfficiencyStudies::deltaRbbDist(int massCut)
 		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
 		latex->DrawLatex(0.88, 0.66, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
  
-        TLegend * legend2 = new TLegend(0.55, 0.75, 0.80, 0.88); //(xmin, ymin, xmax, ymax)	
+        TLegend * legend2 = new TLegend(0.53, 0.75, 0.80, 0.86); //(xmin, ymin, xmax, ymax)	
 		legend2->AddEntry(h, "No mass cut", "L");
-		legend2->AddEntry(hM, "Mass > 100 GeV", "L");
+		legend2->AddEntry(hM, Form("Jet mass > %d GeV", massCut), "L");
 		legend2->Draw();
 
 		std::string saveName = Form("bbDeltaR_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
 		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
 		c->Close();
 
-		// for the combined plot
+		// for the combined plots
 		vecHistos.push_back(h);
 		vecHistos[iWP]->SetLineColor(iWP+1);
 		Double_t norm = vecHistos[iWP]->GetEntries();
 		vecHistos[iWP]->Scale(1/norm);
 		legend->AddEntry(h, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
+		vecHistosMassCut.push_back(hM);
+		vecHistosMassCut[iWP]->SetLineColor(iWP+1);
+		Double_t normMassCut = vecHistosMassCut[iWP]->GetEntries();
+		vecHistosMassCut[iWP]->Scale(1/normMassCut);
+		legendMassCut->AddEntry(hM, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
 
 	} // closes loop through Btag WP labels
 	
@@ -302,6 +358,20 @@ void PlottingDoubleBTaggerEfficiencyStudies::deltaRbbDist(int massCut)
 
 	c->SaveAs(Form("%sbbDeltaR_allDoubleBTagWPNormalised.pdf", outputDirectory.c_str()));
 	c->Close();
+
+    TCanvas* cMassCut=new TCanvas("c","c");
+    for (int iDR=vecHistosMassCut.size()-1; iDR>=0; --iDR){
+	    vecHistosMassCut[iDR]->Draw("same");
+	}
+	legendMassCut->Draw();
+	// Add stamps
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->SetTextAlign(31); // align from right
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+	latex->DrawLatex(0.88,0.50,Form("Jet mass > %d GeV", massCut));
+	cMassCut->SaveAs(Form("%sbbDeltaR_allDoubleBTagWPNormalised_withMassCut.pdf", outputDirectory.c_str()));
+	cMassCut->Close();
 } // closes the function 'deltaRbbDist'
 
 
@@ -311,24 +381,18 @@ void PlottingDoubleBTaggerEfficiencyStudies::deltaRbbDist(int massCut)
 
 
 
-
-
-
-
-
-
-
-
-void PlottingDoubleBTaggerEfficiencyStudies::fatJetEtaDist(int massCut)
+void PlottingDoubleBTaggerEfficiencyStudies::fatJetEtaDist()
 {
 	std::vector<TH1F*> vecHistos;
+	std::vector<TH1F*> vecHistosMassCut;
     TLegend * legend = new TLegend(0.20, 0.60, 0.42, 0.85); //(xmin, ymin, xmax, ymax)
+	TLegend * legendMassCut = new TLegend(0.20, 0.60, 0.42, 0.85); //(xmin, ymin, xmax, ymax)
 
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 		
 	    TCanvas* c=new TCanvas("c","c"); 	
 		TH1F * h = (TH1F*)f->Get(Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
-
+		TH1F * hMassCut = (TH1F*)f->Get(Form("fatJetEta_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPname[iWP].c_str(), massCut));
 		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
 		h->SetLineWidth(2);
 		// h->SetLineColor(2);
@@ -338,15 +402,28 @@ void PlottingDoubleBTaggerEfficiencyStudies::fatJetEtaDist(int massCut)
 		// h->GetYaxis()->SetTitle("");
 		h->GetYaxis()->SetTitleSize(0.06);
 		h->GetYaxis()->SetLabelSize(0.05);
-
 		h->Draw();
+
+		hMassCut->SetLineWidth(2);
+		hMassCut->SetLineColor(2);
+		// hMassCut->GetXaxis()->SetTitle("");
+		hMassCut->GetXaxis()->SetTitleSize(0.06);	
+		hMassCut->GetXaxis()->SetLabelSize(0.05);
+		// hMassCut->GetYaxis()->SetTitle("");
+		hMassCut->GetYaxis()->SetTitleSize(0.06);
+		hMassCut->GetYaxis()->SetLabelSize(0.05);
+		hMassCut->Draw("same");
 		// Add stamps
 		latex->SetTextAlign(11); // align from left
 		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
 		latex->DrawLatex(0.17, 0.80, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
 		latex->SetTextAlign(31); // align from right
 		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
-
+	
+        TLegend * legend2 = new TLegend(0.60, 0.78, 0.90, 0.89); //(xmin, ymin, xmax, ymax)	
+		legend2->AddEntry(h, "No mass cut", "L");
+		legend2->AddEntry(hMassCut, Form("Mass > %d GeV", massCut), "L");
+		legend2->Draw();
 		std::string saveName = Form("fatJetEta_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
 		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
 		c->Close();
@@ -357,6 +434,12 @@ void PlottingDoubleBTaggerEfficiencyStudies::fatJetEtaDist(int massCut)
 		Double_t norm = vecHistos[iWP]->GetEntries();
 		vecHistos[iWP]->Scale(1/norm);
 		legend->AddEntry(h, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
+		vecHistosMassCut.push_back(hMassCut);
+		vecHistosMassCut[iWP]->SetLineColor(iWP+1);
+		Double_t normMassCut = vecHistosMassCut[iWP]->GetEntries();
+		vecHistosMassCut[iWP]->Scale(1/normMassCut);
+		legendMassCut->AddEntry(hMassCut, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
 
 	} // closes loop through Btag WP labels
 	
@@ -374,6 +457,23 @@ void PlottingDoubleBTaggerEfficiencyStudies::fatJetEtaDist(int massCut)
 
 	c->SaveAs(Form("%sfatJetEta_allDoubleBTagWPNormalised.pdf", outputDirectory.c_str()));
 	c->Close();
+
+
+    TCanvas* cMassCut=new TCanvas("c","c");
+    for (int iDR=vecHistosMassCut.size()-1; iDR>=0; --iDR){
+	    vecHistosMassCut[iDR]->Draw("same");
+	}
+	legendMassCut->Draw();
+	// Add stamps
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->SetTextAlign(31); // align from right
+	latex->DrawLatex(0.88,0.84,Form("Jet mass > %d GeV", massCut));
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	cMassCut->SaveAs(Form("%sfatJetEta_allDoubleBTagWPNormalised_withMassCut.pdf", outputDirectory.c_str()));
+	cMassCut->Close();
+
 } // closes the function 'fatJetEtaDist'
 
 
@@ -382,7 +482,7 @@ void PlottingDoubleBTaggerEfficiencyStudies::fatJetEtaDist(int massCut)
 
 
 
-void PlottingDoubleBTaggerEfficiencyStudies::fatJetVsHBbPtDist(int massCut)
+void PlottingDoubleBTaggerEfficiencyStudies::fatJetVsHBbPtDist()
 {
 	double defaultParam = tdrStyle->GetPadRightMargin();
 	tdrStyle->SetPadRightMargin(0.10);
@@ -418,6 +518,38 @@ void PlottingDoubleBTaggerEfficiencyStudies::fatJetVsHBbPtDist(int massCut)
 		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
 		c->Close();
 
+
+		TCanvas* cMassCut=new TCanvas("c","c");
+		TH2F * h2MassCut = (TH2F*)f->Get(Form("ptScatter_%sDoubleBTagWP_massMoreThan%d", doubleBtagWPname[iWP].c_str(), massCut));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		// h2MassCut->GetXaxis()->SetTitle("");
+		h2MassCut->GetXaxis()->SetTitleSize(0.06);
+		h2MassCut->GetXaxis()->SetLabelSize(0.05);	
+		// h2MassCut->GetYaxis()->SetTitle("");
+		h2MassCut->GetYaxis()->SetTitleSize(0.06);
+		h2MassCut->GetYaxis()->SetLabelSize(0.05);	
+		
+		h2MassCut->Draw("colz");
+
+		// Add diagnol line		
+		cMassCut->Update();
+		// TLine *line = new TLine(0,0,gPad->GetUxmax(),gPad->GetUymax());
+		// line->SetLineStyle(2);
+		// line->SetLineWidth(2);
+		line->Draw();
+		// Add stamps
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.85,0.30,Form("Jet mass > %d GeV", massCut));		
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		latex->DrawLatex(0.85, 0.20, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+
+		std::string saveNameMassCut = Form("fatJetVsHBbPtScatter_%sDoubleBTagWP_withMassCut.pdf", doubleBtagWPname[iWP].c_str());
+		cMassCut->SaveAs(Form("%s%s", outputDirectory.c_str(), saveNameMassCut.c_str()));
+		cMassCut->Close();
+
 	} // closes loop through Btag WP labels
 	tdrStyle->SetPadRightMargin(defaultParam);
 } // closes the function 'fatJetVsHBbDist'
@@ -428,12 +560,12 @@ void PlottingDoubleBTaggerEfficiencyStudies::fatJetVsHBbPtDist(int massCut)
 
 
 
-void PlottingDoubleBTaggerEfficiencyStudies::effComparingWPs(int massCut)
+void PlottingDoubleBTaggerEfficiencyStudies::effComparingWPs()
 {
 	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
 	
 	    TCanvas* c=new TCanvas("c","c");
-	    TLegend * legend = new TLegend(0.6, 0.15, 0.91, 0.30); //(xmin, ymin, xmax, ymax)
+	    TLegend * legend = new TLegend(0.6, 0.75, 0.91, 0.90); //(xmin, ymin, xmax, ymax)
 	    legend->SetLineColor(0);
 	    legend-> SetNColumns(2);
 		TH1F * hDen = (TH1F*)f->Get( Form("effDenominator_eta%.2f-%.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
@@ -484,6 +616,64 @@ void PlottingDoubleBTaggerEfficiencyStudies::effComparingWPs(int massCut)
 		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
 		c->Close();
 
+	} // closes loop through eta bins
+
+	// AGAIN, but with the mass cut
+	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
+
+    TCanvas* c=new TCanvas("c","c");
+    TLegend * legend = new TLegend(0.18, 0.63, 0.49, 0.78); //(xmin, ymin, xmax, ymax)
+    legend->SetLineColor(0);
+    legend-> SetNColumns(2);
+	TH1F * hDen = (TH1F*)f->Get( Form("effDenominator_eta%.2f-%.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
+
+	for (std::vector<std:: string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+
+		TH1F * hNum = (TH1F*)f->Get( Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_massMoreThan%d", doubleBtagWPname[iWP].c_str(), etaBinning[iEtaBin], etaBinning[iEtaBin+1], massCut) );
+		TEfficiency * hEff = new TEfficiency(*hNum,*hDen);		
+		TH1F *hEffHist = (TH1F*) hNum->Clone();
+		hEffHist->Divide(hDen);
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT
+		int colour = SetColor(iWP, doubleBtagWPname.size());
+		hEff->SetLineColor(colour);
+		hEff->SetMarkerColor(colour);
+		hEffHist->SetMarkerColor(colour);
+		hEff->SetLineWidth(2);
+		hEffHist->GetXaxis()->SetLabelSize(0.05);
+		hEffHist->GetYaxis()->SetLabelSize(0.05);
+		// hEffHist->GetXaxis()->SetTitle("");
+		hEffHist->GetXaxis()->SetTitleSize(0.06);	
+		hEffHist->GetYaxis()->SetTitle("Efficiency");
+		hEffHist->GetYaxis()->SetTitleSize(0.06);
+		hEffHist->GetYaxis()->SetRangeUser(0,1.11);
+
+		hEffHist->Draw("same, P");
+		hEff->Draw("same");
+		legend->AddEntry(hEff, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
+	} // closes loop through WPs
+
+	legend->Draw();
+	// Add Stamps
+	latex->SetTextAlign(11);
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	if (iEtaBin==0) latex->DrawLatex(0.18,0.84, Form("|#eta| < %.2f", etaBinning[iEtaBin+1]));
+	else latex->DrawLatex(0.18,0.84, Form("%.2f #leq |#eta| < %.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]));
+	latex->SetTextAlign(31);	
+	latex->DrawLatex(0.91,0.84,Form("Jet mass > %d GeV", massCut));	
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+	// Add line across max efficiency		
+	c->Update();
+	TLine *line = new TLine(0,1,gPad->GetUxmax(),1);
+	line->SetLineStyle(2);
+	line->SetLineWidth(2);
+	line->Draw();
+
+	std::string saveName = Form("efficiency_eta%.2f-%.2f_withMassCut.pdf", etaBinning[iEtaBin], etaBinning[iEtaBin+1]);
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();
+
 	} // closes loop through eta bins 
 } // closes the function effComparingWPs
 
@@ -493,12 +683,12 @@ void PlottingDoubleBTaggerEfficiencyStudies::effComparingWPs(int massCut)
 
 
 
-void PlottingDoubleBTaggerEfficiencyStudies::effComparingWPsFncDR(int massCut)
+void PlottingDoubleBTaggerEfficiencyStudies::effComparingWPsFncDR()
 {
 	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
 	
 	    TCanvas* c=new TCanvas("c","c");
-	    TLegend * legend = new TLegend(0.6, 0.15, 0.91, 0.30); //(xmin, ymin, xmax, ymax)
+	    TLegend * legend = new TLegend(0.6, 0.75, 0.91, 0.90); //(xmin, ymin, xmax, ymax)
 	    legend->SetLineColor(0);
 	    legend-> SetNColumns(2);
 		TH1F * hDen = (TH1F*)f->Get( Form("effDenominator_eta%.2f-%.2f_fcnDR", etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
@@ -549,7 +739,67 @@ void PlottingDoubleBTaggerEfficiencyStudies::effComparingWPsFncDR(int massCut)
 		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
 		c->Close();
 
+	} // closes loop through eta bins
+
+	// AGAIN, but with the mass cut
+	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
+	
+	    TCanvas* c=new TCanvas("c","c");
+	    TLegend * legend = new TLegend(0.53, 0.65, 0.89, 0.75); //(xmin, ymin, xmax, ymax)
+	    legend->SetLineColor(0);
+	    legend-> SetNColumns(2);
+		TH1F * hDen = (TH1F*)f->Get( Form("effDenominator_eta%.2f-%.2f_fcnDR", etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
+
+		for (std::vector<std:: string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+	
+			TH1F * hNum = (TH1F*)f->Get( Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_fcnDR_massMoreThan%d", doubleBtagWPname[iWP].c_str(), etaBinning[iEtaBin], etaBinning[iEtaBin+1], massCut) );
+			TEfficiency * hEff = new TEfficiency(*hNum,*hDen);		
+			TH1F *hEffHist = (TH1F*) hNum->Clone();
+			hEffHist->Divide(hDen);
+
+			// SETUP HOW YOU WOULD LIKE THE PLOT
+			int colour = SetColor(iWP, doubleBtagWPname.size());
+			hEff->SetLineColor(colour);
+			hEff->SetMarkerColor(colour);
+			hEffHist->SetMarkerColor(colour);
+			hEff->SetLineWidth(2);
+			hEffHist->GetXaxis()->SetLabelSize(0.05);
+			hEffHist->GetYaxis()->SetLabelSize(0.05);
+			// hEffHist->GetXaxis()->SetTitle("");
+			hEffHist->GetXaxis()->SetTitleSize(0.06);	
+			hEffHist->GetYaxis()->SetTitle("Efficiency");
+			hEffHist->GetYaxis()->SetTitleSize(0.06);
+			hEffHist->GetYaxis()->SetRangeUser(0,1.11);
+
+			hEffHist->Draw("same, P");
+			hEff->Draw("same");
+			legend->AddEntry(hEff, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
+		} // closes loop through WPs
+
+		legend->Draw();
+		// Add Stamps
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		if (iEtaBin==0) latex->DrawLatex(0.18,0.84, Form("|#eta| < %.2f", etaBinning[iEtaBin+1]));
+		else latex->DrawLatex(0.18,0.84, Form("%.2f #leq |#eta| < %.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]));
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.91,0.84,Form("Jet mass > %d GeV", massCut));	
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		// Add line across max efficiency		
+		c->Update();
+		TLine *line = new TLine(0,1,gPad->GetUxmax(),1);
+		line->SetLineStyle(2);
+		line->SetLineWidth(2);
+		line->Draw();
+
+		std::string saveName = Form("efficiency_fncDR_eta%.2f-%.2f_withMassCut.pdf", etaBinning[iEtaBin], etaBinning[iEtaBin+1]);
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
+
 	} // closes loop through eta bins 
+
+
 } // closes the function effComparingWPsFncDR
 
 
@@ -559,7 +809,7 @@ void PlottingDoubleBTaggerEfficiencyStudies::effComparingWPsFncDR(int massCut)
 
 
 
-void PlottingDoubleBTaggerEfficiencyStudies::effComparingEta(int massCut)
+void PlottingDoubleBTaggerEfficiencyStudies::effComparingEta()
 {
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 
@@ -623,7 +873,100 @@ void PlottingDoubleBTaggerEfficiencyStudies::effComparingEta(int massCut)
 		c->Close();	
 
 	} // closes loop through WPs
+
+
+	// AGAIN, but with the mass cut!
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+
+    TCanvas* c=new TCanvas("c","c");
+    TLegend * legend = new TLegend(0.18, 0.60, 0.49, 0.75); //(xmin, ymin, xmax, ymax)
+    legend->SetLineColor(0);
+    // legend-> SetNColumns(2);
+
+		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinning.size()-1; ++iEtaBin){
+
+			TH1F * hDen = (TH1F*)f->Get( Form("effDenominator_eta%.2f-%.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]) );
+			TH1F * hNum = (TH1F*)f->Get( Form("effNumerator_%sDoubleBTagWP_eta%.2f-%.2f_massMoreThan%d", doubleBtagWPname[iWP].c_str(), etaBinning[iEtaBin], etaBinning[iEtaBin+1], massCut) );		
+			TEfficiency * hEff = new TEfficiency(*hNum,*hDen);
+			TH1F *hEffHist = (TH1F*) hNum->Clone();
+			hEffHist->Divide(hDen);
+
+			// SETUP HOW YOU WOULD LIKE THE PLOT			
+			int colour = SetColor(iEtaBin+1, etaBinning.size());
+			hEff->SetLineColor(colour);
+			hEff->SetMarkerColor(colour);
+			hEffHist->SetMarkerColor(colour);
+			hEff->SetLineWidth(2);
+			hEffHist->GetXaxis()->SetLabelSize(0.05);
+			hEffHist->GetYaxis()->SetLabelSize(0.05);
+			hEffHist->GetXaxis()->SetTitleSize(0.06);	
+			hEffHist->GetYaxis()->SetTitle("Efficiency");
+			hEffHist->GetYaxis()->SetTitleSize(0.06);
+
+			hEffHist->GetYaxis()->SetRangeUser(0,1.11);
+
+			hEffHist->Draw("same, P");
+			hEff->Draw("same");
+			if (iEtaBin==0) legend->AddEntry(hEff, Form("|#eta| < %.2f", etaBinning[iEtaBin+1]), "L");
+			else legend->AddEntry(hEff, Form("%.2f #leq |#eta| < %.2f", etaBinning[iEtaBin], etaBinning[iEtaBin+1]), "L");
+
+		} // closes loop through eta bins 
+
+		legend->Draw();
+
+		// Add Stamps
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->DrawLatex(0.18,0.84, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		latex->DrawLatex(0.91,0.84,Form("Jet mass > %d GeV", massCut));	
+		// Add line across max efficiency		
+		c->Update();
+		TLine *line = new TLine(0,1,gPad->GetUxmax(),1);
+		line->SetLineStyle(2);
+		line->SetLineWidth(2);
+		line->Draw();
+
+		std::string saveName = Form("efficiency_%sDoubleBTagWP_withMassCut.pdf", doubleBtagWPname[iWP].c_str());
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();	
+
+	} // closes loop through WPs
 } // closes the function effComparingEta
+
+
+
+
+
+
+void PlottingDoubleBTaggerEfficiencyStudies::higgsBbDRdist()
+{
+    TCanvas* c=new TCanvas("c","c"); 	
+	TH1F * h = (TH1F*)f->Get("DEBUG_higgsBbDRpreMatching");
+
+	// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+	h->SetLineWidth(2);
+	// h->SetLineColor(2);
+	// h->GetXaxis()->SetTitle("");
+	h->GetXaxis()->SetTitleSize(0.06);	
+	h->GetXaxis()->SetLabelSize(0.05);
+	// h->GetYaxis()->SetTitle("");
+	h->GetYaxis()->SetTitleSize(0.06);
+	h->GetYaxis()->SetLabelSize(0.05);
+	h->Draw();
+
+	// Add stamps
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->SetTextAlign(31); // align from right
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	std::string saveName = "DEBUG_higgsBbDRpreMatching.pdf";
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();	
+
+}
 
 
 
