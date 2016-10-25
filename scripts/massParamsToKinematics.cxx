@@ -3,69 +3,205 @@
 #include <fstream>
 #include <iostream>
 
+#include <TH1F.h>
 #include <TGraph.h>
 #include <TGraphErrors.h>
 #include <TGraphAsymmErrors.h>
 #include <TMultiGraph.h>
 #include <TLegend.h>
 #include <TCanvas.h>
+#include <TLatex.h>
 #include <TStyle.h>
 #include <TROOT.h>
 #include <TFile.h>
 #include <TAxis.h>
 
-
-
-void drawAndSave(TMultiGraph * mg, TLegend * leg, std::string saveName)
+TStyle * TDRStyle()
 {
+	TStyle * tdrStyle = new TStyle("tdrStyle","");
+	gROOT->SetStyle("tdrStyle"); 
+	//tdrStyle->SetPalette(palette);
 
-	TCanvas* cPlot=new TCanvas("cPlot","cPlot");
+	// For the canvas:
+	tdrStyle->SetCanvasBorderMode(0);
+	tdrStyle->SetCanvasColor(kWhite);
+	tdrStyle->SetCanvasDefH(600); //Height of canvas
+	tdrStyle->SetCanvasDefW(800); //Width of canvas
+	tdrStyle->SetCanvasDefX(0);   //POsition on screen
+	tdrStyle->SetCanvasDefY(0);
 
+	// For the Pad:
+	tdrStyle->SetPadBorderMode(0);
+	// tdrStyle->SetPadBorderSize(Width_t size = 1);
+	tdrStyle->SetPadColor(kWhite);
+	tdrStyle->SetPadGridX(false);
+	tdrStyle->SetPadGridY(false);
+	tdrStyle->SetGridColor(0);
+	tdrStyle->SetGridStyle(3);
+	tdrStyle->SetGridWidth(1);
+	tdrStyle->SetPadGridX(false);
+	tdrStyle->SetPadGridY(false);
 
-// a function to draw and save!  use tdr style also
- 	
-// add latex stamps
+	// For the frame:
+	tdrStyle->SetFrameBorderMode(0);
+	tdrStyle->SetFrameBorderSize(1);
+	tdrStyle->SetFrameFillColor(0);
+	tdrStyle->SetFrameFillStyle(0);
+	tdrStyle->SetFrameLineColor(1);
+	tdrStyle->SetFrameLineStyle(1);
+	tdrStyle->SetFrameLineWidth(1);
 
-	mg->Draw("ALP");
-	mg->GetXaxis()->SetTitle("massHigss / massNLSP");
-	mg->GetYaxis()->SetTitle("massLSP (GeV)");
-	mg->Draw("ALP");
+	// For the histo:
+	// tdrStyle->SetHistFillColor(1);
+	// tdrStyle->SetHistFillStyle(0);
+	tdrStyle->SetHistLineColor(1);
+	tdrStyle->SetHistLineStyle(0);
+	tdrStyle->SetHistLineWidth(1);
+	// tdrStyle->SetLegoInnerR(Float_t rad = 0.5);
+	// tdrStyle->SetNumberContours(Int_t number = 20);
 
-leg->Draw();
-cPlot->SaveAs(saveName.c_str());
+	tdrStyle->SetEndErrorSize(2);
+	//  tdrStyle->SetErrorMarker(20);
+	tdrStyle->SetErrorX(0.);
+
+	tdrStyle->SetMarkerStyle(1); // EDITFROM 20
+
+	//For the legend
+	tdrStyle->SetLegendBorderSize(0);
+	tdrStyle->SetLegendFillColor(0);
+	tdrStyle->SetLegendFont(42); // EDITFROM 42
+	tdrStyle->SetLegendTextSize(0.04);
+
+	//For the fit/function:
+	tdrStyle->SetOptFit(0);
+	tdrStyle->SetFitFormat("5.4g");
+	tdrStyle->SetFuncColor(2);
+	tdrStyle->SetFuncStyle(1);
+	tdrStyle->SetFuncWidth(1);
+
+	//For the date:
+	tdrStyle->SetOptDate(0);
+	// tdrStyle->SetDateX(Float_t x = 0.01);
+	// tdrStyle->SetDateY(Float_t y = 0.01);
+
+	// For the statistics box:
+	tdrStyle->SetOptFile(0);
+	tdrStyle->SetOptStat(0); // To display the mean and RMS:   SetOptStat("mr");
+	tdrStyle->SetStatColor(kWhite);
+	tdrStyle->SetStatFont(42);
+	tdrStyle->SetStatFontSize(0.025);
+	tdrStyle->SetStatTextColor(1);
+	tdrStyle->SetStatFormat("6.4g");
+	tdrStyle->SetStatBorderSize(1);
+	tdrStyle->SetStatH(0.1);
+	tdrStyle->SetStatW(0.15);
+	// tdrStyle->SetStatStyle(Style_t style = 1001);
+	// tdrStyle->SetStatX(Float_t x = 0);
+	// tdrStyle->SetStatY(Float_t y = 0);
+
+	// Margins:
+	//tdrStyle->SetPadTopMargin(0.05);
+	tdrStyle->SetPadTopMargin(0.10);
+	tdrStyle->SetPadBottomMargin(0.13);
+	// tdrStyle->SetPadLeftMargin(0.16);
+	tdrStyle->SetPadLeftMargin(0.14);
+	// tdrStyle->SetPadRightMargin(0.02);
+	tdrStyle->SetPadRightMargin(0.07);
+	// tdrStyle->SetPadRightMargin(0.10); // only really want to be changing this for the scatters
+
+	// For the Global title:
+	// tdrStyle->SetOptTitle(1); //EDITFROM 0
+	tdrStyle->SetTitleFont(42);
+	tdrStyle->SetTitleColor(1);
+	tdrStyle->SetTitleTextColor(1);
+	tdrStyle->SetTitleFillColor(10);
+	tdrStyle->SetTitleFontSize(0.05);
+	// tdrStyle->SetTitleH(0); // Set the height of the title box
+	// tdrStyle->SetTitleW(0); // Set the width of the title box
+	// tdrStyle->SetTitleX(0); // Set the position of the title box
+	// tdrStyle->SetTitleY(0.985); // Set the position of the title box
+	// tdrStyle->SetTitleStyle(Style_t style = 1001);
+	// tdrStyle->SetTitleBorderSize(2);
+
+	// For the axis titles:
+	tdrStyle->SetTitleColor(1, "XYZ");
+	tdrStyle->SetTitleFont(42, "XYZ");
+	tdrStyle->SetTitleSize(0.045, "XYZ");
+	// tdrStyle->SetTitleXSize(Float_t size = 0.02); // Another way to set the size?
+	// tdrStyle->SetTitleYSize(Float_t size = 0.02);
+	tdrStyle->SetTitleXOffset(0.95);//EDITFROM 0.9
+	tdrStyle->SetTitleYOffset(1.35);//EDITFROM 1.25
+	// tdrStyle->SetTitleOffset(1.1, "Y"); // Another way to set the Offset
+
+	// For the axis labels:
+	tdrStyle->SetLabelColor(1, "XYZ");
+	tdrStyle->SetLabelFont(42, "XYZ");
+	tdrStyle->SetLabelOffset(0.007, "XYZ");
+	// tdrStyle->SetLabelSize(0.05, "XYZ");
+	tdrStyle->SetLabelSize(0.045, "XYZ");
+
+	// For the axis:
+	tdrStyle->SetAxisColor(1, "XYZ");
+	tdrStyle->SetStripDecimals(kTRUE);
+	tdrStyle->SetTickLength(0.03, "XYZ");
+	tdrStyle->SetNdivisions(510, "XYZ");
+	tdrStyle->SetPadTickX(1);  // To get tick marks on the opposite side of the frame
+	tdrStyle->SetPadTickY(1);
+
+	// Change for log plots:
+	tdrStyle->SetOptLogx(0);
+	tdrStyle->SetOptLogy(0);
+	tdrStyle->SetOptLogz(0);
+
+	// Postscript options:
+	tdrStyle->SetPaperSize(20.,20.);
+	// tdrStyle->SetLineScalePS(Float_t scale = 3);
+	// tdrStyle->SetLineStyleString(Int_t i, const char* text);
+	// tdrStyle->SetHeaderPS(const char* header);
+	// tdrStyle->SetTitlePS(const char* pstitle);
+
+	// tdrStyle->SetBarOffset(Float_t baroff = 0.5);
+	// tdrStyle->SetBarWidth(Float_t barwidth = 0.5);
+	// tdrStyle->SetPaintTextFormat(const char* format = "g");
+	// tdrStyle->SetPalette(Int_t ncolors = 0, Int_t* colors = 0);
+	// tdrStyle->SetTimeOffset(Double_t toffset);
+	// tdrStyle->SetHistMinimumZero(kTRUE);
+
+	//tdrStyle->cd();
+	return tdrStyle;
 }
 
-
-
-
-
-
-
-
-
-
-// maybe get these out of the plotting class...
-int SetColor(int posititon, int maxColors)
+void drawAndSave(TMultiGraph * mg, TLegend * leg, std::string saveName, std::string yAxisTitle, double mass_squark, double mass_higgs, double legXmin, double legXmax, double legYmin, double legYmax)
 {
-// the plot has 'maxColors' number of colours involved
-// this function gives you a colour for the nth histogram
-	
+	TStyle * tdrStyle = TDRStyle();
+	TCanvas* cPlot=new TCanvas("cPlot","cPlot");
+	mg->Draw("a3L");
+	mg->GetXaxis()->SetTitle("mass_Higgs / mass_NLSP");
+	mg->GetYaxis()->SetTitle(yAxisTitle.c_str());
+	// mg->SetTitle(Form("Mass_{squark} = %.1f, Mass_{higgs} = %.1f", mass_squark, mass_higgs));
+	mg->Draw("a3L");
+	leg->SetX1NDC(legXmin);
+	leg->SetX2NDC(legXmax);
+	leg->SetY1NDC(legYmin);
+	leg->SetY2NDC(legYmax);
+	leg->Draw("same");
+	TLatex * latex = new TLatex();
+	latex->SetNDC();
+	latex->SetTextFont(42);
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,Form("Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV", mass_squark, mass_higgs));
+	cPlot->SaveAs(saveName.c_str());
+	cPlot->Close();
+}
+
+int SetColor(int posititon, int maxColors)
+{	
 	gStyle->SetPalette(55); // sets what sort of colours we will use (this number could be changed)
-	
-	// nice for four inputs
-	// for three inputs use 'position+1' and 'size+1' for best outputs
 
 	// modifier is an offset in the colour spectrum
 	double modifier = 0.00;
-	// double modifier = 0.05;
-	// double modifier = 0.10;
-    // double modifier = 0.15;
-    // double modifier = 0.20;
-	// double modifier = 0.25;	
-    // double modifier = 0.30;
     double colorIndex;
     int colour(1);
-    // double fraction = (double)(posititon)/(double)(maxColors-1);
     double fraction = (double)(posititon)/(double)(maxColors);
 
     if( posititon > maxColors || posititon < 0 || maxColors < 0 ) colour = 1;
@@ -77,12 +213,12 @@ int SetColor(int posititon, int maxColors)
     return colour;
 }
 
-
-
 void SetGraphOptions(TGraphAsymmErrors * gr, size_t index, size_t numberOfBins){
-
-	gr->SetLineColor(SetColor(index, numberOfBins));
 	gr->SetLineWidth(2);
+	gr->SetLineColor(SetColor(index, numberOfBins));
+	gr->SetFillColorAlpha(SetColor(index, numberOfBins), 0.35);
+	gr->SetFillStyle(3001);
+	gr->SetTitle("testingTitleGR");
 }
 
 
@@ -124,7 +260,7 @@ void massParamsToKinematics(){
 	double mass_higgs = 83.0;
 	double mass_ratio_beginPoint = 0.7; // mass_ratio = mass_higgs / mass_NLSP
 	double mass_ratio_stepSize = 0.01;
-	std::vector<double> mass_delta_vec = {1.0, 5.0, 10.0, 15.0}; // mass_delta = mass_NLSP - mass_higgs - mass_LSP
+	std::vector<double> mass_delta_vec = {15.0, 10.0, 5.0, 1.0}; // mass_delta = mass_NLSP - mass_higgs - mass_LSP
 
 	TMultiGraph * mg_mass_NLSP = new TMultiGraph();
 	TMultiGraph * mg_mass_LSP = new TMultiGraph();
@@ -138,46 +274,9 @@ void massParamsToKinematics(){
 	TMultiGraph * mg_momentum_higgs = new TMultiGraph();
 	TMultiGraph * mg_seperation_bb = new TMultiGraph();
 
-	// maybe just use one legend as they are all the same anyway
-	TLegend * legend = new TLegend(0.1, 0.7, 0.48, 0.9);
+	TLegend * legend = new TLegend();
 	legend->SetHeader("Mass Gap (GeV)");
-
-	// TLegend * leg_mass_NLSP = new TLegend(0.1, 0.7, 0.48, 0.9);
-	// TLegend * leg_mass_LSP = new TLegend(0.1, 0.7, 0.48, 0.9);
-	// TLegend * leg_energy_quark = new TLegend(0.1, 0.7, 0.48, 0.9);
-	// TLegend * leg_momentum_quark = new TLegend(0.1, 0.7, 0.48, 0.9);
-	// TLegend * leg_energy_NLSP = new TLegend(0.1, 0.7, 0.48, 0.9);
-	// TLegend * leg_momentum_NLSP = new TLegend(0.1, 0.7, 0.48, 0.9);
-	// TLegend * leg_energy_LSP = new TLegend(0.1, 0.7, 0.48, 0.9);
-	// TLegend * leg_momentum_LSP = new TLegend(0.1, 0.7, 0.48, 0.9);
-	// TLegend * leg_energy_higgs = new TLegend(0.1, 0.7, 0.48, 0.9);
-	// TLegend * leg_momentum_higgs = new TLegend(0.1, 0.7, 0.48, 0.9);
-	// TLegend * leg_seperation_bb = new TLegend(0.1, 0.7, 0.48, 0.9);
-
-	// leg_mass_NLSP->SetHeader("Mass Gap (GeV)");
-	// leg_mass_LSP->SetHeader("Mass Gap (GeV)");
-	// leg_energy_quark->SetHeader("Mass Gap (GeV)");
-	// leg_momentum_quark->SetHeader("Mass Gap (GeV)");
-	// leg_energy_NLSP->SetHeader("Mass Gap (GeV)");
-	// leg_momentum_NLSP->SetHeader("Mass Gap (GeV)"); 
-	// leg_energy_LSP->SetHeader("Mass Gap (GeV)");
-	// leg_momentum_LSP->SetHeader("Mass Gap (GeV)");
-	// leg_energy_higgs->SetHeader("Mass Gap (GeV)");
-	// leg_momentum_higgs->SetHeader("Mass Gap (GeV)");
-	// leg_seperation_bb->SetHeader("Mass Gap (GeV)");
-
 	TCanvas* c=new TCanvas("c","c");
-	// TCanvas * c_mass_NLSP = new TCanvas("c", "c");
-	// TCanvas * c_mass_LSP = new TCanvas("c", "c");
-	// TCanvas * c_energy_quark = new TCanvas("c", "c");
-	// TCanvas * c_momentum_quark = new TCanvas("c", "c");
-	// TCanvas * c_energy_NLSP = new TCanvas("c", "c");
-	// TCanvas * c_momentum_NLSP = new TCanvas("c", "c");
-	// TCanvas * c_energy_LSP = new TCanvas("c", "c");
-	// TCanvas * c_momentum_LSP = new TCanvas("c", "c");
-	// TCanvas * c_energy_higgs = new TCanvas("c", "c");
-	// TCanvas * c_momentum_higgs = new TCanvas("c", "c");
-	// TCanvas * c_seperation_bb = new TCanvas("c", "c");
 
 
 
@@ -208,6 +307,13 @@ void massParamsToKinematics(){
 		for (double mass_ratio = mass_ratio_beginPoint; mass_ratio < mass_higgs / (mass_delta + mass_higgs); mass_ratio += mass_ratio_stepSize){  
 			mass_ratio_vec.push_back(mass_ratio);
 			null_vec.push_back(0);  
+			
+			//////////////////
+			// ------------ // 
+			// CALCULATIONS //
+			// ------------ //
+			//////////////////
+
 			// calculate the LSP and NLSP masses
 			double mass_NLSP = mass_higgs / mass_ratio;
 			double mass_LSP = mass_NLSP - mass_higgs - mass_delta;
@@ -228,21 +334,27 @@ void massParamsToKinematics(){
 			// higgs: rest frame
 			double energy_higgs_restFrame = mass_NLSP - energy_LSP_restFrame;
 			double momentum_higgs_restFrame = momentum_LSP_restFrame;
-			// LSP: lab frame
+			// LSP: lab frame                                                     //ARE THE CALCULATIONS RIGHT??
 			double energy_LSP_mean = boost_gamma * energy_LSP_restFrame;
 			double energy_LSP_dev = boost_betaGamma * momentum_LSP_restFrame; // energy extremums can be +/- this value depending on boost angle
 			double momentum_LSP_mean = sqrt(energy_LSP_mean * energy_LSP_mean - mass_LSP * mass_LSP);
-			double momentum_LSP_devUp = sqrt( (energy_LSP_mean+energy_LSP_dev) * (energy_LSP_mean+energy_LSP_dev) - mass_LSP * mass_LSP );
-			double momentum_LSP_devDown = sqrt( (energy_LSP_mean-energy_LSP_dev) * (energy_LSP_mean-energy_LSP_dev) - mass_LSP * mass_LSP );
+			double momentum_LSP_devUp = sqrt( (energy_LSP_mean+energy_LSP_dev) * (energy_LSP_mean+energy_LSP_dev) - mass_LSP * mass_LSP ) - momentum_LSP_mean;
+			double momentum_LSP_devDown = -1 * sqrt( (energy_LSP_mean-energy_LSP_dev) * (energy_LSP_mean-energy_LSP_dev) - mass_LSP * mass_LSP ) + momentum_LSP_mean;
 			// higgs: lab frame
 			double energy_higgs_mean = boost_gamma * energy_higgs_restFrame;
 			double energy_higgs_dev = boost_betaGamma * momentum_higgs_restFrame; // energy extremums can be +/- this value depending on boost angle
 			double momentum_higgs_mean = sqrt(energy_higgs_mean * energy_higgs_mean - mass_higgs * mass_higgs);
-			double momentum_higgs_devUp = sqrt( (energy_higgs_mean+energy_higgs_dev) * (energy_higgs_mean+energy_higgs_dev) - mass_higgs * mass_higgs );
-			double momentum_higgs_devDown = sqrt( (energy_higgs_mean-energy_higgs_dev) * (energy_higgs_mean-energy_higgs_dev) - mass_higgs * mass_higgs );
+			double momentum_higgs_devUp = sqrt( (energy_higgs_mean+energy_higgs_dev) * (energy_higgs_mean+energy_higgs_dev) - mass_higgs * mass_higgs ) - momentum_higgs_mean;
+			double momentum_higgs_devDown = -1 * sqrt( (energy_higgs_mean-energy_higgs_dev) * (energy_higgs_mean-energy_higgs_dev) - mass_higgs * mass_higgs ) + momentum_higgs_mean;
 
 			// higgs -> bbar
 			double seperation_bb = 2 * mass_higgs / momentum_higgs_mean; //transverse momentum???
+
+			//////////////////
+			// -----END---- // 
+			// CALCULATIONS //
+			// ------------ //
+			//////////////////
 
 			mass_NLSP_vec.push_back(mass_NLSP);
 			mass_LSP_vec.push_back(mass_LSP);
@@ -288,22 +400,10 @@ void massParamsToKinematics(){
 		SetGraphOptions(gr_momentum_higgs, i_delta, mass_delta_vec.size());
 		SetGraphOptions(gr_seperation_bb, i_delta, mass_delta_vec.size());
 
-		// could get the histograms right with some dummy histograms!!!
-		legend->AddEntry("gr_mass_NLSP", Form("%.1f", mass_delta_vec[i_delta]), "L");
-
-		// function to set up the graph, eg line colour and line width, the legend thing also...
-		// plot styles need to have been updated first joe
-		// leg_mass_NLSP->AddEntry("gr_mass_NLSP",Form("%.2f", mass_delta_vec[i_delta]),"L");
-		// leg_mass_LSP->AddEntry("gr_mass_LSP",Form("%.2f", mass_delta_vec[i_delta]),"L");
-		// leg_energy_quark->AddEntry("gr_energy_quark",Form("%.2f", mass_delta_vec[i_delta]),"L");
-		// leg_momentum_quark->AddEntry("gr_momentum_quark",Form("%.2f", mass_delta_vec[i_delta]),"L");
-		// leg_energy_NLSP->AddEntry("gr_energy_NLSP",Form("%.2f", mass_delta_vec[i_delta]),"L");
-		// leg_momentum_NLSP->AddEntry("gr_momentum_NLSP",Form("%.2f", mass_delta_vec[i_delta]),"L");
-		// leg_energy_LSP->AddEntry("gr_energy_LSP",Form("%.2f", mass_delta_vec[i_delta]),"L");
-		// leg_momentum_LSP->AddEntry("gr_momentum_LSP",Form("%.2f", mass_delta_vec[i_delta]),"L");
-		// leg_energy_higgs->AddEntry("gr_energy_higgs",Form("%.2f", mass_delta_vec[i_delta]),"L");
-		// leg_momentum_higgs->AddEntry("gr_momentum_higgs",Form("%.2f", mass_delta_vec[i_delta]),"L");
-		// leg_seperation_bb->AddEntry("gr_seperation_bb",Form("%.2f", mass_delta_vec[i_delta]),"L");
+		TH1F * h_dummy = new TH1F("h_dummy", "", 100, 0, 100);
+		h_dummy->SetLineColor(SetColor(i_delta, mass_delta_vec.size()));
+		legend->AddEntry(h_dummy, Form("%.1f", mass_delta_vec[i_delta]), "L");
+	    legend->SetLineColor(0);
 
 		// add the TGraphs for this mass_delta bin to the TMultiGraphs
 		mg_mass_NLSP->Add(gr_mass_NLSP);
@@ -320,18 +420,47 @@ void massParamsToKinematics(){
 
 	} // closes loop through the mass_delta entries
 
-
-
-
-drawAndSave(mg_mass_LSP, legend, "mg_mass_LSP.pdf");
-drawAndSave(mg_momentum_higgs, legend, "mg_momHiggs.pdf");
-
-
-
-
-
-
-
-
+	drawAndSave(mg_mass_NLSP, legend, "NLSP_mass.pdf", "mass_NLSP (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
+	drawAndSave(mg_mass_LSP, legend, "LSP_mass.pdf", "mass_LSP (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
+	// drawAndSave(mg_energy_quark, legend, "quark_energy.pdf", "energy_quark (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
+	drawAndSave(mg_momentum_quark, legend, "quark_momentum.pdf", "momentum_quark (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.25, 0.46);
+	drawAndSave(mg_energy_NLSP, legend, "NLSP_energy.pdf", "energy_NLSP (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
+	drawAndSave(mg_momentum_NLSP, legend, "NLSP_momentum.pdf", "momentum_NLSP (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.25, 0.46);
+	// drawAndSave(mg_energy_LSP, legend, "LSP_energy.pdf", "energy_LSP (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
+	drawAndSave(mg_momentum_LSP, legend, "LSP_momentum.pdf", "momentum_LSP (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
+	// drawAndSave(mg_energy_higgs, legend, "higgs_energy.pdf", "energy_higgs (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
+	drawAndSave(mg_momentum_higgs, legend, "higgs_momentum.pdf", "momentum_higgs (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.25, 0.46);
+	drawAndSave(mg_seperation_bb, legend, "speration_bb.pdf", "seperation_bb", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
