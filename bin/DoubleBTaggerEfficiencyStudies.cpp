@@ -284,7 +284,12 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 
 	// create the debugging histograms
 	h_["DEBUG_higgsBbDRpreMatching"] = new TH1F("DEBUG_higgsBbDRpreMatching", ";dR_bb;a.u.", 50, 0, 2.50);
-
+	h_["DEBUG_higgsBbDRpreMatching_pt400to415_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_pt400to415_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
+	h_["DEBUG_higgsBbDRpreMatching_pt450to465_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_pt450to465_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
+	h_["DEBUG_higgsBbDRpreMatching_pt500to515_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_pt500to515_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
+	h_["DEBUG_higgsBbDRpreMatching_3p400to415_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_3p400to415_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
+	h_["DEBUG_higgsBbDRpreMatching_3p450to465_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_3p450to465_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
+	h_["DEBUG_higgsBbDRpreMatching_3p500to515_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_3p500to515_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
 } //closes the function 'CreateHistograms'
 
 
@@ -307,7 +312,27 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 	// fill other histograms if there is a match
 	if (isMatch){
 
+		// debug/kinematic interests histograms
 		h_["DEBUG_higgsBbDRpreMatching"]->Fill(dRbb);
+		if (higssBbGenParticleD.pt() > 400 && higssBbGenParticleD.pt() < 415){
+			if (fabs(higssBbGenParticleD.eta())<2.4) h_["DEBUG_higgsBbDRpreMatching_pt400to415_eta0to2p4"]->Fill(dRbb);
+		}
+		if (higssBbGenParticleD.pt() > 450 && higssBbGenParticleD.pt() < 465){
+			if (fabs(higssBbGenParticleD.eta())<2.4) h_["DEBUG_higgsBbDRpreMatching_pt450to465_eta0to2p4"]->Fill(dRbb);
+		}
+		if (higssBbGenParticleD.pt() > 500 && higssBbGenParticleD.pt() < 515){
+			if (fabs(higssBbGenParticleD.eta())<2.4) h_["DEBUG_higgsBbDRpreMatching_pt500to515_eta0to2p4"]->Fill(dRbb);
+		}
+		if (higssBbGenParticleD.p() > 400 && higssBbGenParticleD.p() < 415){
+			if (fabs(higssBbGenParticleD.eta())<2.4) h_["DEBUG_higgsBbDRpreMatching_3p400to415_eta0to2p4"]->Fill(dRbb);
+		}
+		if (higssBbGenParticleD.p() > 450 && higssBbGenParticleD.p() < 465){
+			if (fabs(higssBbGenParticleD.eta())<2.4) h_["DEBUG_higgsBbDRpreMatching_3p450to465_eta0to2p4"]->Fill(dRbb);
+		}
+		if (higssBbGenParticleD.p() > 500 && higssBbGenParticleD.p() < 515){
+			if (fabs(higssBbGenParticleD.eta())<2.4) h_["DEBUG_higgsBbDRpreMatching_3p500to515_eta0to2p4"]->Fill(dRbb);
+		}
+
 
 		for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPnameD.size(); ++iWP){
 			if (fatJetMatchD.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWPD[iWP]){
