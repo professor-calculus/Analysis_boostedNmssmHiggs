@@ -51,7 +51,7 @@ Splitting angle of the bbar pair
 TStyle * TDRStyle();
 void drawAndSave(TMultiGraph*, TLegend*, std::string, std::string, double, double, double, double, double, double);
 int SetColor(int, int);
-void SetGraphOptions(TGraphAsymmErrors *, size_t, size_t);
+void SetGraphOptions(TGraphAsymmErrors *, size_t, size_t, int);
 void doCalculationsAndGraphs(double, double, double, double, std::vector<double>, std::string);
 
 
@@ -62,14 +62,15 @@ void massParamsToKinematics()
 	////////////////////////
 
 	// Setup the outputting
-	std::string motherDir = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_massParamsToKinematics_5e2202_v9/";
+	std::string motherDir = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_massParamsToKinematics_5e2202_v103/";
 
 	// Setup the mass parameters
 	std::vector<double> mass_squark_vec = {1000.0, 1100.0, 1200.0};
 	std::vector<double> mass_higgs_vec = {83.0, 89.0, 95.0};
 	double mass_ratio_beginPoint = 0.7; // mass_ratio = mass_higgs / mass_NLSP
-	double mass_ratio_stepSize = 0.01; // interval in ratio between each calculation
-	std::vector<double> mass_delta_vec = {15.0, 10.0, 5.0, 1.0}; // mass_delta = mass_NLSP - mass_higgs - mass_LSP
+	double mass_ratio_stepSize = 0.001; // interval in ratio between each calculation
+	// std::vector<double> mass_delta_vec = {15.0, 10.0, 5.0, 1.0}; // mass_delta = mass_NLSP - mass_higgs - mass_LSP
+	std::vector<double> mass_delta_vec = {1.0, 5.0, 10.0, 15.0}; // mass_delta = mass_NLSP - mass_higgs - mass_LSP
 
 	////////////////////////
 	////////////////////////
@@ -96,6 +97,81 @@ void massParamsToKinematics()
 		} // closes loop through higgs entries
 	} // closes loop through squark entries
 
+	// create educational pdfs
+	// pt dist.
+	TStyle * tdrStyle = TDRStyle();
+	TCanvas* cPT = new TCanvas("cPT","cPT");
+	TF1 * funcPT = new TF1("funcPT","x/sqrt(1-x*x)",0,0.9999999);
+	funcPT->GetXaxis()->SetTitle("X");
+	// funcPT->GetYaxis()->SetTitle("distribution");
+	funcPT->SetTitle("");
+	funcPT->SetLineColor(2);
+	funcPT->SetLineWidth(2);
+	funcPT->Draw();
+	TLatex * latPT = new TLatex();
+	latPT->SetNDC();
+	latPT->SetTextFont(42);
+	latPT->SetTextAlign(11); // align from left
+	latPT->DrawLatex(0.20,0.80,"distribution of a particles p_{T}");
+	latPT->DrawLatex(0.20,0.74,"with constant |p| and random direction");
+	latPT->DrawLatex(0.50,0.62,"PDF = #frac{X}{#sqrt{1-X^{2}}}");
+	latPT->DrawLatex(0.50,0.45,"X = #frac{p_{T}}{|p|}");	
+	cPT->SaveAs(Form("%sexamplePtDist.pdf", motherDir.c_str()));
+	cPT->Close();
+
+	// dr dist.
+	// TStyle * tdrStyle = TDRStyle();
+	TCanvas* cDR = new TCanvas("cDR","cDR");
+	double mass_squark_func = mass_squark_vec[int(mass_squark_vec.size()/2)];
+	double pt_higgs_func = 5*mass_squark_func/12;
+	double mass_higgs_func = mass_higgs_vec[int(mass_higgs_vec.size()/2)];
+	double dRmin_func = 2 * mass_higgs_func / pt_higgs_func; 
+	// TF1 * funcDRdum = new TF1("funcDR","0",0,2.0);
+	// funcDRdum->Draw();
+	TF1 * funcDR = new TF1("funcDR","(1/x)*(2*[0]/([1]*x))*(2*[0]/([1]*x))/sqrt(1-(2*[0]/([1]*x))*(2*[0]/([1]*x)))",dRmin_func,2.0);
+	funcDR->SetParameter(0, mass_higgs_func);
+	funcDR->SetParameter(1, pt_higgs_func);
+	funcDR->GetXaxis()->SetTitle("dR bb");
+	// funcDR->GetYaxis()->SetTitle("distribution");
+	funcDR->SetTitle("");
+	funcDR->SetLineColor(2);
+	funcDR->SetLineWidth(2);
+	funcDR->Draw();
+	TLatex * latDR = new TLatex();
+	latDR->SetNDC();
+	latDR->SetTextFont(42);
+	latDR->SetTextAlign(11); // align from left
+	// latDR->DrawLatex(0.15,0.92,Form("Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV", mass_squark_func, mass_higgs_func));
+	latDR->DrawLatex(0.20,0.80,"distribution in higss->bb seperation, R");
+	latDR->DrawLatex(0.20,0.74,"due to variation in higgs p_{T} for a given |p|");
+	latDR->DrawLatex(0.50,0.62,"PDF = #frac{(R_{0}/R)^{2}}{R#sqrt{1-(R_{0}/R)^{2}}}");
+	latDR->DrawLatex(0.50,0.45,"R_{0} = #frac{2m_{higgs}}{p_{higgs}}");	
+	latDR->DrawLatex(0.15,0.92,"Described by 'Straight Line' Dists (R_{0} to R_{mean})");	
+	cDR->SaveAs(Form("%sexampleDrDist.pdf", motherDir.c_str()));
+	cDR->Close();
+
+	// higgs |p| dist.
+	TCanvas* cHP = new TCanvas("cHP","cHP");
+	TF1 * funcHP = new TF1("funcHP","sin(x)",0,M_PI);
+	funcHP->SetParameter(0, mass_higgs_func);
+	funcHP->SetParameter(1, pt_higgs_func);
+	funcHP->GetXaxis()->SetTitle("|p_{higgs}|");
+	// funcHP->GetYaxis()->SetTitle("distribution");
+	funcHP->SetTitle("");
+	funcHP->SetLineColor(2);
+	funcHP->SetLineWidth(2);
+	funcHP->Draw();
+	TLatex * latHP = new TLatex();
+	latHP->SetNDC();
+	latHP->SetTextFont(42);
+	latHP->SetTextAlign(11); // align from left
+	latHP->DrawLatex(0.30,0.30,"Note:");
+	latHP->DrawLatex(0.30,0.25,"higgs |p| distribution is ~sinosoidal");
+	latHP->DrawLatex(0.30,0.20,"between min and max");
+	latHP->DrawLatex(0.15,0.92,"Described by 'Dotted' Dists (min to max)");
+	cHP->SaveAs(Form("%sexampleHiggs3PDist.pdf", motherDir.c_str()));
+	cHP->Close(); 
+
 } // closes the function 'massParamsToKinematics'
 
 
@@ -112,8 +188,11 @@ void doCalculationsAndGraphs(double mass_squark, double mass_higgs, double mass_
 	TMultiGraph * mg_momentum_LSP = new TMultiGraph();
 	TMultiGraph * mg_energy_higgs = new TMultiGraph();
 	TMultiGraph * mg_momentum_higgs = new TMultiGraph();
-	TMultiGraph * mg_seperation_bb = new TMultiGraph();
-
+	TMultiGraph * mg_seperation_bb_min_different3p = new TMultiGraph();
+	TMultiGraph * mg_seperation_bb_minToMean = new TMultiGraph();
+	std::vector<TGraphAsymmErrors*> reverse_momentumHiggsEntry;
+	std::vector<TGraphAsymmErrors*> reverse_momentumLSPEntry;
+	std::vector<TGraphAsymmErrors*> reverse_seperation_bb_min_different3p;
 	TLegend * legend = new TLegend();
 	legend->SetHeader("Mass Gap");
 	TCanvas* c=new TCanvas("c","c");
@@ -140,7 +219,10 @@ void doCalculationsAndGraphs(double mass_squark, double mass_higgs, double mass_
 		std::vector<double> momentum_higgs_mean_vec;
 		std::vector<double> momentum_higgs_devUp_vec;
 		std::vector<double> momentum_higgs_devDown_vec;
-		std::vector<double> seperation_bb_vec;
+		std::vector<double> seperation_bb_min_higgsPtMean_vec;
+		std::vector<double> seperation_bb_meanMinDev_higgsPtMean_vec;
+		std::vector<double> seperation_bb_minDev_higgsPtMax_vec;
+		std::vector<double> seperation_bb_minDev_higgsPtMin_vec;
 
 		for (double mass_ratio = mass_ratio_beginPoint; mass_ratio < mass_higgs / (mass_delta + mass_higgs); mass_ratio += mass_ratio_stepSize){  
 			mass_ratio_vec.push_back(mass_ratio);
@@ -186,12 +268,14 @@ void doCalculationsAndGraphs(double mass_squark, double mass_higgs, double mass_
 			double momentum_higgs_devDown = -1 * sqrt( (energy_higgs_mean-energy_higgs_dev) * (energy_higgs_mean-energy_higgs_dev) - mass_higgs * mass_higgs ) + momentum_higgs_mean;
 
 			// higgs -> bbar
-			double seperation_bb = 2 * mass_higgs / momentum_higgs_mean; //transverse momentum???
-
+			double seperation_bb_min_higgsPtMean = 2 * mass_higgs / momentum_higgs_mean;
+			double seperation_bb_meanMinDev_higgsPtMean = ((M_PI/2) - 1) * seperation_bb_min_higgsPtMean;
+			double seperation_bb_minDev_higgsPtMax = seperation_bb_min_higgsPtMean - 2 * mass_higgs / (momentum_higgs_mean+momentum_higgs_devUp); // smearing below
+			double seperation_bb_minDev_higgsPtMin = 2 * mass_higgs / (momentum_higgs_mean-momentum_higgs_devDown) - seperation_bb_min_higgsPtMean; // smearing above
 			//////////////////
 			// -----END---- // 
 			// CALCULATIONS //
-			// ------------ //
+			// ------------ //todo update the vector objects and graphs that handle bb sep
 			//////////////////
 
 			mass_NLSP_vec.push_back(mass_NLSP);
@@ -210,7 +294,10 @@ void doCalculationsAndGraphs(double mass_squark, double mass_higgs, double mass_
 			momentum_higgs_mean_vec.push_back(momentum_higgs_mean);
 			momentum_higgs_devUp_vec.push_back(momentum_higgs_devUp);
 			momentum_higgs_devDown_vec.push_back(momentum_higgs_devDown);
-			seperation_bb_vec.push_back(seperation_bb);
+			seperation_bb_min_higgsPtMean_vec.push_back(seperation_bb_min_higgsPtMean);
+			seperation_bb_meanMinDev_higgsPtMean_vec.push_back(seperation_bb_meanMinDev_higgsPtMean);
+			seperation_bb_minDev_higgsPtMax_vec.push_back(seperation_bb_minDev_higgsPtMax);
+			seperation_bb_minDev_higgsPtMin_vec.push_back(seperation_bb_minDev_higgsPtMin); 
 
 		} // closes loop through the mass_ratio values
 
@@ -224,19 +311,21 @@ void doCalculationsAndGraphs(double mass_squark, double mass_higgs, double mass_
 		TGraphAsymmErrors * gr_momentum_LSP = new TGraphAsymmErrors(mass_ratio_vec.size(), &(mass_ratio_vec[0]), &(momentum_LSP_mean_vec[0]), &(null_vec[0]), &(null_vec[0]), &(momentum_LSP_devDown_vec[0]), &(momentum_LSP_devUp_vec[0]));
 		TGraphAsymmErrors * gr_energy_higgs = new TGraphAsymmErrors(mass_ratio_vec.size(), &(mass_ratio_vec[0]), &(energy_higgs_mean_vec[0]), &(null_vec[0]), &(null_vec[0]), &(energy_higgs_dev_vec[0]), &(energy_higgs_dev_vec[0]));
 		TGraphAsymmErrors * gr_momentum_higgs = new TGraphAsymmErrors(mass_ratio_vec.size(), &(mass_ratio_vec[0]), &(momentum_higgs_mean_vec[0]), &(null_vec[0]), &(null_vec[0]), &(momentum_higgs_devDown_vec[0]), &(momentum_higgs_devUp_vec[0]));
-		TGraphAsymmErrors * gr_seperation_bb = new TGraphAsymmErrors(mass_ratio_vec.size(), &(mass_ratio_vec[0]), &(seperation_bb_vec[0]), &(null_vec[0]), &(null_vec[0]), &(null_vec[0]), &(null_vec[0]));
+		TGraphAsymmErrors * gr_seperation_bb_min_different3p = new TGraphAsymmErrors(mass_ratio_vec.size(), &(mass_ratio_vec[0]), &(seperation_bb_min_higgsPtMean_vec[0]), &(null_vec[0]), &(null_vec[0]), &(seperation_bb_minDev_higgsPtMax_vec[0]), &(seperation_bb_minDev_higgsPtMin_vec[0]));
+		TGraphAsymmErrors * gr_seperation_bb_minToMean = new TGraphAsymmErrors(mass_ratio_vec.size(), &(mass_ratio_vec[0]), &(seperation_bb_min_higgsPtMean_vec[0]), &(null_vec[0]), &(null_vec[0]), &(null_vec[0]), &(seperation_bb_meanMinDev_higgsPtMean_vec[0]));
 
-		SetGraphOptions(gr_mass_NLSP, i_delta, mass_delta_vec.size());
-		SetGraphOptions(gr_mass_LSP, i_delta, mass_delta_vec.size());
-		SetGraphOptions(gr_energy_quark, i_delta, mass_delta_vec.size());
-		SetGraphOptions(gr_momentum_quark, i_delta, mass_delta_vec.size());
-		SetGraphOptions(gr_energy_NLSP, i_delta, mass_delta_vec.size());
-		SetGraphOptions(gr_momentum_NLSP, i_delta, mass_delta_vec.size());
-		SetGraphOptions(gr_energy_LSP, i_delta, mass_delta_vec.size());
-		SetGraphOptions(gr_momentum_LSP, i_delta, mass_delta_vec.size());
-		SetGraphOptions(gr_energy_higgs, i_delta, mass_delta_vec.size());
-		SetGraphOptions(gr_momentum_higgs, i_delta, mass_delta_vec.size());
-		SetGraphOptions(gr_seperation_bb, i_delta, mass_delta_vec.size());
+		SetGraphOptions(gr_mass_NLSP, i_delta, mass_delta_vec.size(), 3002);
+		SetGraphOptions(gr_mass_LSP, i_delta, mass_delta_vec.size(), 3002);
+		SetGraphOptions(gr_energy_quark, i_delta, mass_delta_vec.size(), 3002);
+		SetGraphOptions(gr_momentum_quark, i_delta, mass_delta_vec.size(), 3002);
+		SetGraphOptions(gr_energy_NLSP, i_delta, mass_delta_vec.size(), 3002);
+		SetGraphOptions(gr_momentum_NLSP, i_delta, mass_delta_vec.size(), 3002);
+		SetGraphOptions(gr_energy_LSP, i_delta, mass_delta_vec.size(), 3002);
+		SetGraphOptions(gr_momentum_LSP, i_delta, mass_delta_vec.size(), 3002);
+		SetGraphOptions(gr_energy_higgs, i_delta, mass_delta_vec.size(), 3002);
+		SetGraphOptions(gr_momentum_higgs, i_delta, mass_delta_vec.size(), 3002);
+		SetGraphOptions(gr_seperation_bb_min_different3p, i_delta, mass_delta_vec.size(), 3002);
+		SetGraphOptions(gr_seperation_bb_minToMean, i_delta, mass_delta_vec.size(), 3395); // 3007
 
 		TH1F * h_dummy = new TH1F("h_dummy", "", 100, 0, 100);
 		h_dummy->SetLineColor(SetColor(i_delta, mass_delta_vec.size()));
@@ -252,12 +341,24 @@ void doCalculationsAndGraphs(double mass_squark, double mass_higgs, double mass_
 		mg_energy_NLSP->Add(gr_energy_NLSP);
 		mg_momentum_NLSP->Add(gr_momentum_NLSP);
 		mg_energy_LSP->Add(gr_energy_LSP);
-		mg_momentum_LSP->Add(gr_momentum_LSP);
+		// mg_momentum_LSP->Add(gr_momentum_LSP);
 		mg_energy_higgs->Add(gr_energy_higgs);
-		mg_momentum_higgs->Add(gr_momentum_higgs);
-		mg_seperation_bb->Add(gr_seperation_bb);
+		// mg_momentum_higgs->Add(gr_momentum_higgs);
+		// mg_seperation_bb_min_different3p->Add(gr_seperation_bb_min_different3p);
+		mg_seperation_bb_minToMean->Add(gr_seperation_bb_minToMean);
 
+		// hack to reverse the order of the higgs and lsp momentum entries into the multigraph 		
+		reverse_momentumLSPEntry.push_back(gr_momentum_LSP);
+		reverse_momentumHiggsEntry.push_back(gr_momentum_higgs);
+		reverse_seperation_bb_min_different3p.push_back(gr_seperation_bb_min_different3p);
 	} // closes loop through the mass_delta entries
+
+	// hack to reverse the order of the higgs and lsp momentum entries into the multigraph 
+	for (size_t revCount = mass_delta_vec.size(); revCount > 0; --revCount){
+		mg_momentum_LSP->Add(reverse_momentumLSPEntry[revCount-1]);
+		mg_momentum_higgs->Add(reverse_momentumHiggsEntry[revCount-1]);
+		mg_seperation_bb_min_different3p->Add(reverse_seperation_bb_min_different3p[revCount-1]);
+	}
 
 	drawAndSave(mg_mass_NLSP, legend, Form("%sNLSP_mass.pdf", outputDir.c_str()), "mass_NLSP (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
 	drawAndSave(mg_mass_LSP, legend, Form("%sLSP_mass.pdf", outputDir.c_str()), "mass_LSP (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
@@ -269,8 +370,8 @@ void doCalculationsAndGraphs(double mass_squark, double mass_higgs, double mass_
 	drawAndSave(mg_momentum_LSP, legend, Form("%sLSP_momentum.pdf", outputDir.c_str()), "momentum_LSP (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
 	// drawAndSave(mg_energy_higgs, legend, Form("%shiggs_energy.pdf", outputDir.c_str()), "energy_higgs (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
 	drawAndSave(mg_momentum_higgs, legend, Form("%shiggs_momentum.pdf", outputDir.c_str()), "momentum_higgs (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.25, 0.46);
-	drawAndSave(mg_seperation_bb, legend, Form("%ssperation_bb.pdf", outputDir.c_str()), "seperation_bb", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
-
+	drawAndSave(mg_seperation_bb_min_different3p, legend, Form("%ssepration_bb_min_difference3p.pdf", outputDir.c_str()), "dR_{0} bb", mass_squark, mass_higgs, 0.76, 0.88, 0.65, 0.86);
+	drawAndSave(mg_seperation_bb_minToMean, legend, Form("%sseperation_bb_minToMean.pdf", outputDir.c_str()), "dR bb", mass_squark, mass_higgs, 0.76, 0.88, 0.65, 0.86);
 } // closes the function 'doCalculationsAndGraphs'
 
 
@@ -283,7 +384,7 @@ void drawAndSave(TMultiGraph * mg, TLegend * leg, std::string saveName, std::str
 	TStyle * tdrStyle = TDRStyle();
 	TCanvas* cPlot=new TCanvas("cPlot","cPlot");
 	mg->Draw("a3L");
-	mg->GetXaxis()->SetTitle("mass_Higgs / mass_NLSP");
+	mg->GetXaxis()->SetTitle("mass_higgs / mass_NLSP");
 	mg->GetYaxis()->SetTitle(yAxisTitle.c_str());
 	mg->Draw("a3L");
 	leg->SetX1NDC(legXmin);
@@ -296,6 +397,8 @@ void drawAndSave(TMultiGraph * mg, TLegend * leg, std::string saveName, std::str
 	latex->SetTextFont(42);
 	latex->SetTextAlign(11); // align from left
 	latex->DrawLatex(0.15,0.92,Form("Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV", mass_squark, mass_higgs));
+	if (yAxisTitle=="dR_{0} bb") latex->DrawLatex(0.30,0.83,"dist. due to different higgs |p|");
+	if (yAxisTitle=="dR bb") latex->DrawLatex(0.30,0.83,"dist. due to higgs p_{T} variation");
 	cPlot->SaveAs(saveName.c_str());
 	cPlot->Close();
 }
@@ -325,11 +428,13 @@ int SetColor(int posititon, int maxColors)
 
 
 
-void SetGraphOptions(TGraphAsymmErrors * gr, size_t index, size_t numberOfBins){
+void SetGraphOptions(TGraphAsymmErrors * gr, size_t index, size_t numberOfBins, int fillStyle){
 	gr->SetLineWidth(3);
 	gr->SetLineColor(SetColor(index, numberOfBins));
 	gr->SetFillColorAlpha(SetColor(index, numberOfBins), 1.00);
-	gr->SetFillStyle(3002);
+	gStyle->SetHatchesLineWidth(2);
+	gr->SetFillStyle(fillStyle);
+
 }
 
 
