@@ -47,7 +47,7 @@ in lab frame - energy, momentum, transverse momentum
 Splitting angle of the bbar pair
 */
 
-
+void createTex(std::vector<double>, std::vector<double>, std::string);
 TStyle * TDRStyle();
 void drawAndSave(TMultiGraph*, TLegend*, std::string, std::string, double, double, double, double, double, double);
 int SetColor(int, int);
@@ -62,15 +62,14 @@ void massParamsToKinematics()
 	////////////////////////
 
 	// Setup the outputting
-	std::string motherDir = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_massParamsToKinematics_5e2202_v202/";
+	std::string motherDir = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_massParamsToKinematics_5e2202_v01/";
 
 	// Setup the mass parameters
-	std::vector<double> mass_squark_vec = {1000.0, 1100.0, 1200.0};
-	std::vector<double> mass_higgs_vec = {83.0, 89.0, 95.0};
+	std::vector<double> mass_squark_vec = {800.0, 900.0, 1000.0, 1100.0, 1200.0, 1300.0, 1400.0, 1500.0, 1600.0, 1700.0, 1800.0};
+	std::vector<double> mass_higgs_vec = {70.0, 75.0, 80.0, 85.0, 90.0, 95.0, 100.0, 105.0, 110.0, 115.0, 120.0, 125.0, 130.0};
 	double mass_ratio_beginPoint = 0.7; // mass_ratio = mass_higgs / mass_NLSP
 	double mass_ratio_stepSize = 0.001; // interval in ratio between each calculation
-	// std::vector<double> mass_delta_vec = {15.0, 10.0, 5.0, 1.0}; // mass_delta = mass_NLSP - mass_higgs - mass_LSP
-	std::vector<double> mass_delta_vec = {1.0, 5.0, 10.0, 15.0}; // mass_delta = mass_NLSP - mass_higgs - mass_LSP
+	std::vector<double> mass_delta_vec = {1.0, 5.0, 10.0, 15.0, 20.0}; // mass_delta = mass_NLSP - mass_higgs - mass_LSP
 
 	////////////////////////
 	////////////////////////
@@ -87,47 +86,6 @@ void massParamsToKinematics()
 		return;
 	}
 
-	// create .tex strings to use in presentations
-	std::string tex_sep = "\\documentclass{beamer}\n";
-	tex_sep += "\\begin{document}\n\n";
-	std::string tex_LSP = "\\documentclass{beamer}\n";
-	tex_LSP += "\\begin{document}\n\n";
-	std::string tex_NLSP = "\\documentclass{beamer}\n";
-	tex_NLSP += "\\begin{document}\n\n";
-	std::string tex_higgs = "\\documentclass{beamer}\n";
-	tex_higgs += "\\begin{document}\n\n";
-
-	// add the intro pics
-	tex_sep += "\\begin{frame}";
-	tex_sep += "\\begin{figure}[!htbp]\n";
-	tex_sep += "\\centering\n";
-	tex_sep += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleHiggs3PDist.pdf}\n";
-	tex_sep += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleDrDist.pdf}\n";
-	tex_sep += "\\end{figure}\n";
-	tex_sep += "\\end{frame}\n\n";
-
-	tex_LSP += "\\begin{frame}";
-	tex_LSP += "\\begin{figure}[!htbp]\n";
-	tex_LSP += "\\centering\n";
-	tex_LSP += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{examplePtDist.pdf}\n";
-	tex_LSP += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleHiggs3PDist.pdf}\n";
-	tex_LSP += "\\end{figure}\n";
-	tex_LSP += "\\end{frame}\n\n";
-
-	tex_NLSP += "\\begin{frame}";
-	tex_NLSP += "\\begin{figure}[!htbp]\n";
-	tex_NLSP += "\\centering\n";
-	tex_NLSP += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{examplePtDist.pdf}\n";
-	tex_NLSP += "\\end{figure}\n";
-	tex_NLSP += "\\end{frame}\n\n";
-
-	tex_higgs += "\\begin{frame}";
-	tex_higgs += "\\begin{figure}[!htbp]\n";
-	tex_higgs += "\\centering\n";
-	tex_higgs += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleHiggs3PDist.pdf}\n";
-	tex_higgs += "\\end{figure}\n";
-	tex_higgs += "\\end{frame}\n\n";
-
 	for (size_t i_squark=0; i_squark < mass_squark_vec.size(); ++i_squark){
 		for (size_t i_higgs=0; i_higgs < mass_higgs_vec.size(); ++i_higgs){
 		
@@ -135,72 +93,11 @@ void massParamsToKinematics()
 			std::system(Form("mkdir %s", outputDir.c_str()));
 			doCalculationsAndGraphs(mass_squark_vec[i_squark], mass_higgs_vec[i_higgs], mass_ratio_beginPoint, mass_ratio_stepSize, mass_delta_vec, outputDir);
 
-			// add images to .tex presentations
-		    std::string dirForSlide = Form("massSquark%.0f_massHiggs%.0f/", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
-		    
-		    tex_sep += "\\begin{frame}";
-		    tex_sep += "\\begin{figure}[!htbp]\n";
-		    tex_sep += "\\centering\n";
-	        // tex_sep += Form("\\footnotesize\n \\textbf{Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV} \\hspace{0.15\\textwidth}", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
-		    tex_sep += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sseperation_bb_min_difference3p.pdf}\n", dirForSlide.c_str());
-		    tex_sep += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sseperation_bb_minToMean.pdf}\n", dirForSlide.c_str());
-		    tex_sep += "\\end{figure}\n";
-		    tex_sep += "\\end{frame}\n\n";
-
-		    tex_LSP += "\\begin{frame}";
-		    tex_LSP += "\\begin{figure}[!htbp]\n";
-		    tex_LSP += "\\centering\n";
-	        // tex_LSP += Form("\\footnotesize\n \\textbf{Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV} \\hspace{0.15\\textwidth}", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
-		    tex_LSP += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sLSP_mass.pdf}\n", dirForSlide.c_str());
-		    tex_LSP += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sLSP_momentum.pdf}\n", dirForSlide.c_str());
-		    tex_LSP += "\\end{figure}\n";
-		    tex_LSP += "\\end{frame}\n\n";
-
-		    tex_NLSP += "\\begin{frame}";
-		    tex_NLSP += "\\begin{figure}[!htbp]\n";
-		    tex_NLSP += "\\centering\n";
-	        // tex_NLSP += Form("\\footnotesize\n \\textbf{Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV} \\hspace{0.15\\textwidth}", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
-		    tex_NLSP += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sNLSP_mass.pdf}\n", dirForSlide.c_str());
-		    tex_NLSP += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sNLSP_momentum.pdf}\n", dirForSlide.c_str());
-		    tex_NLSP += "\\end{figure}\n";
-		    tex_NLSP += "\\end{frame}\n\n";
-
-		    tex_higgs += "\\begin{frame}";
-		    tex_higgs += "\\begin{figure}[!htbp]\n";
-		    tex_higgs += "\\centering\n";
-	        // tex_higgs += Form("\\footnotesize\n \\textbf{Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV} \\hspace{0.15\\textwidth}", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
-		    tex_higgs += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%shiggs_momentum.pdf}\n", dirForSlide.c_str());
-		    tex_higgs += "\\end{figure}\n";
-		    tex_higgs += "\\end{frame}\n\n";
-
 		} // closes loop through higgs entries
 	} // closes loop through squark entries
 
-	tex_sep += "\\end{document}";
-	tex_LSP += "\\end{document}";
-	tex_NLSP += "\\end{document}";
-	tex_higgs += "\\end{document}";
-
-	// write these strings to .tex files
-	std::ofstream file_sep;
-	file_sep.open(Form("%ssep.tex", motherDir.c_str()));
-	file_sep << tex_sep;
-	file_sep.close();
-
-	std::ofstream file_LSP;
-	file_LSP.open(Form("%sLSP.tex", motherDir.c_str()));
-	file_LSP << tex_LSP;
-	file_LSP.close();
-
-	std::ofstream file_NLSP;
-	file_NLSP.open(Form("%sNLSP.tex", motherDir.c_str()));
-	file_NLSP << tex_NLSP;
-	file_NLSP.close();
-
-	std::ofstream file_higgs;
-	file_higgs.open(Form("%shiggs.tex", motherDir.c_str()));
-	file_higgs << tex_higgs;
-	file_higgs.close();
+	// create the .tex file
+	createTex(mass_squark_vec, mass_higgs_vec, motherDir);
 
 	// create educational pdfs
 	// pt dist.
@@ -539,6 +436,227 @@ void SetGraphOptions(TGraphAsymmErrors * gr, size_t index, size_t numberOfBins, 
 	gr->SetFillColorAlpha(SetColor(index, numberOfBins), 1.00);
 	gStyle->SetHatchesLineWidth(2);
 	gr->SetFillStyle(fillStyle);
+
+}
+
+
+
+
+
+void createTex(std::vector<double> mass_squark_vec, std::vector<double> mass_higgs_vec, std::string motherDir)
+{
+	// create .tex strings to use in presentations
+	std::string tex_sep = "\\documentclass{beamer}\n";
+	tex_sep += "\\begin{document}\n\n";
+	std::string tex_LSP = "\\documentclass{beamer}\n";
+	tex_LSP += "\\begin{document}\n\n";
+	std::string tex_NLSP = "\\documentclass{beamer}\n";
+	tex_NLSP += "\\begin{document}\n\n";
+	std::string tex_higgs = "\\documentclass{beamer}\n";
+	tex_higgs += "\\begin{document}\n\n";
+	std::string tex_sepRev = "\\documentclass{beamer}\n";
+	tex_sepRev += "\\begin{document}\n\n";
+	std::string tex_LSPRev = "\\documentclass{beamer}\n";
+	tex_LSPRev += "\\begin{document}\n\n";
+	std::string tex_NLSPRev = "\\documentclass{beamer}\n";
+	tex_NLSPRev += "\\begin{document}\n\n";
+	std::string tex_higgsRev = "\\documentclass{beamer}\n";
+	tex_higgsRev += "\\begin{document}\n\n";
+
+	// add the intro pics
+	tex_sep += "\\begin{frame}";
+	tex_sep += "\\begin{figure}[!htbp]\n";
+	tex_sep += "\\centering\n";
+	tex_sep += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleHiggs3PDist.pdf}\n";
+	tex_sep += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleDrDist.pdf}\n";
+	tex_sep += "\\end{figure}\n";
+	tex_sep += "\\end{frame}\n\n";
+
+	tex_LSP += "\\begin{frame}";
+	tex_LSP += "\\begin{figure}[!htbp]\n";
+	tex_LSP += "\\centering\n";
+	tex_LSP += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{examplePtDist.pdf}\n";
+	tex_LSP += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleHiggs3PDist.pdf}\n";
+	tex_LSP += "\\end{figure}\n";
+	tex_LSP += "\\end{frame}\n\n";
+
+	tex_NLSP += "\\begin{frame}";
+	tex_NLSP += "\\begin{figure}[!htbp]\n";
+	tex_NLSP += "\\centering\n";
+	tex_NLSP += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{examplePtDist.pdf}\n";
+	tex_NLSP += "\\end{figure}\n";
+	tex_NLSP += "\\end{frame}\n\n";
+
+	tex_higgs += "\\begin{frame}";
+	tex_higgs += "\\begin{figure}[!htbp]\n";
+	tex_higgs += "\\centering\n";
+	tex_higgs += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleHiggs3PDist.pdf}\n";
+	tex_higgs += "\\end{figure}\n";
+	tex_higgs += "\\end{frame}\n\n";
+
+	tex_sepRev += "\\begin{frame}";
+	tex_sepRev += "\\begin{figure}[!htbp]\n";
+	tex_sepRev += "\\centering\n";
+	tex_sepRev += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleHiggs3PDist.pdf}\n";
+	tex_sepRev += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleDrDist.pdf}\n";
+	tex_sepRev += "\\end{figure}\n";
+	tex_sepRev += "\\end{frame}\n\n";
+
+	tex_LSPRev += "\\begin{frame}";
+	tex_LSPRev += "\\begin{figure}[!htbp]\n";
+	tex_LSPRev += "\\centering\n";
+	tex_LSPRev += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{examplePtDist.pdf}\n";
+	tex_LSPRev += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleHiggs3PDist.pdf}\n";
+	tex_LSPRev += "\\end{figure}\n";
+	tex_LSPRev += "\\end{frame}\n\n";
+
+	tex_NLSPRev += "\\begin{frame}";
+	tex_NLSPRev += "\\begin{figure}[!htbp]\n";
+	tex_NLSPRev += "\\centering\n";
+	tex_NLSPRev += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{examplePtDist.pdf}\n";
+	tex_NLSPRev += "\\end{figure}\n";
+	tex_NLSPRev += "\\end{frame}\n\n";
+
+	tex_higgsRev += "\\begin{frame}";
+	tex_higgsRev += "\\begin{figure}[!htbp]\n";
+	tex_higgsRev += "\\centering\n";
+	tex_higgsRev += "\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{exampleHiggs3PDist.pdf}\n";
+	tex_higgsRev += "\\end{figure}\n";
+	tex_higgsRev += "\\end{frame}\n\n";
+
+	for (size_t i_squark=0; i_squark < mass_squark_vec.size(); ++i_squark){
+		for (size_t i_higgs=0; i_higgs < mass_higgs_vec.size(); ++i_higgs){
+		
+			// add images to .tex presentations
+		    std::string dirForSlide = Form("massSquark%.0f_massHiggs%.0f/", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
+		    
+		    tex_sep += "\\begin{frame}";
+		    tex_sep += "\\begin{figure}[!htbp]\n";
+		    tex_sep += "\\centering\n";
+	        // tex_sep += Form("\\footnotesize\n \\textbf{Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV} \\hspace{0.15\\textwidth}", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
+		    tex_sep += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sseperation_bb_min_difference3p.pdf}\n", dirForSlide.c_str());
+		    tex_sep += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sseperation_bb_minToMean.pdf}\n", dirForSlide.c_str());
+		    tex_sep += "\\end{figure}\n";
+		    tex_sep += "\\end{frame}\n\n";
+
+		    tex_LSP += "\\begin{frame}";
+		    tex_LSP += "\\begin{figure}[!htbp]\n";
+		    tex_LSP += "\\centering\n";
+	        // tex_LSP += Form("\\footnotesize\n \\textbf{Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV} \\hspace{0.15\\textwidth}", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
+		    tex_LSP += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sLSP_mass.pdf}\n", dirForSlide.c_str());
+		    tex_LSP += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sLSP_momentum.pdf}\n", dirForSlide.c_str());
+		    tex_LSP += "\\end{figure}\n";
+		    tex_LSP += "\\end{frame}\n\n";
+
+		    tex_NLSP += "\\begin{frame}";
+		    tex_NLSP += "\\begin{figure}[!htbp]\n";
+		    tex_NLSP += "\\centering\n";
+	        // tex_NLSP += Form("\\footnotesize\n \\textbf{Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV} \\hspace{0.15\\textwidth}", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
+		    tex_NLSP += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sNLSP_mass.pdf}\n", dirForSlide.c_str());
+		    tex_NLSP += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sNLSP_momentum.pdf}\n", dirForSlide.c_str());
+		    tex_NLSP += "\\end{figure}\n";
+		    tex_NLSP += "\\end{frame}\n\n";
+
+		    tex_higgs += "\\begin{frame}";
+		    tex_higgs += "\\begin{figure}[!htbp]\n";
+		    tex_higgs += "\\centering\n";
+	        // tex_higgs += Form("\\footnotesize\n \\textbf{Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV} \\hspace{0.15\\textwidth}", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
+		    tex_higgs += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%shiggs_momentum.pdf}\n", dirForSlide.c_str());
+		    tex_higgs += "\\end{figure}\n";
+		    tex_higgs += "\\end{frame}\n\n";
+
+		} // closes loop through higgs entries
+	} // closes loop through squark entries
+
+	for (size_t i_higgs=0; i_higgs < mass_higgs_vec.size(); ++i_higgs){
+		for (size_t i_squark=0; i_squark < mass_squark_vec.size(); ++i_squark){
+		
+			// add images to .tex presentations
+		    std::string dirForSlide = Form("massSquark%.0f_massHiggs%.0f/", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
+		    
+		    tex_sepRev += "\\begin{frame}";
+		    tex_sepRev += "\\begin{figure}[!htbp]\n";
+		    tex_sepRev += "\\centering\n";
+		    tex_sepRev += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sseperation_bb_min_difference3p.pdf}\n", dirForSlide.c_str());
+		    tex_sepRev += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sseperation_bb_minToMean.pdf}\n", dirForSlide.c_str());
+		    tex_sepRev += "\\end{figure}\n";
+		    tex_sepRev += "\\end{frame}\n\n";
+
+		    tex_LSPRev += "\\begin{frame}";
+		    tex_LSPRev += "\\begin{figure}[!htbp]\n";
+		    tex_LSPRev += "\\centering\n";
+		    tex_LSPRev += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sLSP_mass.pdf}\n", dirForSlide.c_str());
+		    tex_LSPRev += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sLSP_momentum.pdf}\n", dirForSlide.c_str());
+		    tex_LSPRev += "\\end{figure}\n";
+		    tex_LSPRev += "\\end{frame}\n\n";
+
+		    tex_NLSPRev += "\\begin{frame}";
+		    tex_NLSPRev += "\\begin{figure}[!htbp]\n";
+		    tex_NLSPRev += "\\centering\n";
+		    tex_NLSPRev += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sNLSP_mass.pdf}\n", dirForSlide.c_str());
+		    tex_NLSPRev += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sNLSP_momentum.pdf}\n", dirForSlide.c_str());
+		    tex_NLSPRev += "\\end{figure}\n";
+		    tex_NLSPRev += "\\end{frame}\n\n";
+
+		    tex_higgsRev += "\\begin{frame}";
+		    tex_higgsRev += "\\begin{figure}[!htbp]\n";
+		    tex_higgsRev += "\\centering\n";
+		    tex_higgsRev += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%shiggs_momentum.pdf}\n", dirForSlide.c_str());
+		    tex_higgsRev += "\\end{figure}\n";
+		    tex_higgsRev += "\\end{frame}\n\n";
+
+		} // closes loop through squark entries
+	} // closes loop through higgs entries
+
+	tex_sep += "\\end{document}";
+	tex_LSP += "\\end{document}";
+	tex_NLSP += "\\end{document}";
+	tex_higgs += "\\end{document}";
+	tex_sepRev += "\\end{document}";
+	tex_LSPRev += "\\end{document}";
+	tex_NLSPRev += "\\end{document}";
+	tex_higgsRev += "\\end{document}";
+
+	// write these strings to .tex files
+	std::ofstream file_sep;
+	file_sep.open(Form("%ssep.tex", motherDir.c_str()));
+	file_sep << tex_sep;
+	file_sep.close();
+
+	std::ofstream file_LSP;
+	file_LSP.open(Form("%sLSP.tex", motherDir.c_str()));
+	file_LSP << tex_LSP;
+	file_LSP.close();
+
+	std::ofstream file_NLSP;
+	file_NLSP.open(Form("%sNLSP.tex", motherDir.c_str()));
+	file_NLSP << tex_NLSP;
+	file_NLSP.close();
+
+	std::ofstream file_higgs;
+	file_higgs.open(Form("%shiggs.tex", motherDir.c_str()));
+	file_higgs << tex_higgs;
+	file_higgs.close();
+
+	std::ofstream file_sepRev;
+	file_sepRev.open(Form("%ssepRev.tex", motherDir.c_str()));
+	file_sepRev << tex_sepRev;
+	file_sepRev.close();
+
+	std::ofstream file_LSPRev;
+	file_LSPRev.open(Form("%sLSPRev.tex", motherDir.c_str()));
+	file_LSPRev << tex_LSPRev;
+	file_LSPRev.close();
+
+	std::ofstream file_NLSPRev;
+	file_NLSPRev.open(Form("%sNLSPRev.tex", motherDir.c_str()));
+	file_NLSPRev << tex_NLSPRev;
+	file_NLSPRev.close();
+
+	std::ofstream file_higgsRev;
+	file_higgsRev.open(Form("%shiggsRev.tex", motherDir.c_str()));
+	file_higgsRev << tex_higgsRev;
+	file_higgsRev.close();
 
 }
 
