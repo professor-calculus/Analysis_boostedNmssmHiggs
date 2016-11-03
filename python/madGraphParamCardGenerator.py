@@ -25,6 +25,7 @@ massSplitting = 1.0 # massNLSP - massHiggs - massLSP
 numberEvents = 1
 #############################
 
+#need to add changes to certain things!!!
 
 f = open('infoXYZ.param_card', 'w')
 f.write("# NMSSMTools OUTPUT IN SLHA FORMAT\n")
