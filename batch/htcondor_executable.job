@@ -1,0 +1,32 @@
+### the executable to run
+# Executable = /users/jt15104/MG5_aMC_v2_4_2/bin/mg5_aMC
+Universe = vanilla
+
+### options to be given after the executable (comma seperated values)
+# arguments = /users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/mcCampaignCommands.txt
+
+### where to store the output, error and logs
+# Output = /storage/jt15104/htcondor_executable.job.$(cluster).$(process).out
+# Error = /storage/jt15104/htcondor_executable.job.$(cluster).$(process).err
+# Log = /storage/jt15104/htcondor_executable.job.$(cluster).$(process).log
+
+### the following file is copied onto dice worker
+# input = /users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/mcCampaignCommands.txt
+### these are additional files copied onto dice worker (csv)
+# transfer_input_files = rootObjects_1.h, rootObjects_2.h
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT_OR_EVICT
+request_cpus = 1
+### memory in MB
+# request_memory = 1000
+
+getenv = true
+queue
+
+### this is a .job template for submitting jobs to dice
+### $ condor_submit htcondor_executable.job
+###
+### add the following terms to above command to set .job file settings
+### eg. -append 'request_memory=5000'
+### will control most of the job using -append.
