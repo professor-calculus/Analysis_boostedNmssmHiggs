@@ -31,20 +31,21 @@
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
+bool indexAllCascadeParticles(std::vector<GenParticle*>,int,std::string,std::ofstream&,unsigned int&,std::vector<int>&,std::vector<int>&,std::vector<int>&,std::vector<int>&,std::vector<int>&,std::vector<int>&,std::vector<int>&);
 
 void McSignalStudies() 
 {
+	// Running Options
+	int maxEvents_ = -1; // -1 for all events
+	unsigned int outputEvery_ = 1000;
+	std::vector<std::string> inputFiles_ = {"~/tag_1_delphes_events.root"};
+	std::string outputFile_ = "ABC_v3/output.root";
+	bool justDoPlotting_ = false;
+
 	// Create histograms, they are accessed by eg: h_["fatJetMass_loose"]->Fill(125.0);
 	std::map<std::string, TH1F*> h_;
 	std::map<std::string, TH2F*> h2_;
 	CreateHistograms(h_, h2_);
-
-	// Running Options
-	int maxEvents_ = 50; // -1 for all events
-	unsigned int outputEvery_ = 1;
-	std::vector<std::string> inputFiles_ = {"~/tag_1_delphes_events.root"};
-	std::string outputFile_ = "ABC_v3/output.root";
-	bool justDoPlotting_ = false;
 
 	std::string outputDirectory_;
 	std::string forwardSlash = "/";
@@ -65,7 +66,10 @@ void McSignalStudies()
 	// copy the code used to make the histogram ROOT file into the same directory (this could be out of sync if you edit after compilation)
 	if (justDoPlotting_ == false) std::system(Form("cp $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/macros/McSignalStudies.cxx %s",outputDirectory_.c_str()));		
 
-
+	// create an error log, for events that don't have the particles we expect... 
+	std::ofstream errorRecord;
+	errorRecord.open(Form("%serrors.txt",outputDirectory_.c_str()));
+	
 	///////////////////////////////
 	// Loop through the input files
 	///////////////////////////////
@@ -93,7 +97,7 @@ void McSignalStudies()
 				// event counter
 				if(outputEvery_!=0 ? (ievt>0 && ievt%outputEvery_==0) : false){
 					std::cout << "   File " << iFile+1 << " of " << inputFiles_.size() << ":";
-					std::cout << "  processing event: " << ievt << std::endl;
+					std::cout << "  processing event: " << ievt << " of " << nevents << std::endl;
 				}
 
 				// load info for this event
@@ -118,12 +122,11 @@ void McSignalStudies()
 				// A N A L Y S I S
 				// ------------------------------------------------------------------------------------------------------------//
 				// ------------------------------------------------------------------------------------------------------------//
-				
+
 				// count how many gluinos are involved, we know we expect 2 squarks
 				unsigned int gluinoCount = 0;
-
-				// the first element is leading arm
-				// the second element is for the secondary arm
+				// the first element is leading arm (decay from highest pt squark)
+				// the second element is for the secondary arm (decay from secondary pt squark)
 				// access leading lsp PT like so: particleVec[lspIndices[0]]->PT
 				// access secondary lsp PT like so: particleVec[lspIndices[1]]->PT
 				std::vector<int> squarkIndices;
@@ -133,132 +136,26 @@ void McSignalStudies()
 				std::vector<int> higgsIndices;
 				std::vector<int> bIndices;
 				std::vector<int> bbarIndices;
+				bool allParticlesPresent = indexAllCascadeParticles(particleVec,ievt,inputFiles_[iFile],errorRecord,gluinoCount,squarkIndices,qjetIndices,nlspIndices,lspIndices,higgsIndices,bIndices,bbarIndices);
+				if (allParticlesPresent==false) continue;
 
-				// *** SQUARKS ***
-				// loop through gen particle entries to find the squarks (and count the gluinos)
-				for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-					if ( abs(particleVec[iPar]->PID) == 1000021 ) gluinoCount++;
-					if ( abs(particleVec[iPar]->PID) == 1000001
-					|| abs(particleVec[iPar]->PID) == 2000001
-					|| abs(particleVec[iPar]->PID) == 1000002
-					|| abs(particleVec[iPar]->PID) == 2000002
-					|| abs(particleVec[iPar]->PID) == 1000003
-					|| abs(particleVec[iPar]->PID) == 2000003
-					|| abs(particleVec[iPar]->PID) == 1000004
-					|| abs(particleVec[iPar]->PID) == 2000004) squarkIndices.push_back(iPar);
-				} // closes loop through gen particle vector
-				if (squarkIndices.size() != 2){
-					std::cout << "WARNING" << std::endl;
-					// could elaborate and write to text or something the problem...
-					continue;
-				} // closes 'if' we don't have the 2 squarks
-				if (particleVec[squarkIndices[1]]->PT > particleVec[squarkIndices[0]]->PT) std::swap(squarkIndices[0],squarkIndices[1]);
-
-
-				// NB: the squark object do not have daughters...so we have to find cascade particles in a backwards kind of way			
-
-				// *** QJET ***
-				// loop through gen particle entries to find the quarks (squark->QUARK+nlsp)
-				// nb: currently these are set in madgraph to only be u or d quarks
-				// leading arm quark
-				for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-					if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 ){
-						if (particleVec[iPar]->M1 == squarkIndices[0]){
-							qjetIndices.push_back(iPar);  
-							break;
-						}
-					}
-				} // closes loop through gen particle vector
-				// secondary arm quark
-				for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-					if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 ){
-						if (particleVec[iPar]->M1 == squarkIndices[1]){
-							qjetIndices.push_back(iPar);  
-							break;
-						}
-					}
-				} // closes loop through gen particle vector
-				// check there are two entries
-
-
-				// *** NLSP ***
-				// loop through gen particle entries to find the nlsp's (squark->quark+NLSP)
-				// leading arm quark
-				for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-					if ( abs(particleVec[iPar]->PID) == 1000023 ){
-						if (particleVec[iPar]->M1 == squarkIndices[0]){
-							nlspIndices.push_back(iPar);  
-							break;
-						}
-					}
-				} // closes loop through gen particle vector
-				// secondary arm quark
-				for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-					if ( abs(particleVec[iPar]->PID) == 1000023 ){
-						if (particleVec[iPar]->M1 == squarkIndices[1]){
-							nlspIndices.push_back(iPar);  
-							break;
-						}
-					}
-				} // closes loop through gen particle vector
-				// check there are two entries
-
-
-
-				// *** LSP ***
-				// loop through gen particle entries to find the lsp's (nlsp->LSP+higgs)
-				// leading arm quark
-				for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-					if ( abs(particleVec[iPar]->PID) == 1000022 ){
-						if (particleVec[iPar]->M1 == nlspIndices[0]){
-							lspIndices.push_back(iPar);  
-							break;
-						}
-					}
-				} // closes loop through gen particle vector
-				// secondary arm quark
-				for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-					if ( abs(particleVec[iPar]->PID) == 1000022 ){
-						if (particleVec[iPar]->M1 == nlspIndices[1]){
-							lspIndices.push_back(iPar);  
-							break;
-						}
-					}
-				} // closes loop through gen particle vector
-				// check there are two entries
+				// Fill histograms with properties of these particles:)
+				h_["numberOfGluinos"]->Fill(gluinoCount);
 				
+				h_["leadingSquarkPt"]->Fill(particleVec[squarkIndices[0]]->PT);
+				if (gluinoCount == 0) h_["leadingSquarkPt_zeroGluinos"]->Fill(particleVec[squarkIndices[0]]->PT);
+				if (gluinoCount == 1) h_["leadingSquarkPt_oneGluinos"]->Fill(particleVec[squarkIndices[0]]->PT);
+				if (gluinoCount == 2) h_["leadingSquarkPt_twoGluinos"]->Fill(particleVec[squarkIndices[0]]->PT);
 
+				h_["secondarySquarkPt"]->Fill(particleVec[squarkIndices[1]]->PT);
+				if (gluinoCount == 0) h_["secondarySquarkPt_zeroGluinos"]->Fill(particleVec[squarkIndices[1]]->PT);
+				if (gluinoCount == 1) h_["secondarySquarkPt_oneGluinos"]->Fill(particleVec[squarkIndices[1]]->PT);
+				if (gluinoCount == 2) h_["secondarySquarkPt_twoGluinos"]->Fill(particleVec[squarkIndices[1]]->PT);
 
-				// *** HIGGS ***
-				// loop through gen particle entries to find the lsp's (nlsp->LSP+higgs)
-				// leading arm quark
-				for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-					if ( abs(particleVec[iPar]->PID) == 35 ){
-						if (particleVec[iPar]->M1 == nlspIndices[0]){
-							higgsIndices.push_back(iPar);  
-							break;
-						}
-					}
-				} // closes loop through gen particle vector
-				// secondary arm quark
-				for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-					if ( abs(particleVec[iPar]->PID) == 35 ){
-						if (particleVec[iPar]->M1 == nlspIndices[1]){
-							higgsIndices.push_back(iPar);  
-							break;
-						}
-					}
-				} // closes loop through gen particle vector
-				// check there are two entries
-
-
-
-				// do the same for the b's
-
-				// do the same for the bbars's
-
-
-
+				h2_["leadingSquarkPt_SecondarySquarkPt"]->Fill(particleVec[squarkIndices[1]]->PT,particleVec[squarkIndices[0]]->PT);
+				if (gluinoCount == 0) h2_["leadingSquarkPt_SecondarySquarkPt_zeroGluinos"]->Fill(particleVec[squarkIndices[1]]->PT,particleVec[squarkIndices[0]]->PT);
+				if (gluinoCount == 1) h2_["leadingSquarkPt_SecondarySquarkPt_oneGluinos"]->Fill(particleVec[squarkIndices[1]]->PT,particleVec[squarkIndices[0]]->PT); 
+				if (gluinoCount == 2) h2_["leadingSquarkPt_SecondarySquarkPt_twoGluinos"]->Fill(particleVec[squarkIndices[1]]->PT,particleVec[squarkIndices[0]]->PT); 
 
 
 
@@ -276,6 +173,7 @@ void McSignalStudies()
 
 	} // closes loop through files
 
+	errorRecord.close();
 	WriteHistograms(h_, h2_, outputFile_.c_str());
 
 	plottingLabel: //DO SOMETHING SIMILAR HERE!!!
@@ -305,16 +203,25 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
     for(double binLowerEdge=  500.0; binLowerEdge< 600.0; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  600.0; binLowerEdge< 800.1; binLowerEdge+= 200.0) ptBinning.push_back(binLowerEdge);
 
-	// create the debugging histograms
-	h_["DEBUG_higgsBbDRpreMatching"] = new TH1F("DEBUG_higgsBbDRpreMatching", ";dR_bb;a.u.", 50, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_pt400to415_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_pt400to415_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_pt450to465_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_pt450to465_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_pt500to515_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_pt500to515_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_3p400to415_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_3p400to415_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_3p450to465_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_3p450to465_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_3p500to515_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_3p500to515_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
-} //closes the function 'CreateHistograms'
+	// create the histograms
+    h_["numberOfGluinos"] = new TH1F("numberOfGluinos", ";number of Gluinos;a.u.", 4, 0, 4);
+	
+	h_["leadingSquarkPt"] = new TH1F("leadingSquarkPt", ";pt;a.u.", 100, 0, 1000);
+	h_["leadingSquarkPt_zeroGluinos"] = new TH1F("leadingSquarkPt_zeroGluinos", ";pt;a.u.", 100, 0, 1000);
+	h_["leadingSquarkPt_oneGluinos"] = new TH1F("leadingSquarkPt_oneGluinos", ";pt;a.u.", 100, 0, 1000);
+	h_["leadingSquarkPt_twoGluinos"] = new TH1F("leadingSquarkPt_twoGluinos", ";pt;a.u.", 100, 0, 1000);
+	
+	h_["secondarySquarkPt"] = new TH1F("secondarySquarkPt", ";pt;a.u.", 100, 0, 1000);
+	h_["secondarySquarkPt_zeroGluinos"] = new TH1F("secondarySquarkPt_zeroGluinos", ";pt;a.u.", 100, 0, 1000);
+	h_["secondarySquarkPt_oneGluinos"] = new TH1F("secondarySquarkPt_oneGluinos", ";pt;a.u.", 100, 0, 1000);
+	h_["secondarySquarkPt_twoGluinos"] = new TH1F("secondarySquarkPt_twoGluinos", ";pt;a.u.", 100, 0, 1000);
+	
+	h2_["leadingSquarkPt_SecondarySquarkPt"] = new TH2F("leadingSquarkPt_SecondarySquarkPt", ";pt secondary; pt leading", 100, 0, 1000, 100, 0, 1000);
+	h2_["leadingSquarkPt_SecondarySquarkPt_zeroGluinos"] = new TH2F("leadingSquarkPt_SecondarySquarkPt_zeroGluinos", ";pt secondary; pt leading", 100, 0, 1000, 100, 0, 1000);
+	h2_["leadingSquarkPt_SecondarySquarkPt_oneGluinos"] = new TH2F("leadingSquarkPt_SecondarySquarkPt_oneGluinos", ";pt secondary; pt leading", 100, 0, 1000, 100, 0, 1000);
+	h2_["leadingSquarkPt_SecondarySquarkPt_twoGluinos"] = new TH2F("leadingSquarkPt_SecondarySquarkPt_twoGluinos", ";pt secondary; pt leading", 100, 0, 1000, 100, 0, 1000);
 
+} //closes the function 'CreateHistograms'
 
 
 
@@ -331,4 +238,220 @@ void WriteHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F
 	}
    outFile -> Close();
    delete outFile;
+}
+
+
+
+
+
+bool indexAllCascadeParticles(std::vector<GenParticle*> particleVec, int ievt, std::string filename, std::ofstream & errorRecord, unsigned int & gluinoCount, std::vector<int> & squarkIndices, std::vector<int> & qjetIndices, std::vector<int> & nlspIndices, std::vector<int> & lspIndices, std::vector<int> & higgsIndices, std::vector<int> & bIndices, std::vector<int> & bbarIndices)
+{
+// *** SQUARKS ***
+// loop through gen particle entries to find the squarks (and count the gluinos)
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( abs(particleVec[iPar]->PID) == 1000021 ) gluinoCount++;
+	if ( abs(particleVec[iPar]->PID) == 1000001
+	|| abs(particleVec[iPar]->PID) == 2000001
+	|| abs(particleVec[iPar]->PID) == 1000002
+	|| abs(particleVec[iPar]->PID) == 2000002
+	|| abs(particleVec[iPar]->PID) == 1000003
+	|| abs(particleVec[iPar]->PID) == 2000003
+	|| abs(particleVec[iPar]->PID) == 1000004
+	|| abs(particleVec[iPar]->PID) == 2000004) squarkIndices.push_back(iPar);
+} // closes loop through gen particle vector
+if (squarkIndices.size() != 2){
+	errorRecord << "ERROR - Not 2 Squarks" << std::endl;
+	errorRecord << "File: " << filename << std::endl;
+	errorRecord << "Event: " << ievt << std::endl;
+	errorRecord << std::endl;
+	return false;
+} // closes 'if' we don't have the 2 squarks
+// arrange so first element is the highest pt squark
+if (particleVec[squarkIndices[1]]->PT > particleVec[squarkIndices[0]]->PT) std::swap(squarkIndices[0],squarkIndices[1]);
+
+
+
+// NB: the squark object do not have daughters in root file
+// so we have to find cascade particles in a backwards kind of way			
+
+// *** QJET ***
+// loop through gen particle entries to find the quarks (squark->QUARK+nlsp)
+// nb: currently these are set in madgraph to only be u or d quarks
+// leading arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 ){
+		if (particleVec[iPar]->M1 == squarkIndices[0]){
+			qjetIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+// secondary arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 ){
+		if (particleVec[iPar]->M1 == squarkIndices[1]){
+			qjetIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+if (qjetIndices.size() != 2){
+	errorRecord << "ERROR - Not 2 qjets" << std::endl;
+	errorRecord << "File: " << filename << std::endl;
+	errorRecord << "Event: " << ievt << std::endl;
+	errorRecord << std::endl;
+	return false;
+} // closes 'if' we don't have the 2 qjets
+
+
+
+// *** NLSP ***
+// loop through gen particle entries to find the nlsp's (squark->quark+NLSP)
+// leading arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( abs(particleVec[iPar]->PID) == 1000023 ){
+		if (particleVec[iPar]->M1 == squarkIndices[0]){
+			nlspIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+// secondary arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( abs(particleVec[iPar]->PID) == 1000023 ){
+		if (particleVec[iPar]->M1 == squarkIndices[1]){
+			nlspIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+if (nlspIndices.size() != 2){
+	errorRecord << "ERROR - Not 2 nlsp's" << std::endl;
+	errorRecord << "File: " << filename << std::endl;
+	errorRecord << "Event: " << ievt << std::endl;
+	errorRecord << std::endl;
+	return false;
+} // closes 'if' we don't have the 2 nlsps's
+
+
+
+// *** LSP ***
+// loop through gen particle entries to find the lsp's (nlsp->LSP+higgs)
+// leading arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( abs(particleVec[iPar]->PID) == 1000022 ){
+		if (particleVec[iPar]->M1 == nlspIndices[0]){
+			lspIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+// secondary arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( abs(particleVec[iPar]->PID) == 1000022 ){
+		if (particleVec[iPar]->M1 == nlspIndices[1]){
+			lspIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+if (lspIndices.size() != 2){
+	errorRecord << "ERROR - Not 2 lsp's" << std::endl;
+	errorRecord << "File: " << filename << std::endl;
+	errorRecord << "Event: " << ievt << std::endl;
+	errorRecord << std::endl;
+	return false;
+} // closes 'if' we don't have the 2 lsp's
+
+
+
+// *** HIGGS ***
+// loop through gen particle entries to find the lsp's (nlsp->lsp+HIGGS)
+// leading arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( abs(particleVec[iPar]->PID) == 35 ){
+		if (particleVec[iPar]->M1 == nlspIndices[0]){
+			higgsIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+// secondary arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( abs(particleVec[iPar]->PID) == 35 ){
+		if (particleVec[iPar]->M1 == nlspIndices[1]){
+			higgsIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+if (higgsIndices.size() != 2){
+	errorRecord << "ERROR - Not 2 higgs'" << std::endl;
+	errorRecord << "File: " << filename << std::endl;
+	errorRecord << "Event: " << ievt << std::endl;
+	errorRecord << std::endl;
+	return false;
+} // closes 'if' we don't have the 2 higgs
+
+
+
+//  *** b ***
+// loop through gen particle entries to find the b's (higgs->B+bbar)
+// leading arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( particleVec[iPar]->PID == 5 ){
+		if (particleVec[iPar]->M1 == higgsIndices[0]){
+			bIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+// secondary arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( particleVec[iPar]->PID == 5 ){
+		if (particleVec[iPar]->M1 == higgsIndices[1]){
+			bIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+if (bIndices.size() != 2){
+	errorRecord << "ERROR - Not 2 b's" << std::endl;
+	errorRecord << "File: " << filename << std::endl;
+	errorRecord << "Event: " << ievt << std::endl;
+	errorRecord << std::endl;
+	return false;
+} // closes 'if' we don't have the 2 b's				
+
+
+
+//  *** bbar ***
+// loop through gen particle entries to find the b's (higgs->b+BBAR)
+// leading arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( particleVec[iPar]->PID == -5 ){
+		if (particleVec[iPar]->M1 == higgsIndices[0]){
+			bbarIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+// secondary arm quark
+for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
+	if ( particleVec[iPar]->PID == -5 ){
+		if (particleVec[iPar]->M1 == higgsIndices[1]){
+			bbarIndices.push_back(iPar);  
+			break;
+		}
+	}
+} // closes loop through gen particle vector
+if (bIndices.size() != 2){
+	errorRecord << "ERROR - Not 2 bbars's" << std::endl;
+	errorRecord << "File: " << filename << std::endl;
+	errorRecord << "Event: " << ievt << std::endl;
+	errorRecord << std::endl;
+	return false;
+} // closes 'if' we don't have the 2 bbar's	
+
+return true;
 }
