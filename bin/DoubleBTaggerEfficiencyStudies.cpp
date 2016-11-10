@@ -174,9 +174,9 @@ int main(int argc, char* argv[])
 	if (std::system(Form("test -e %s",outputFile_.c_str())) == 0) // check the file exists
 		PlottingDoubleBTaggerEfficiencyStudies createPlots(outputFile_.c_str(), doubleBtagWPname, etaBinning, massCut);
 	else{
-		std::cout << "the folling output root file does not exist to make plots from:" << std::endl;
+		std::cout << "the following output root file does not exist to make plots from:" << std::endl;
 		std::cout << outputFile_ << std::endl;
-		}
+	}
 
 return 0;
 } // closes the 'main' function

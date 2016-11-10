@@ -23,16 +23,17 @@
 // #include "Analysis/Analysis_boostedNmssmHiggs/interface/Kinematics.h"
 // #include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingDoubleBTaggerEfficiencyStudies.h"
 
+// *** NOTE ***
+// need to have already loaded in a root session:
+// gSystem->Load("libTreePlayer");
+// gSystem->Load("$HOME/MG5_aMC_v2_3_3/Delphes/libDelphes.so");
+// ************
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 
 void McSignalStudies() 
 {
-	// already loaded in root session
-    // gSystem->Load("libTreePlayer");
-    // gSystem->Load("$HOME/MG5_aMC_v2_3_3/Delphes/libDelphes.so");
-
 	// Create histograms, they are accessed by eg: h_["fatJetMass_loose"]->Fill(125.0);
 	std::map<std::string, TH1F*> h_;
 	std::map<std::string, TH2F*> h2_;
