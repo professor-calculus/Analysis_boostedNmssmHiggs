@@ -38,8 +38,8 @@ void McSignalStudies()
 	// Running Options
 	int maxEvents_ = -1; // -1 for all events
 	unsigned int outputEvery_ = 1000;
-	std::vector<std::string> inputFiles_ = {"~/tag_1_delphes_events.root"};
-	std::string outputFile_ = "ABC_v3/output.root";
+	std::vector<std::string> inputFiles_ = {"~/tag_1_delphes_events_wFix.root"};
+	std::string outputFile_ = "DEF_v3/output.root";
 	bool justDoPlotting_ = false;
 
 	// Create histograms, they are accessed by eg: h_["fatJetMass_loose"]->Fill(125.0);
@@ -333,10 +333,10 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["secondaryHiggsPt"] = new TH1F("secondaryHiggsPt", ";higgs p_{T} (GeV);a.u.", 100, 0, 2000);
 	h_["secondaryHiggsEta"] = new TH1F("secondaryHiggsEta", ";#eta higgs;a.u.", 100, -5, 5);
 	h2_["leadingQjetPt_leadingHiggsPt"] = new TH2F("leadingQjetPt_leadingHiggsPt", ";higgs p_{T} (GeV);quark p_{T} (GeV)", 100, 0, 1000, 100, 0, 1000);
-	h2_["leadingQjetEta_leadingHiggsEta"] = new TH2F("leadingQjetEta_leadingHiggsEta", ";#eta higgs;#eta quark", 100, -5, 5, 100, 0, 5);
+	h2_["leadingQjetEta_leadingHiggsEta"] = new TH2F("leadingQjetEta_leadingHiggsEta", ";#eta higgs;#eta quark", 100, -5, 5, 100, -5, 5);
 	h2_["leadingQjetPhi_leadingHiggsPhi"] = new TH2F("leadingQjetPhi_leadingHiggsPhi", ";higgs Phi;quark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
 	h2_["secondaryQjetPt_secondaryHiggsPt"] = new TH2F("secondaryQjetPt_secondaryHiggsPt", ";higgs p_{T};quark p_{T}", 100, 0, 1000, 100, 0, 1000);
-	h2_["secondaryQjetEta_secondaryHiggsEta"] = new TH2F("secondaryQjetEta_secondaryHiggsEta", ";#eta higgs;#eta quark", 100, -5, 5, 100, 05, 5);
+	h2_["secondaryQjetEta_secondaryHiggsEta"] = new TH2F("secondaryQjetEta_secondaryHiggsEta", ";#eta higgs;#eta quark", 100, -5, 5, 100, -5, 5);
 	h2_["secondaryQjetPhi_secondaryHiggsPhi"] = new TH2F("secondaryQjetPhi_secondaryHiggsPhi", ";NLSP Phi;quark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
 
 	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 100, 0, 300);
@@ -354,7 +354,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["secondaryBBbarSeperation"] = new TH1F("secondaryBBbarSeperation", ";dR_bb;a.u.", 50, 0, 2.5);
 	h_["secondaryBBbarInvmass"] = new TH1F("secondaryBBbarInvmass", ";mass bb (GeV);a.u.", 100, 60, 140);
 	h2_["leadingBBbarSeperation_massHiggsOverPt"] = new TH2F("leadingBBbarSeperation_massHiggsOverPt", ";(higgs) mass / p_{T};dR_bb", 100, 0, 1.5, 100, 0, 2.5);
-	h2_["secondaryBBbarSeperation_massHiggsOverPt"] = new TH2F("secondaryBBbarSeperation_massHiggsOverPt",";(higgs) mass / p_{T};dR_bb", 50, 0, 1.5, 50, 0, 2.5);
+	h2_["secondaryBBbarSeperation_massHiggsOverPt"] = new TH2F("secondaryBBbarSeperation_massHiggsOverPt",";(higgs) mass / p_{T};dR_bb", 100, 0, 1.5, 100, 0, 2.5);
 
 } //closes the function 'CreateHistograms'
 
