@@ -13,7 +13,7 @@ import os
 ### where is the mad-graph project stored
 projectLocation = "/afs/cern.ch/work/t/taylor/public/madGraphProjects/nmssmCascadeAnalysis_v01"
 #
-### where the parameter cards are stored (must run madGraphParamCardGenerator.py first)
+### where the parameter cards are stored (must run madGraphParamCardGenerator.py first to create these!)
 paramCardDir = "/afs/cern.ch/user/t/taylor/MG5_aMC_v2_3_3/nmssmCascadeParamCards" 
 #
 ### parameter options
@@ -26,7 +26,6 @@ numberEvents = 10
 
 # check that the base directory does indeed exist
 if os.path.isdir("%s/baseMGR/" % projectLocation):
-
 
 	for higgsMass in higgsMassScan:
 		for susyMass in susyMassScan:
