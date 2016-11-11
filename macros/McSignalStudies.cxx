@@ -39,7 +39,7 @@ void McSignalStudies()
 	int maxEvents_ = -1; // -1 for all events
 	unsigned int outputEvery_ = 1000;
 	std::vector<std::string> inputFiles_ = {"~/tag_1_delphes_events_wFix.root"};
-	std::string outputFile_ = "DEF_v3/output.root";
+	std::string outputFile_ = "GHG_v3/output.root";
 	bool justDoPlotting_ = false;
 
 	// Create histograms, they are accessed by eg: h_["fatJetMass_loose"]->Fill(125.0);
@@ -234,11 +234,11 @@ void McSignalStudies()
 				h_["detectorLeadingJet"]->Fill(leadingDetJetPt);
 				h_["detectorSecondaryJet"]->Fill(secondaryDetJetPt);
 
-				double leadingBBbarInvmass = invMass_v1(particleVec[bIndices[0]]->E, particleVec[bbarIndices[0]]->E, particleVec[bIndices[0]]->Px, particleVec[bbarIndices[0]]->Px, particleVec[bIndices[0]]->Py, particleVec[bbarIndices[0]]->Py, particleVec[bIndices[0]]->Pz, particleVec[bbarIndices[0]]->Pz);
+				double leadingBBbarInvmass = invMass_v1(particleVec[bIndices[0]]->E, particleVec[bbarIndices[0]]->E, particleVec[bIndices[0]]->Px, particleVec[bbarIndices[0]]->Px, particleVec[bIndices[0]]->Py, particleVec[bbarIndices[0]]->Py, particleVec[bIndices[0]]->Pz, particleVec[bbarIndices[0]]->Pz, particleVec[bIndices[0]]->Mass, particleVec[bbarIndices[0]]->Mass);
 				h_["leadingBBbarInvmass"]->Fill(leadingBBbarInvmass);
 				double leadingBBbarSeperation = delR( delPhi(particleVec[bIndices[0]]->Phi, particleVec[bbarIndices[0]]->Phi), delEta(particleVec[bIndices[0]]->Eta, particleVec[bbarIndices[0]]->Eta) );
 				h_["leadingBBbarSeperation"]->Fill(leadingBBbarSeperation);
-				double secondaryBBbarInvmass = invMass_v1(particleVec[bIndices[1]]->E, particleVec[bbarIndices[1]]->E, particleVec[bIndices[1]]->Px, particleVec[bbarIndices[1]]->Px, particleVec[bIndices[1]]->Py, particleVec[bbarIndices[1]]->Py, particleVec[bIndices[1]]->Pz, particleVec[bbarIndices[1]]->Pz);
+				double secondaryBBbarInvmass = invMass_v1(particleVec[bIndices[1]]->E, particleVec[bbarIndices[1]]->E, particleVec[bIndices[1]]->Px, particleVec[bbarIndices[1]]->Px, particleVec[bIndices[1]]->Py, particleVec[bbarIndices[1]]->Py, particleVec[bIndices[1]]->Pz, particleVec[bbarIndices[1]]->Pz, particleVec[bIndices[1]]->Mass, particleVec[bbarIndices[1]]->Mass);
 				h_["secondaryBBbarInvmass"]->Fill(secondaryBBbarInvmass);
 				double secondaryBBbarSeperation = delR( delPhi(particleVec[bIndices[1]]->Phi, particleVec[bbarIndices[1]]->Phi), delEta(particleVec[bIndices[1]]->Eta, particleVec[bbarIndices[1]]->Eta) );
 				h_["secondaryBBbarSeperation"]->Fill(secondaryBBbarSeperation);

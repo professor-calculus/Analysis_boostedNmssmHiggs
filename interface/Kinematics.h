@@ -20,9 +20,9 @@ double delR(double dPhi, double dEta)
   return dR;
 }
 
-double invMass_v1(double E1, double E2, double px1, double px2, double py1, double py2, double pz1, double pz2)
+double invMass_v1(double E1, double E2, double px1, double px2, double py1, double py2, double pz1, double pz2, double M1, double M2)
 {
-	double invmass = sqrt( E1*E2 - (px1*px2 + py1*py2 + pz1*pz2) );
+	double invmass = sqrt(2 * (E1*E2 - (px1*px2+py1*py2+pz1*pz2)) + M1*M1 + M2*M2);
 	return invmass;
 }
 
