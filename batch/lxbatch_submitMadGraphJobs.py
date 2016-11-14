@@ -47,13 +47,13 @@ if os.path.isdir("%s/baseMGR/" % projectLocation):
 				f.write("pythia=ON\n")
 				f.write("delphes=ON\n")
 				f.write("done\n")
-				f.write("%s/Cards/delphes_card_CMS.dat\n" % (MGProject))
+				f.write("%s/Cards/delphes_card_CMS.dat\n" % MGProject)
 				f.write("%s\n" % paramCard)
 				f.write("set nevents %d\n" % numberEvents)
 				f.write("done\n")
 				f.close()
 
-				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s"' % (instructionText,MGProject))
+				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s"' % instructionText)
 				# print('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s"' % instructionText)
 				print("job %s submitted to lxbatch" % temp)
 
