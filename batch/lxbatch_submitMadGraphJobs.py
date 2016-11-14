@@ -36,7 +36,7 @@ if os.path.isdir("%s/baseMGR/" % projectLocation):
 			temp = temp + "_" + str(numberEvents) + "events"
 			MGProject = projectLocation + "/" + temp 
 			# check the dir does not exist already
-			if not os.path.isdir("%s/%s/" % (projectLocation,temp)):
+			if not os.path.isdir("%s/%s/" % (MGProject)):
 
 				# make the working directory by copying the base directory
 				os.system("cp -r %s/baseMGR/ %s" % (projectLocation,MGProject))
