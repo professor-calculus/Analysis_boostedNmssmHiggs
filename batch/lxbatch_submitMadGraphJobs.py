@@ -34,26 +34,26 @@ if os.path.isdir("%s/baseMGR/" % projectLocation):
 			temp = temp.replace(".", "p")
 			paramCard = paramCardDir + "/" + temp + ".param_card"
 			temp = temp + "_" + str(numberEvents) + "events"
-
+			MGProject = projectLocation + "/" + temp 
 			# check the dir does not exist already
 			if not os.path.isdir("%s/%s/" % (projectLocation,temp)):
 
 				# make the working directory by copying the base directory
-				os.system("cp -r %s/baseMGR/ %s/%s" % (projectLocation,projectLocation,temp))
+				os.system("cp -r %s/baseMGR/ %s" % (projectLocation,MGProject))
 				# create the instructions for the madgraph job (links to the corresponding .param_card)
-				instructionText = projectLocation + "/" + temp + "/instructionsToRun.txt"		
+				instructionText = MGProject + "/instructionsToRun.txt"		
 				f = open(instructionText, 'w')
-				f.write("launch %s/%s;\n" % (projectLocation,temp))
+				f.write("launch %s;\n" % (MGProject))
 				f.write("pythia=ON\n")
 				f.write("delphes=ON\n")
 				f.write("done\n")
-				f.write("%s/%s/Cards/delphes_card_CMS.dat\n" % (projectLocation,temp))
+				f.write("%s/Cards/delphes_card_CMS.dat\n" % (MGProject))
 				f.write("%s\n" % paramCard)
 				f.write("set nevents %d\n" % numberEvents)
 				f.write("done\n")
 				f.close()
 
-				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s"' % instructionText)
+				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s"' % (instructionText,MGProject))
 				# print('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s"' % instructionText)
 				print("job %s submitted to lxbatch" % temp)
 
