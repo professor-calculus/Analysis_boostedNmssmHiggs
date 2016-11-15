@@ -41,9 +41,12 @@ private:
 	// individual plots
 	void oneDimension_standard(std::string, std::string);
 	// void oneDimension_twoPlotsAdd();
-	void oneDimension_twoPlotsSeparate(std::string, std::string, std::string, std::string, std::string, double, double, double, double);
+	void oneDimension_twoPlotsSeparate(std::string, std::string, std::string, std::string, std::string, double, double, double, double, int);
 	void oneDimension_threePlotsSeparate(std::string, std::string, std::string, std::string, std::string, std::string, std::string, double, double, double, double);
 	void twoDimension_standard(std::string, std::string);
+	void twoDimension_addPlots(std::string, std::string, std::string);
+	void twoDimension_addPlots_withGradientLines(std::string, std::string, std::string);
+
 
 	// TStyle * TDRStyle(); // now get this function from seperate file
 	TStyle * tdrStyle;
@@ -82,57 +85,54 @@ PlottingMcSignalStudies::PlottingMcSignalStudies(std::string inputHistoFile, std
 
 	// make the .pdfs
 	oneDimension_standard("numberOfGluinos", "numberOfGluinos.pdf");
-
- 	oneDimension_standard("detectorLeadingJet", "detectorLeadingJet.pdf");
- 	oneDimension_standard("detectorSecondaryJet", "detectorSecondaryJet.pdf");
+	// legXmin, legXmax, legYmin, legYmax, whichHistoFirst?
+ 	oneDimension_twoPlotsSeparate("detectorLeadingJet", "detectorSecondaryJet", "Leading", "Secondary", "detectorLeadingJet.pdf",  0.63, 0.88, 0.76, 0.88, 2);
 	oneDimension_standard("detectorMET", "detectorMET.pdf");
 	oneDimension_standard("detectorHT", "detectorHT.pdf");
+	twoDimension_standard("detectorSecondaryJet_detectorLeadingJet", "detectorSecondaryJet_detectorLeadingJet.pdf");
+	twoDimension_standard("detectorSecondaryJet_detectorHT", "detectorSecondaryJet_detectorHT.pdf");
+	twoDimension_standard("detectorLeadingJet_detectorHT", "detectorLeadingJet_detectorHT.pdf");
+	oneDimension_standard("numberOfDetectorJets", "numberOfDetectorJets.pdf");
 
-	oneDimension_twoPlotsSeparate("leadingSquarkPt", "secondarySquarkPt", "Leading Arm", "Secondary Arm", "squarkPt.pdf", 0.60, 0.88, 0.73, 0.88);
-	oneDimension_twoPlotsSeparate("leadingSquarkEta", "secondarySquarkEta", "Leading Arm", "Secondary Arm", "squarkEta.pdf", 0.60, 0.88, 0.73, 0.88);
-	oneDimension_threePlotsSeparate("leadingSquarkPt_zeroGluinos", "leadingSquarkPt_oneGluinos", "leadingSquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluLeading.pdf", 0.65, 0.88, 0.73, 0.88);
-	oneDimension_threePlotsSeparate("leadingSquarkEta_zeroGluinos", "leadingSquarkEta_oneGluinos", "leadingSquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluLeading.pdf", 0.65, 0.88, 0.73, 0.88);
-	oneDimension_threePlotsSeparate("secondarySquarkPt_zeroGluinos", "secondarySquarkPt_oneGluinos", "secondarySquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluSecondary.pdf", 0.65, 0.88, 0.73, 0.88);
-	oneDimension_threePlotsSeparate("secondarySquarkEta_zeroGluinos", "secondarySquarkEta_oneGluinos", "secondarySquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluSecondary.pdf", 0.65, 0.88, 0.73, 0.88);
+	oneDimension_twoPlotsSeparate("leadingSquarkPt", "secondarySquarkPt", "Leading Arm", "Secondary Arm", "squarkPt.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	oneDimension_twoPlotsSeparate("leadingSquarkEta", "secondarySquarkEta", "Leading Arm", "Secondary Arm", "squarkEta.pdf", 0.63, 0.88, 0.76, 0.88, 1);
+	oneDimension_threePlotsSeparate("leadingSquarkPt_zeroGluinos", "leadingSquarkPt_oneGluinos", "leadingSquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluLeading.pdf", 0.63, 0.88, 0.73, 0.88);
+	oneDimension_threePlotsSeparate("leadingSquarkEta_zeroGluinos", "leadingSquarkEta_oneGluinos", "leadingSquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluLeading.pdf", 0.63, 0.88, 0.73, 0.88);
+	oneDimension_threePlotsSeparate("secondarySquarkPt_zeroGluinos", "secondarySquarkPt_oneGluinos", "secondarySquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluSecondary.pdf", 0.63, 0.88, 0.73, 0.88);
+	oneDimension_threePlotsSeparate("secondarySquarkEta_zeroGluinos", "secondarySquarkEta_oneGluinos", "secondarySquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluSecondary.pdf", 0.63, 0.88, 0.73, 0.88);
 	twoDimension_standard("leadingSquarkPt_SecondarySquarkPt", "leadingSquarkPt_SecondarySquarkPt.pdf");
 	twoDimension_standard("leadingSquarkEta_SecondarySquarkEta", "leadingSquarkEta_SecondarySquarkEta.pdf");
 	twoDimension_standard("leadingSquarkPhi_SecondarySquarkPhi", "leadingSquarkPhi_SecondarySquarkPhi.pdf");
 
-	oneDimension_twoPlotsSeparate("leadingQjetPt", "secondaryQjetPt", "Leading Arm", "Secondary Arm", "QjetPt.pdf", 0.60, 0.88, 0.73, 0.88);
-	oneDimension_twoPlotsSeparate("leadingQjetEta", "secondaryQjetEta", "Leading Arm", "Secondary Arm", "QjetEta.pdf", 0.60, 0.88, 0.73, 0.88);
+	oneDimension_twoPlotsSeparate("leadingQjetPt", "secondaryQjetPt", "Leading Arm", "Secondary Arm", "QjetPt.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	oneDimension_twoPlotsSeparate("leadingQjetEta", "secondaryQjetEta", "Leading Arm", "Secondary Arm", "QjetEta.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 
 	twoDimension_standard("leadingQjetPt_secondaryQjetPt", "leadingQjetPt_SecondaryQjetPt.pdf");
 	twoDimension_standard("leadingQjetEta_secondaryQjetEta", "leadingQjetEta_SecondaryQjetEta.pdf");
 	twoDimension_standard("leadingQjetPhi_secondaryQjetPhi", "leadingQjetPhi_SecondaryQjetPhi.pdf");
 
-	oneDimension_twoPlotsSeparate("leadingNlspPt", "secondaryNlspPt", "Leading Arm", "Secondary Arm", "nlspPt.pdf", 0.60, 0.88, 0.73, 0.88);
-	oneDimension_twoPlotsSeparate("leadingNlspEta", "secondaryNlspEta", "Leading Arm", "Secondary Arm", "nlspEta.pdf", 0.60, 0.88, 0.73, 0.88);
+	oneDimension_twoPlotsSeparate("leadingNlspPt", "secondaryNlspPt", "Leading Arm", "Secondary Arm", "nlspPt.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	oneDimension_twoPlotsSeparate("leadingNlspEta", "secondaryNlspEta", "Leading Arm", "Secondary Arm", "nlspEta.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 	twoDimension_standard("leadingNlspPt_secondaryNlspPt", "leadingNlspPt_secondaryNlspPt.pdf");
 	twoDimension_standard("leadingNlspEta_secondaryNlspEta", "leadingNlspEta_secondaryNlspEta.pdf");
 	twoDimension_standard("leadingNlspPhi_secondaryNlspPhi", "leadingNlspPhi_secondaryNlspPhi.pdf");
 
-	oneDimension_twoPlotsSeparate("leadingHiggsPt", "secondaryHiggsPt", "Leading Arm", "Secondary Arm", "higgsPt.pdf", 0.60, 0.88, 0.73, 0.88);
-	oneDimension_twoPlotsSeparate("leadingHiggsEta", "secondaryHiggsEta", "Leading Arm", "Secondary Arm", "higgsEta.pdf", 0.60, 0.88, 0.73, 0.88);
+	oneDimension_twoPlotsSeparate("leadingHiggsPt", "secondaryHiggsPt", "Leading Arm", "Secondary Arm", "higgsPt.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	oneDimension_twoPlotsSeparate("leadingHiggsEta", "secondaryHiggsEta", "Leading Arm", "Secondary Arm", "higgsEta.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	oneDimension_twoPlotsSeparate("leadingHiggsQjetDphi", "secondaryHiggsQjetDphi", "Leading Arm", "Secondary Arm", "higgsQjetDphi.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 
-	twoDimension_standard("leadingQjetPt_leadingHiggsPt", "leadingQjetPt_leadingHiggsPt.pdf");
-	twoDimension_standard("leadingQjetEta_leadingHiggsEta", "leadingQjetEta_leadingHiggsEta.pdf");
-	twoDimension_standard("leadingQjetPhi_leadingHiggsPhi", "leadingQjetPhi_leadingHiggsPhi.pdf");
-	twoDimension_standard("secondaryQjetPt_secondaryHiggsPt", "secondaryQjetPt_secondaryHiggsPt.pdf");
-	twoDimension_standard("secondaryQjetEta_secondaryHiggsEta", "secondaryQjetEta_secondaryHiggsEta.pdf");
-	twoDimension_standard("secondaryQjetPhi_secondaryHiggsPhi", "secondaryQjetPhi_secondaryHiggsPhi.pdf");
+	twoDimension_addPlots("leadingQjetPt_leadingHiggsPt", "secondaryQjetPt_secondaryHiggsPt", "QjetPt_HiggsPt_bothArms.pdf");
+	twoDimension_addPlots("leadingQjetEta_leadingHiggsEta", "secondaryQjetEta_secondaryHiggsEta", "QjetEta_HiggsEta_bothArms.pdf");
+	twoDimension_addPlots("leadingQjetPhi_leadingHiggsPhi", "secondaryQjetPhi_secondaryHiggsPhi", "QjetPhi_HiggsPhi_bothArms.pdf");
 
-	oneDimension_twoPlotsSeparate("leadingLspPt", "secondaryLspPt", "Leading Arm", "Secondary Arm", "lspPt.pdf", 0.60, 0.88, 0.73, 0.88);
-	oneDimension_twoPlotsSeparate("leadingLspEta", "secondaryLspEta", "Leading Arm", "Secondary Arm", "lspEta.pdf", 0.60, 0.88, 0.73, 0.88);
+	oneDimension_twoPlotsSeparate("leadingLspPt", "secondaryLspPt", "Leading Arm", "Secondary Arm", "lspPt.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	oneDimension_twoPlotsSeparate("leadingLspEta", "secondaryLspEta", "Leading Arm", "Secondary Arm", "lspEta.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 	oneDimension_standard("lspMET", "lspMET.pdf");
 
-	oneDimension_twoPlotsSeparate("leadingBBbarSeperation", "secondaryBBbarSeperation", "Leading Arm", "Secondary Arm", "BBbarSeperation.pdf", 0.60, 0.88, 0.73, 0.88);
-	oneDimension_twoPlotsSeparate("leadingBBbarInvmass", "secondaryBBbarInvmass", "Leading Arm", "Secondary Arm", "BBbarInvmass.pdf", 0.60, 0.88, 0.73, 0.88);
-	twoDimension_standard("leadingBBbarSeperation_massHiggsOverPt", "leadingBBbarSeperation_massHiggsOverPt.pdf");
-	twoDimension_standard("secondaryBBbarSeperation_massHiggsOverPt", "secondaryBBbarSeperation_massHiggsOverPt.pdf");
-
-// ADD TO WORKFLOW
-// DPHI
-// DR DR SCATTER
+	oneDimension_twoPlotsSeparate("leadingBBbarSeperation", "secondaryBBbarSeperation", "Leading Arm", "Secondary Arm", "BBbarSeperation.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	oneDimension_twoPlotsSeparate("leadingBBbarInvmass", "secondaryBBbarInvmass", "Leading Arm", "Secondary Arm", "BBbarInvmass.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	twoDimension_addPlots_withGradientLines("leadingBBbarSeperation_massHiggsOverPt", "secondaryBBbarSeperation_massHiggsOverPt", "BBbarSeperation_massHiggsOverPt_bothArms.pdf");
+	twoDimension_standard("secondaryBBbarSeperation_leadingBBbarSeperation", "secondaryBBbarSeperation_leadingBBbarSeperation.pdf");
 
 }
 
@@ -168,7 +168,7 @@ void PlottingMcSignalStudies::oneDimension_standard(std::string histoname, std::
 
 
 
-void PlottingMcSignalStudies::oneDimension_twoPlotsSeparate(std::string histoname1, std::string histoname2, std::string legendName1, std::string legendName2, std::string saveName, double legXmin, double legXmax, double legYmin, double legYmax)
+void PlottingMcSignalStudies::oneDimension_twoPlotsSeparate(std::string histoname1, std::string histoname2, std::string legendName1, std::string legendName2, std::string saveName, double legXmin, double legXmax, double legYmin, double legYmax, int plotWhichHistoFirst)
 {
     TCanvas* c=new TCanvas("c","c"); 	
 	TH1F * h1 = (TH1F*)f->Get(Form("%s", histoname1.c_str()));
@@ -182,7 +182,6 @@ void PlottingMcSignalStudies::oneDimension_twoPlotsSeparate(std::string histonam
 	// h1->GetYaxis()->SetTitle("");
 	h1->GetYaxis()->SetTitleSize(0.06);
 	h1->GetYaxis()->SetLabelSize(0.05);
-	h1->Draw();
 	
 	h2->SetLineWidth(2);
 	h2->SetLineColor(2);
@@ -192,7 +191,15 @@ void PlottingMcSignalStudies::oneDimension_twoPlotsSeparate(std::string histonam
 	// h2->GetYaxis()->SetTitle("");
 	h2->GetYaxis()->SetTitleSize(0.06);
 	h2->GetYaxis()->SetLabelSize(0.05);
-	h2->Draw("same");
+
+	if (plotWhichHistoFirst==2){
+		h2->Draw();
+		h1->Draw("same");
+	}
+	else{
+		h1->Draw();
+		h2->Draw("same");
+	}
 
 	TLegend * legend = new TLegend();
 	legend->SetX1NDC(legXmin);
@@ -284,9 +291,11 @@ void PlottingMcSignalStudies::oneDimension_threePlotsSeparate(std::string histon
 
 void PlottingMcSignalStudies::twoDimension_standard(std::string histoname, std::string saveName)
 {
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
     TCanvas* c=new TCanvas("c","c"); 	
 	TH2F * h = (TH2F*)f->Get(Form("%s", histoname.c_str()));
-	h->SetLineWidth(2);
+	// h->SetLineWidth(2);
 	// h->SetLineColor(2);
 	// h->GetXaxis()->SetTitle("");
 	h->GetXaxis()->SetTitleSize(0.06);	
@@ -303,6 +312,92 @@ void PlottingMcSignalStudies::twoDimension_standard(std::string histoname, std::
 
 	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
 	c->Close();
+	tdrStyle->SetPadRightMargin(defaultParam);
 }
+
+
+
+
+
+void PlottingMcSignalStudies::twoDimension_addPlots(std::string histoname1, std::string histoname2, std::string saveName)
+{
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
+    TCanvas* c=new TCanvas("c","c"); 	
+	TH2F * h1 = (TH2F*)f->Get(Form("%s", histoname1.c_str()));
+	TH2F * h2 = (TH2F*)f->Get(Form("%s", histoname2.c_str()));
+	h1->Add(h2);
+	// h1->SetLineWidth(2);
+	// h1->SetLineColor(2);
+	// h1->GetXaxis()->SetTitle("");
+	h1->GetXaxis()->SetTitleSize(0.06);	
+	h1->GetXaxis()->SetLabelSize(0.05);
+	// h1->GetYaxis()->SetTitle("");
+	h1->GetYaxis()->SetTitleSize(0.06);
+	h1->GetYaxis()->SetLabelSize(0.05);
+	h1->Draw("colz");
+	
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,massTitle.c_str());
+	// latex->SetTextAlign(31); // align from right
+	// latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();
+	tdrStyle->SetPadRightMargin(defaultParam);
+}
+
+
+
+
+
+
+void PlottingMcSignalStudies::twoDimension_addPlots_withGradientLines(std::string histoname1, std::string histoname2, std::string saveName)
+{
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
+    TCanvas* c=new TCanvas("c","c"); 	
+	TH2F * h1 = (TH2F*)f->Get(Form("%s", histoname1.c_str()));
+	TH2F * h2 = (TH2F*)f->Get(Form("%s", histoname2.c_str()));
+	h1->Add(h2);
+	// h1->SetLineWidth(2);
+	// h1->SetLineColor(2);
+	// h1->GetXaxis()->SetTitle("");
+	h1->GetXaxis()->SetTitleSize(0.06);	
+	h1->GetXaxis()->SetLabelSize(0.05);
+	// h1->GetYaxis()->SetTitle("");
+	h1->GetYaxis()->SetTitleSize(0.06);
+	h1->GetYaxis()->SetLabelSize(0.05);
+	h1->Draw("colz");
+	
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,massTitle.c_str());
+	// latex->SetTextAlign(31); // align from right
+	// latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	TF1 *line1 = new TF1("line1","2*x",0,10);
+	line1->SetLineWidth(3);
+	line1->SetLineStyle(2);
+	line1->Draw("same");	
+
+	TF1 *line2 = new TF1("line2","1.8*x",0,10);
+	line2->SetLineWidth(3);
+	line2->SetLineStyle(2);
+	line2->SetLineColor(kMagenta);
+	line2->Draw("same");
+
+
+	leg = new TLegend(0.6,0.3,0.88,0.5);
+	leg->AddEntry("line1","y=2x","l");
+	leg->AddEntry("line2","y=1.8x","l");
+	leg->Draw("same");
+
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();
+	tdrStyle->SetPadRightMargin(defaultParam);
+}
+
+
+
 
 #endif
