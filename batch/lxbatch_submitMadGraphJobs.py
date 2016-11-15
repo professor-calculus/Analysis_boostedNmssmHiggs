@@ -17,11 +17,13 @@ projectLocation = "/afs/cern.ch/work/t/taylor/public/madGraphProjects/nmssmCasca
 paramCardDir = "/afs/cern.ch/user/t/taylor/MG5_aMC_v2_3_3/nmssmCascadeParamCards" 
 #
 ### parameter options
-higgsMassScan = [70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0]
-susyMassScan = [1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0]
+# higgsMassScan = [70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0]
+higgsMassScan = [70.0]
+# susyMassScan = [1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0]
+susyMassScan = [1000.0]
 massRatio = 0.95 # massHiggs / massNLSP
 massSplitting = 1.0 # massNLSP - massHiggs - massLSP
-numberEvents = 10000
+numberEvents = 500
 #############################
 
 # check that the base directory does indeed exist
@@ -53,8 +55,8 @@ if os.path.isdir("%s/baseMGR/" % projectLocation):
 				f.write("done\n")
 				f.close()
 
-				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s"' % instructionText)
-				# print('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s"' % instructionText)
+				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s"' % (instructionText, MGProject))
+				# print('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s"' % (instructionText, MGProject))
 				print("job %s submitted to lxbatch" % temp)
 
 			else:
