@@ -20,14 +20,17 @@
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/ExRootTreeReader.h"
 
 // Headers from this package
-#include "../interface/Kinematics.h"
-// #include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingDoubleBTaggerEfficiencyStudies.h"
+#include "Analysis/Analysis_boostedNmssmHiggs/interface/Kinematics.h"
+#include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingMcSignalStudies.h"
 
 // *** NOTE ***
 // need to have already loaded in a root session:
 // gSystem->Load("libTreePlayer");
 // gSystem->Load("$HOME/MG5_aMC_v2_3_3/Delphes/libDelphes.so");
 // ************
+
+// run with
+// $ root -l -b -q McSignalStudies.cxx
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
@@ -38,9 +41,10 @@ void McSignalStudies()
 	// Running Options
 	int maxEvents_ = -1; // -1 for all events
 	unsigned int outputEvery_ = 1000;
-	std::vector<std::string> inputFiles_ = {"~/tag_1_delphes_events_wFix.root"};
-	std::string outputFile_ = "GHG_v3/output.root";
+	std::vector<std::string> inputFiles_ = {"/storage/jt15104/madGraphProjects/testing/mH125p0_mSusy1000p0_ratio0p96_splitting2p0_5000events/dirA/dirB/dirC/tag_1_delphes_events.root"};
+	std::string outputFile_ = "ABC_v3/output.root";
 	bool justDoPlotting_ = false;
+	// bool justDoPlotting_ = true;
 
 	// Create histograms, they are accessed by eg: h_["fatJetMass_loose"]->Fill(125.0);
 	std::map<std::string, TH1F*> h_;
@@ -68,14 +72,16 @@ void McSignalStudies()
 
 	// create an error log, for events that don't have the particles we expect... 
 	std::ofstream errorRecord;
-	errorRecord.open(Form("%serrors.txt",outputDirectory_.c_str()));
+	if (justDoPlotting_ == false) errorRecord.open(Form("%serrors.txt",outputDirectory_.c_str()));
 	
 	///////////////////////////////
 	// Loop through the input files
 	///////////////////////////////
 	int ievt=0;
-	// but if we are just doing the plotting goto the end
+	/////////////////////////////////////////////////
+	// if we are just doing the plotting goto the end
 	if (justDoPlotting_) goto plottingLabel;
+	/////////////////////////////////////////////////
 
 	for(unsigned int iFile=0; iFile<inputFiles_.size(); ++iFile){
 	    
@@ -262,13 +268,35 @@ void McSignalStudies()
 	errorRecord.close();
 	WriteHistograms(h_, h2_, outputFile_.c_str());
 
-	plottingLabel: //DO SOMETHING SIMILAR HERE!!!
-	// if (std::system(Form("test -e %s",outputFile_.c_str())) == 0) // check the file exists
-	// 	PlottingDoubleBTaggerEfficiencyStudies createPlots(outputFile_.c_str(), doubleBtagWPname, etaBinning, massCut);
-	// else{
-	// 	std::cout << "the following output root file does not exist to make plots from:" << std::endl;
-	// 	std::cout << outputFile_ << std::endl;
-	// }
+	plottingLabel:
+	// sketchy hack to get the higgsMass, squarkMass, ratio and mass splitting from the root file path name
+	size_t endNameContainer;
+	size_t beginNameContainer;
+	for (size_t c = inputFiles_[0].size()-2; c > 0; -- c){
+		
+		if (inputFiles_[0].substr(c-6,6) == "events") endNameContainer = c; 
+		if (inputFiles_[0].substr(c,2) == "mH"){
+			beginNameContainer = c;
+			break;
+		}
+	}
+	std::string titleName = inputFiles_[0].substr(beginNameContainer,endNameContainer-beginNameContainer);
+	std::cout << titleName << std::endl;
+	std::string lowDash = "_";
+	for (size_t c = titleName.size()-1; c > 0; --c){
+		if (titleName[c] == lowDash[0]){
+			endNameContainer = c;
+			break;
+		}
+	}
+	titleName = titleName.substr(0,endNameContainer);
+
+	if (std::system(Form("test -e %s",outputFile_.c_str())) == 0) // check the file exists
+		PlottingMcSignalStudies createPlots(outputFile_.c_str(), titleName.c_str());
+	else{
+		std::cout << "the following output root file does not exist to make plots from:" << std::endl;
+		std::cout << outputFile_ << std::endl;
+	}
 
 return 0;
 } // closes the 'main' function
@@ -292,64 +320,64 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	// create the histograms
     h_["numberOfGluinos"] = new TH1F("numberOfGluinos", ";Number of Gluinos;a.u.", 4, 0, 4);
 	
-	h_["leadingSquarkPt"] = new TH1F("leadingSquarkPt", ";squark p_{T} (GeV);a.u.", 100, 0, 1000);
-	h_["leadingSquarkEta"] = new TH1F("leadingSquarkEta", ";#eta squark;a.u.", 100, -5, 5);
-	h_["secondarySquarkPt"] = new TH1F("secondarySquarkPt", ";squark p_{T} (GeV);a.u.", 100, 0, 1000);
-	h_["secondarySquarkEta"] = new TH1F("secondarySquarkEta", ";#eta squark;a.u.", 100, -5, 5);
+	h_["leadingSquarkPt"] = new TH1F("leadingSquarkPt", ";squark p_{T} (GeV);a.u.", 50, 0, 1000);
+	h_["leadingSquarkEta"] = new TH1F("leadingSquarkEta", ";#eta squark;a.u.", 50, -5, 5);
+	h_["secondarySquarkPt"] = new TH1F("secondarySquarkPt", ";squark p_{T} (GeV);a.u.", 50, 0, 1000);
+	h_["secondarySquarkEta"] = new TH1F("secondarySquarkEta", ";#eta squark;a.u.", 50, -5, 5);
 	h2_["leadingSquarkPt_SecondarySquarkPt"] = new TH2F("leadingSquarkPt_SecondarySquarkPt", ";secondary squark p_{T} (GeV);leading squark p_{T} (GeV)", 100, 0, 1000, 100, 0, 1000);
-	h2_["leadingSquarkEta_SecondarySquarkEta"] = new TH2F("leadingSquarkEta_SecondarySquarkEta", ";#eta secondary quark;#eta leading quark", 100, -5, 5, 100, 05, 5);
+	h2_["leadingSquarkEta_SecondarySquarkEta"] = new TH2F("leadingSquarkEta_SecondarySquarkEta", ";#eta secondary quark;#eta leading quark", 50, -5, 5, 100, 05, 5);
 	h2_["leadingSquarkPhi_SecondarySquarkPhi"] = new TH2F("leadingSquarkPhi_SecondarySquarkPhi", ";secondary squark Phi;leading squark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
-	h_["leadingSquarkPt_zeroGluinos"] = new TH1F("leadingSquarkPt_zeroGluinos", ";squark p_{T} (GeV);a.u.", 100, 0, 1500);
-	h_["leadingSquarkPt_oneGluinos"] = new TH1F("leadingSquarkPt_oneGluinos", ";squark p_{T} (GeV);a.u.", 100, 0, 1500);
-	h_["leadingSquarkPt_twoGluinos"] = new TH1F("leadingSquarkPt_twoGluinos", ";squark p_{T} (GeV);a.u.", 100, 0, 1500);
-	h_["leadingSquarkEta_zeroGluinos"] = new TH1F("leadingSquarkEta_zeroGluinos", ";#eta squark;a.u.", 100, -5, 5);
-	h_["leadingSquarkEta_oneGluinos"] = new TH1F("leadingSquarkEta_oneGluinos", ";#eta squark;a.u.", 100, -5, 5);
-	h_["leadingSquarkEta_twoGluinos"] = new TH1F("leadingSquarkEta_twoGluinos", ";#eta squark;a.u.", 100, -5, 5);
-	h_["secondarySquarkPt_zeroGluinos"] = new TH1F("secondarySquarkPt_zeroGluinos", ";squark p_{T} (GeV);a.u.", 100, 0, 1500);
-	h_["secondarySquarkPt_oneGluinos"] = new TH1F("secondarySquarkPt_oneGluinos", ";squark p_{T} (GeV);a.u.", 100, 0, 1500);
-	h_["secondarySquarkPt_twoGluinos"] = new TH1F("secondarySquarkPt_twoGluinos", ";squark p_{T} (GeV);a.u.", 100, 0, 1500);
-	h_["secondarySquarkEta_zeroGluinos"] = new TH1F("secondarySquarkEta_zeroGluinos", ";#eta squark;a.u.", 100, -5, 5);
-	h_["secondarySquarkEta_oneGluinos"] = new TH1F("secondarySquarkEta_oneGluinos", ";#eta squark;a.u.", 100, -5, 5);
-	h_["secondarySquarkEta_twoGluinos"] = new TH1F("secondarySquarkEta_twoGluinos", ";#eta squark;a.u.", 100, -5, 5);
+	h_["leadingSquarkPt_zeroGluinos"] = new TH1F("leadingSquarkPt_zeroGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 1500);
+	h_["leadingSquarkPt_oneGluinos"] = new TH1F("leadingSquarkPt_oneGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 1500);
+	h_["leadingSquarkPt_twoGluinos"] = new TH1F("leadingSquarkPt_twoGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 1500);
+	h_["leadingSquarkEta_zeroGluinos"] = new TH1F("leadingSquarkEta_zeroGluinos", ";#eta squark;a.u.", 25, -5, 5);
+	h_["leadingSquarkEta_oneGluinos"] = new TH1F("leadingSquarkEta_oneGluinos", ";#eta squark;a.u.", 25, -5, 5);
+	h_["leadingSquarkEta_twoGluinos"] = new TH1F("leadingSquarkEta_twoGluinos", ";#eta squark;a.u.", 25, -5, 5);
+	h_["secondarySquarkPt_zeroGluinos"] = new TH1F("secondarySquarkPt_zeroGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 1500);
+	h_["secondarySquarkPt_oneGluinos"] = new TH1F("secondarySquarkPt_oneGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 1500);
+	h_["secondarySquarkPt_twoGluinos"] = new TH1F("secondarySquarkPt_twoGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 1500);
+	h_["secondarySquarkEta_zeroGluinos"] = new TH1F("secondarySquarkEta_zeroGluinos", ";#eta squark;a.u.", 25, -5, 5);
+	h_["secondarySquarkEta_oneGluinos"] = new TH1F("secondarySquarkEta_oneGluinos", ";#eta squark;a.u.", 25, -5, 5);
+	h_["secondarySquarkEta_twoGluinos"] = new TH1F("secondarySquarkEta_twoGluinos", ";#eta squark;a.u.", 25, -5, 5);
 
-	h_["leadingQjetPt"] = new TH1F("leadingQjetPt", ";quark p_{T} (GeV);a.u.", 100, 0, 1500);
-	h_["leadingQjetEta"] = new TH1F("leadingQjetEta", ";#eta quark;a.u.", 100, -5, 5);
-	h_["secondaryQjetPt"] = new TH1F("secondaryQjetPt", ";quark p_{T} (GeV);a.u.", 100, 0, 1500);
-	h_["secondaryQjetEta"] = new TH1F("secondaryQjetEta", ";#eta quark;a.u.", 100, -5, 5);
+	h_["leadingQjetPt"] = new TH1F("leadingQjetPt", ";quark p_{T} (GeV);a.u.", 50, 0, 1500);
+	h_["leadingQjetEta"] = new TH1F("leadingQjetEta", ";#eta quark;a.u.", 50, -5, 5);
+	h_["secondaryQjetPt"] = new TH1F("secondaryQjetPt", ";quark p_{T} (GeV);a.u.", 50, 0, 1500);
+	h_["secondaryQjetEta"] = new TH1F("secondaryQjetEta", ";#eta quark;a.u.", 50, -5, 5);
 	h2_["leadingQjetPt_secondaryQjetPt"] = new TH2F("leadingQjetPt_secondaryQjetPt", ";secondary quark p_{T} (GeV);leading quark p_{T} (GeV)", 100, 0, 1000, 100, 0, 1000);
-	h2_["leadingQjetEta_secondaryQjetEta"] = new TH2F("leadingQjetEta_secondaryQjetEta", ";#eta secondary quark;#eta leading quark", 100, -5, 5, 100, 05, 5);
+	h2_["leadingQjetEta_secondaryQjetEta"] = new TH2F("leadingQjetEta_secondaryQjetEta", ";#eta secondary quark;#eta leading quark", 100, -5, 5, 100, -5, 5);
 	h2_["leadingQjetPhi_secondaryQjetPhi"] = new TH2F("leadingQjetPhi_secondaryQjetPhi", ";secondary quark Phi;leading quark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
 
-	h_["leadingNlspPt"] = new TH1F("leadingNlspPt", ";NLSP p_{T} (GeV);a.u.", 100, 0, 2000);
-	h_["leadingNlspEta"] = new TH1F("leadingNlspEta", ";#eta NLSP;a.u.", 100, -5, 5);
-	h_["secondaryNlspPt"] = new TH1F("secondaryNlspPt", ";NLSP p_{T} (GeV);a.u.", 100, 0, 2000);
-	h_["secondaryNlspEta"] = new TH1F("secondaryNlspEta", ";#eta NLSP;a.u.", 100, -5, 5);
+	h_["leadingNlspPt"] = new TH1F("leadingNlspPt", ";NLSP p_{T} (GeV);a.u.", 50, 0, 2000);
+	h_["leadingNlspEta"] = new TH1F("leadingNlspEta", ";#eta NLSP;a.u.", 50, -5, 5);
+	h_["secondaryNlspPt"] = new TH1F("secondaryNlspPt", ";NLSP p_{T} (GeV);a.u.", 50, 0, 2000);
+	h_["secondaryNlspEta"] = new TH1F("secondaryNlspEta", ";#eta NLSP;a.u.", 50, -5, 5);
 	h2_["leadingNlspPt_secondaryNlspPt"] = new TH2F("leadingNlspPt_secondaryNlspPt", ";secondary NLSP p_{T} (GeV);leading NLSP p_{T} (GeV)", 100, 0, 1000, 100, 0, 1000);
-	h2_["leadingNlspEta_secondaryNlspEta"] = new TH2F("leadingNlspEta_secondaryNlspEta", ";#eta secondary NLSP;#eta leading NLSP", 100, -5, 5, 100, 05, 5);
+	h2_["leadingNlspEta_secondaryNlspEta"] = new TH2F("leadingNlspEta_secondaryNlspEta", ";#eta secondary NLSP;#eta leading NLSP", 50, -5, 5, 100, 05, 5);
 	h2_["leadingNlspPhi_secondaryNlspPhi"] = new TH2F("leadingNlspPhi_secondaryNlspPhi", ";secondary NLSP Phi;leading NLSP Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
 
-	h_["leadingHiggsPt"] = new TH1F("leadingHiggsPt", ";higgs p_{T} (GeV);a.u.", 100, 0, 2000);
-	h_["leadingHiggsEta"] = new TH1F("leadingHiggsEta", "; #eta higgs;a.u.", 100, -5, 5);
-	h_["secondaryHiggsPt"] = new TH1F("secondaryHiggsPt", ";higgs p_{T} (GeV);a.u.", 100, 0, 2000);
-	h_["secondaryHiggsEta"] = new TH1F("secondaryHiggsEta", ";#eta higgs;a.u.", 100, -5, 5);
+	h_["leadingHiggsPt"] = new TH1F("leadingHiggsPt", ";higgs p_{T} (GeV);a.u.", 50, 0, 2000);
+	h_["leadingHiggsEta"] = new TH1F("leadingHiggsEta", "; #eta higgs;a.u.", 50, -5, 5);
+	h_["secondaryHiggsPt"] = new TH1F("secondaryHiggsPt", ";higgs p_{T} (GeV);a.u.", 50, 0, 2000);
+	h_["secondaryHiggsEta"] = new TH1F("secondaryHiggsEta", ";#eta higgs;a.u.", 50, -5, 5);
 	h2_["leadingQjetPt_leadingHiggsPt"] = new TH2F("leadingQjetPt_leadingHiggsPt", ";higgs p_{T} (GeV);quark p_{T} (GeV)", 100, 0, 1000, 100, 0, 1000);
 	h2_["leadingQjetEta_leadingHiggsEta"] = new TH2F("leadingQjetEta_leadingHiggsEta", ";#eta higgs;#eta quark", 100, -5, 5, 100, -5, 5);
 	h2_["leadingQjetPhi_leadingHiggsPhi"] = new TH2F("leadingQjetPhi_leadingHiggsPhi", ";higgs Phi;quark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
 	h2_["secondaryQjetPt_secondaryHiggsPt"] = new TH2F("secondaryQjetPt_secondaryHiggsPt", ";higgs p_{T};quark p_{T}", 100, 0, 1000, 100, 0, 1000);
 	h2_["secondaryQjetEta_secondaryHiggsEta"] = new TH2F("secondaryQjetEta_secondaryHiggsEta", ";#eta higgs;#eta quark", 100, -5, 5, 100, -5, 5);
-	h2_["secondaryQjetPhi_secondaryHiggsPhi"] = new TH2F("secondaryQjetPhi_secondaryHiggsPhi", ";NLSP Phi;quark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
+	h2_["secondaryQjetPhi_secondaryHiggsPhi"] = new TH2F("secondaryQjetPhi_secondaryHiggsPhi", ";higgs Phi;quark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
 
-	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 100, 0, 300);
-	h_["leadingLspEta"] = new TH1F("leadingLspEta", ";#eta LSP;a.u.", 100, -5, 5);
-	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 100, 0, 300);
-	h_["secondaryLspEta"] = new TH1F("secondaryLspEta", ";#eta LSP;a.u.", 100, -5, 5);
-	h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss};a.u.", 100, 0, 300);
-	h_["detectorMET"] = new TH1F("detectorMET", ";detector E_{T}^{miss} (GeV);a.u.", 100, 0, 600);
-	h_["detectorHT"] = new TH1F("detectorHT", ";detector HT (GeV);a.u.", 100, 0, 5000);
-	h_["detectorLeadingJet"] = new TH1F("detectorLeadingJet", ";detector Leading Jet p_{T} (GeV);a.u.", 100, 0, 2000);
-	h_["detectorSecondaryJet"] = new TH1F("detectorSecondaryJet", ";detector Secondary Jet p_{T} (GeV);a.u.", 100, 0, 2000);
+	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 300);
+	h_["leadingLspEta"] = new TH1F("leadingLspEta", ";#eta LSP;a.u.", 50, -5, 5);
+	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 300);
+	h_["secondaryLspEta"] = new TH1F("secondaryLspEta", ";#eta LSP;a.u.", 50, -5, 5);
+	h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss};a.u.", 50, 0, 300);
+	h_["detectorMET"] = new TH1F("detectorMET", ";detector E_{T}^{miss} (GeV);a.u.", 10, 0, 600);
+	h_["detectorHT"] = new TH1F("detectorHT", ";detector HT (GeV);a.u.", 50, 0, 5000);
+	h_["detectorLeadingJet"] = new TH1F("detectorLeadingJet", ";detector Leading Jet p_{T} (GeV);a.u.", 50, 0, 2000);
+	h_["detectorSecondaryJet"] = new TH1F("detectorSecondaryJet", ";detector Secondary Jet p_{T} (GeV);a.u.", 50, 0, 2000);
 
-	h_["leadingBBbarSeperation"] = new TH1F("leadingBBbarSeperation", ";dR_bb;a.u.", 100, 0, 2.5);
+	h_["leadingBBbarSeperation"] = new TH1F("leadingBBbarSeperation", ";dR_bb;a.u.", 50, 0, 2.5);
 	h_["leadingBBbarInvmass"] = new TH1F("leadingBBbarInvmass", ";mass bb (GeV);a.u.", 100, 60, 140);
 	h_["secondaryBBbarSeperation"] = new TH1F("secondaryBBbarSeperation", ";dR_bb;a.u.", 50, 0, 2.5);
 	h_["secondaryBBbarInvmass"] = new TH1F("secondaryBBbarInvmass", ";mass bb (GeV);a.u.", 100, 60, 140);
