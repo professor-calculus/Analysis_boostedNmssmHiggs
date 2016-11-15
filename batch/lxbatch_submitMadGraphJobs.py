@@ -38,7 +38,7 @@ if os.path.isdir("%s/baseMGR/" % projectLocation):
 			temp = temp + "_" + str(numberEvents) + "events"
 			MGProject = projectLocation + "/" + temp 
 			# check the dir does not exist already
-			if not os.path.isdir("%s/%s/" % (MGProject)):
+			if not os.path.isdir("%s" % (MGProject)):
 
 				# make the working directory by copying the base directory
 				os.system("cp -r %s/baseMGR/ %s" % (projectLocation,MGProject))
@@ -55,8 +55,8 @@ if os.path.isdir("%s/baseMGR/" % projectLocation):
 				f.write("done\n")
 				f.close()
 
-				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s"' % (instructionText, MGProject))
-				# print('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s"' % (instructionText, MGProject))
+				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s"' % (instructionText, MGProject))
+				# print('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s"' % (instructionText, MGProject))
 				print("job %s submitted to lxbatch" % temp)
 
 			else:
