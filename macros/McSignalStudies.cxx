@@ -426,9 +426,7 @@ void doMcSignalStudies(std::vector<std::string> inputFiles_, std::string outputF
 		std::cout << outputFile_ << std::endl;
 	}
 
-	delete h_;
-
-	return 0;
+	return;
 } // closes the function "doMcSignalStudies"
 
 
