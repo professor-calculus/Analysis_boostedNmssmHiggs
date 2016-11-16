@@ -59,8 +59,8 @@ if os.path.isdir("%s/baseMGR/" % projectLocation):
 				f.write("done\n")
 				f.close()
 
-				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s %s"' % (instructionText, MGProject, temp))
-				# print('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s"' % (instructionText, MGProject, temp))
+				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s %s"' % (instructionText, projectLocation, temp))
+				# print('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s %s"' % (instructionText, projectLocation, temp))
 				print("job %s submitted to lxbatch" % temp)
 
 			else:
