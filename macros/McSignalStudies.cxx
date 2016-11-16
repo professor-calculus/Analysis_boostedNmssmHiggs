@@ -30,131 +30,15 @@
 // ************
 
 // run with
-// $ root -l -b -q McSignalStudies.cxx
+// $ root -l -b -q 'McSignalStudies.cxx(std::vector<std::string> inputFiles_, std::string outputFile_)'
+// eg.
+// $ root -l -b -q 'McSignalStudies.cxx({"/storage/jt15104/madGraphProjects/testing/mH125p0_mSusy1000p0_ratio0p96_splitting2p0_10000events/dirA/dirB/dirC/tag_1_delphes_events.root"}, "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/test/output.root")'
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 bool indexAllCascadeParticles(std::vector<GenParticle*>,int,std::string,std::ofstream&,unsigned int&,std::vector<int>&,std::vector<int>&,std::vector<int>&,std::vector<int>&,std::vector<int>&,std::vector<int>&,std::vector<int>&);
-void doMcSignalStudies(std::vector<std::string> inputFiles_, std::string outputFile_);
-void DeleteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&);
 
-
-
-
-void McSignalStudies(){
-
-std::vector<std::vector<std::string>> vecInputFiles_; // can add more than one file if you do so wish
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/testing/mH125p0_mSusy1000p0_ratio0p96_splitting2p0_10000events/dirA/dirB/dirC/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-
-std::vector<std::string> vecOutputFile_;
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/test2/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH70p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH70p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH70p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH70p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH70p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH70p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH80p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH80p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH80p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH80p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH80p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH80p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH90p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH90p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH90p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH90p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH90p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH90p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH100p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH100p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH100p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH100p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH100p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH100p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH110p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH110p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH110p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH110p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH110p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH110p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH120p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH120p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH120p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH120p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH120p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH120p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH130p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH130p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH130p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH130p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH130p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/mH130p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-
-
-if (vecInputFiles_.size() != vecOutputFile_.size()){
-	std::cout << "The size of the two inputs vectors is not the same. Exiting..." << std::endl;
-	return;
-}
-
-for (size_t i=0; i<vecOutputFile_.size(); ++i){
-	std::cout << "******************************" << std::endl;
-	std::cout << "*** Doing MG setup " << i+1 << " of " << vecOutputFile_.size() << " ***" << std::endl;
-	std::cout << "*** Project Name: " << vecInputFiles_[i][0] << " ***" << std::endl;
-	std::cout << "******************************" << std::endl;
-	doMcSignalStudies(vecInputFiles_[i], vecOutputFile_[i]);
-}
-
-} // closes the function "McSignalStudies"
-
-
-
-
-
-
-void doMcSignalStudies(std::vector<std::string> inputFiles_, std::string outputFile_) 
+void McSignalStudies(std::vector<std::string> inputFiles_, std::string outputFile_) 
 {
 	// Running Options
 	int maxEvents_ = -1; // -1 for all events
@@ -347,7 +231,7 @@ void doMcSignalStudies(std::vector<std::string> inputFiles_, std::string outputF
 				h_["secondaryLspEta"]->Fill(particleVec[lspIndices[1]]->Eta);
 				//function: adds two pt vectors together in the (2d) transverse plane
 				//output: first element is magnitude, second element is phi
-				std::vector<double> lspMet = addTwoPtVectors(particleVec[lspIndices[0]]->PT, particleVec[lspIndices[1]]->PT, particleVec[lspIndices[0]]->Phi, particleVec[lspIndices[1]]->Phi);
+				std::vector<double> lspMet = addTwoPtVectors(particleVec[lspIndices[0]]->PT, particleVec[lspIndices[0]]->Phi, particleVec[lspIndices[1]]->PT, particleVec[lspIndices[1]]->Phi);
 				h_["lspMET"]->Fill(lspMet[0]);
 				h_["detectorMET"]->Fill(metDetector->MET);
 				h_["detectorHT"]->Fill(htDetector->HT);
@@ -427,7 +311,7 @@ void doMcSignalStudies(std::vector<std::string> inputFiles_, std::string outputF
 	}
 
 	return;
-} // closes the function "doMcSignalStudies"
+} // closes the function "McSignalStudies"
 
 
 
@@ -497,15 +381,15 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["leadingHiggsQjetDphi"] = new TH1F("leadingHiggsQjetDphi", ";higgs Phi - qjet Phi;a.u.", 50, 0, 2*M_PI);
 	h_["secondaryHiggsQjetDphi"] = new TH1F("secondaryHiggsQjetDphi", ";higgs Phi - qjet Phi;a.u.", 50, 0, 2*M_PI);
 
-	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 300);
+	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 250);
 	h_["leadingLspEta"] = new TH1F("leadingLspEta", ";#eta LSP;a.u.", 50, -5, 5);
-	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 300);
+	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 250);
 	h_["secondaryLspEta"] = new TH1F("secondaryLspEta", ";#eta LSP;a.u.", 50, -5, 5);
-	h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss};a.u.", 50, 0, 300);
+	h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss};a.u.", 50, 0, 250);
 	h_["detectorMET"] = new TH1F("detectorMET", ";detector E_{T}^{miss} (GeV);a.u.", 50, 0, 800);
 	h_["detectorHT"] = new TH1F("detectorHT", ";detector HT (GeV);a.u.", 50, 0, 7000);
-	h_["detectorLeadingJet"] = new TH1F("detectorLeadingJet", ";detector Leading Jet p_{T} (GeV);a.u.", 50, 0, 2500);
-	h_["detectorSecondaryJet"] = new TH1F("detectorSecondaryJet", ";detector Secondary Jet p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["detectorLeadingJet"] = new TH1F("detectorLeadingJet", ";detector Jet p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["detectorSecondaryJet"] = new TH1F("detectorSecondaryJet", ";detector Jet p_{T} (GeV);a.u.", 50, 0, 2500);
 	h2_["detectorSecondaryJet_detectorLeadingJet"] = new TH2F("detectorSecondaryJet_detectorLeadingJet", ";detector Leading Jet p_{T} (GeV);detector Secondary Jet p_{T} (GeV)", 100, 0, 2500, 100, 0, 2500);
 	h2_["detectorSecondaryJet_detectorHT"] = new TH2F("detectorSecondaryJet_detectorHT", ";detector HT (GeV);detector Secondary Jet p_{T} (GeV)", 100, 0, 7000, 100, 0, 2500);
 	h2_["detectorLeadingJet_detectorHT"] = new TH2F("detectorLeadingJet_detectorHT", ";detector HT (GeV);detector Leading Jet p_{T} (GeV)", 100, 0, 7000, 100, 0, 2500);
@@ -536,21 +420,6 @@ void WriteHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F
 	}
    outFile -> Close();
    delete outFile;
-}
-
-
-
-
-
-
-void DeleteHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_)
-{
-   for ( auto & h : h_ ){
-		delete h.second;
-	}
-	for ( auto & h : h2_ ){
-		delete h.second;
-	}
 }
 
 
