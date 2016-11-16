@@ -7,6 +7,8 @@ import os
 ### copies the base madgraph project (have a baseMGR and a testMGR project dir to being with)
 ### creates the .txt file instructions for madGraph
 ### submit jobs to lxbatch
+
+#############################
 #############################
 ### ## # USER INPUTS # ## ###
 #
@@ -24,6 +26,8 @@ susyMassScan = [1000.0]
 massRatio = 0.95 # massHiggs / massNLSP
 massSplitting = 1.0 # massNLSP - massHiggs - massLSP
 numberEvents = 500
+#############################
+#############################
 #############################
 
 # check that the base directory does indeed exist
@@ -55,8 +59,8 @@ if os.path.isdir("%s/baseMGR/" % projectLocation):
 				f.write("done\n")
 				f.close()
 
-				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s"' % (instructionText, MGProject))
-				# print('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s"' % (instructionText, MGProject))
+				os.system('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s %s"' % (instructionText, MGProject, temp))
+				# print('bsub -q 8nh "sh $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_madGraphJob.sh %s %s"' % (instructionText, MGProject, temp))
 				print("job %s submitted to lxbatch" % temp)
 
 			else:
