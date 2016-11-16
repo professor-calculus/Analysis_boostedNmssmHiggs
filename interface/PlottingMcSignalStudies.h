@@ -146,7 +146,7 @@ void PlottingMcSignalStudies::oneDimension_standard(std::string histoname, std::
     TCanvas* c=new TCanvas("c","c"); 	
 	TH1F * h = (TH1F*)f->Get(Form("%s", histoname.c_str()));
 	h->SetLineWidth(2);
-	// h->SetLineColor(2);
+	h->SetLineColor(kBlue+1);
 	// h->GetXaxis()->SetTitle("");
 	h->GetXaxis()->SetTitleSize(0.06);	
 	h->GetXaxis()->SetLabelSize(0.05);
@@ -175,7 +175,7 @@ void PlottingMcSignalStudies::oneDimension_twoPlotsSeparate(std::string histonam
 	TH1F * h2 = (TH1F*)f->Get(Form("%s", histoname2.c_str()));	
 	
 	h1->SetLineWidth(2);
-	// h1->SetLineColor(2);
+	h1->SetLineColor(kBlue+1);
 	// h1->GetXaxis()->SetTitle("");
 	h1->GetXaxis()->SetTitleSize(0.06);	
 	h1->GetXaxis()->SetLabelSize(0.05);
@@ -257,7 +257,7 @@ void PlottingMcSignalStudies::oneDimension_threePlotsSeparate(std::string histon
 	h2->Draw("same");
 
 	h1->SetLineWidth(2);
-	// h1->SetLineColor(2);
+	h1->SetLineColor(kBlue+1);
 	// h1->GetXaxis()->SetTitle("");
 	h1->GetXaxis()->SetTitleSize(0.06);	
 	h1->GetXaxis()->SetLabelSize(0.05);
