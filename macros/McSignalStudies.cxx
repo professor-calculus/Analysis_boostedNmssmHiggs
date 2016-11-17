@@ -42,7 +42,7 @@ void McSignalStudies(std::vector<std::string> inputFiles_, std::string outputFil
 {
 	// Running Options
 	int maxEvents_ = -1; // -1 for all events
-	unsigned int outputEvery_ = 1000;
+	unsigned int outputEvery_ = 2000;
 	// std::vector<std::string> inputFiles_ = {"/storage/jt15104/madGraphProjects/testing/mH125p0_mSusy1000p0_ratio0p96_splitting2p0_10000events/dirA/dirB/dirC/tag_1_delphes_events.root"};
 	// std::string outputFile_ = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/test/output.root";
 	bool justDoPlotting_ = false;
@@ -381,11 +381,11 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["leadingHiggsQjetDphi"] = new TH1F("leadingHiggsQjetDphi", ";higgs Phi - qjet Phi;a.u.", 50, 0, 2*M_PI);
 	h_["secondaryHiggsQjetDphi"] = new TH1F("secondaryHiggsQjetDphi", ";higgs Phi - qjet Phi;a.u.", 50, 0, 2*M_PI);
 
-	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 250);
+	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 200);
 	h_["leadingLspEta"] = new TH1F("leadingLspEta", ";#eta LSP;a.u.", 50, -5, 5);
-	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 250);
+	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 200);
 	h_["secondaryLspEta"] = new TH1F("secondaryLspEta", ";#eta LSP;a.u.", 50, -5, 5);
-	h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss};a.u.", 50, 0, 250);
+	h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss} (GeV);a.u.", 50, 0, 200);
 	h_["detectorMET"] = new TH1F("detectorMET", ";detector E_{T}^{miss} (GeV);a.u.", 50, 0, 800);
 	h_["detectorHT"] = new TH1F("detectorHT", ";detector HT (GeV);a.u.", 50, 0, 7000);
 	h_["detectorLeadingJet"] = new TH1F("detectorLeadingJet", ";detector Jet p_{T} (GeV);a.u.", 50, 0, 2500);
