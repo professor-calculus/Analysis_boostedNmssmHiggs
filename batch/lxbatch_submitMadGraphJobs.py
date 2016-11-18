@@ -8,6 +8,7 @@ import os
 ### creates the .txt file instructions for madGraph
 ### submit jobs to lxbatch
 
+
 #############################
 #############################
 ### ## # USER INPUTS # ## ###
@@ -29,6 +30,7 @@ numberEvents = 500
 #############################
 #############################
 #############################
+
 
 # check that the base directory does indeed exist
 if os.path.isdir("%s/baseMGR/" % projectLocation):

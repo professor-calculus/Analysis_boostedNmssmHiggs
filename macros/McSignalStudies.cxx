@@ -40,13 +40,19 @@ bool indexAllCascadeParticles(std::vector<GenParticle*>,int,std::string,std::ofs
 
 void McSignalStudies(std::vector<std::string> inputFiles_, std::string outputFile_) 
 {
-	// Running Options
+	///////////////////////
+	///////////////////////
+	///////////////////////
+	// Running Options ////
 	int maxEvents_ = -1; // -1 for all events
 	unsigned int outputEvery_ = 2000;
 	// std::vector<std::string> inputFiles_ = {"/storage/jt15104/madGraphProjects/testing/mH125p0_mSusy1000p0_ratio0p96_splitting2p0_10000events/dirA/dirB/dirC/tag_1_delphes_events.root"};
 	// std::string outputFile_ = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/test/output.root";
 	bool justDoPlotting_ = false;
 	// bool justDoPlotting_ = true;
+	///////////////////////
+	///////////////////////
+	///////////////////////
 
 	// Create histograms, they are accessed by eg: h_["fatJetMass_loose"]->Fill(125.0);
 	std::map<std::string, TH1F*> h_;

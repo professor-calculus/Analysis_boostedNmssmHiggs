@@ -27,6 +27,7 @@ void Plotter_add(std::string motherDir, std::string outputDir, std::vector<std::
 
 void combine_McSignalStudies()
 {
+	/////////////////////////////
 	// * U S E R * I N P U T * //
 	std::string motherDir = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/"; // needs the forward slash on the end
 	std::vector<std::string> vecHiggsMassToUse = {"70p0", "90p0", "110p0", "130p0"}; // has to match my already defined naming convention
@@ -34,6 +35,7 @@ void combine_McSignalStudies()
 	std::string tailArgument = "_ratio0p95_splitting1p0_10000events"; // needs the dash at the beginning
 	std::string outputDir = motherDir + "combinedPlots_v1/";  // needs the forward slash on the end
 	// * * * * * * * * * * * * //
+	/////////////////////////////
 
 	bool makeDir = !(std::system(Form("mkdir %s",outputDir.c_str())));
 	if (makeDir == false){

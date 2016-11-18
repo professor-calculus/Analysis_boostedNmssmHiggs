@@ -26,6 +26,7 @@
 /*
 We calculate kintematic properties of the following interaction:
 pp -> squark + squark
+looking at what happens to one arm of the squark
 ...where...
 squark -> quark + NLSP;
 NLSP -> LSP + higgs;

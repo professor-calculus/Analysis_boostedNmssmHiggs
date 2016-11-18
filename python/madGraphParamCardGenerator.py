@@ -6,6 +6,9 @@ import os
 ### 
 ### creates a set of paramater cards to be used by madgraph
 #############################
+
+#############################
+#############################
 ### ## # USER INPUTS # ## ###
 
 ### where you wish to store the parameter cards
@@ -18,13 +21,14 @@ susyMassScan = [1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0]
 massRatio = 0.95 # massHiggs / massNLSP
 massSplitting = 1.0 # massNLSP - massHiggs - massLSP
 #############################
+#############################
 
 for higgsMass in higgsMassScan:
 	nlspMass = higgsMass / massRatio
 	lspMass = nlspMass - higgsMass - massSplitting
 
 	for susyMass in susyMassScan:
-		gluinoMass = 1.01 * susyMass
+		gluinoMass = 1.01 * susyMass # don't change this
 
 		outputName = "mH" + str(higgsMass) + "_mSusy" + str(susyMass) + "_ratio" + str(massRatio) + "_splitting" + str(massSplitting)
 		outputName = outputName.replace(".", "p")

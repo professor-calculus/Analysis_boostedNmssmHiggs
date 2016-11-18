@@ -11,3 +11,5 @@
 *_h.pcm
 *#.*
 *.pcm
+*.DS_Store
+*crab_projects*

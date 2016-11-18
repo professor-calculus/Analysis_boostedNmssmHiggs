@@ -9,6 +9,7 @@
 // script to submit McSignalStudies many times
 // run with
 // $ root -q -b -l submit_McSignalStudies.cxx
+// change the input and output vectors as you wish:)
 
 void submit_McSignalStudies(){
 
