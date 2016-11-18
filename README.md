@@ -1,6 +1,11 @@
 Information on how to run the tools in this repository
 This repo is for the nmssm cascade analysis.
 
+Setup within a CMSSW project.
+$ cd CMSSW_X_Y_Z/src
+$ git clone git@github.com:joseph-taylor/Analysis_boostedNmssmHiggs.git Analysis/Analysis_boostedNmssmHiggs
+$ scram b -j8
+
 
 
 
