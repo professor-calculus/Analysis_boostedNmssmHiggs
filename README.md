@@ -55,7 +55,8 @@ outputfile=outputfile.root
 this should be the full path and include a new directory (which the code creates) where the file will go.
 The new directory should include useful info about what you were doing. The directory should also be unique
 eg "output_DoubleBTaggerEfficiencyStudies_boostedHiggsToBB/histos.root"
-Good idea to use the name of the dir where you got the ntuples. eg boostedHiggsMC_25e777_v3
+Good idea to use the name of the dir where you got the ntuples.
+Link clearly to what you used from /hdfs output_DoubleBTaggerEfficiencyStudies/GluGluToRadionToHHTo2B2G_M-900_narrow_13TeV-madgraph_boostedHiggsMC_25e777/
 (typically use full paths to inputs and outputs)
 
 ***Other options (don't need to explicitly write)***:
@@ -113,6 +114,7 @@ McSignalStudies.cxx info.
 Analyses the output of the MadGraph/Pythia/Delphes production of the signal.
 Has the option of just re-doing the plots and not having to run over everything again.
 Takes the following arguements. The input files as a string vector and output files as a string.
+(Link the output to where you got the ntuples on /storage)
 
 -to submit on mass use submit_McSignalStudies.cxx
 -to analysize different outputs together use combine_McSignalStudies.cxx
