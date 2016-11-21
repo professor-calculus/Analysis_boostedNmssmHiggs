@@ -442,7 +442,6 @@ void WriteHistogramsDICE(std::map<std::string,TH1F*> & h_, std::map<std::string,
 	}
 	outFile.Close();
 	std::system("cp	*.root	../../.	"); // get the output back on soolin
-	std::system("cp *.root /users/jt15104/."); // but this does seem to work sometimes also!!!
 }
 
 

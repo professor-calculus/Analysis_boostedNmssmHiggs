@@ -23,11 +23,15 @@ vecInputFiles = []
 vecInputFiles.append(os.path.join(inputMotherDir,"bTagPatTuple_1.root"))
 vecInputFiles.append(os.path.join(inputMotherDir,"bTagPatTuple_2.root"))
 vecInputFiles.append(os.path.join(inputMotherDir,"bTagPatTuple_3.root"))
+vecInputFiles.append(os.path.join(inputMotherDir,"bTagPatTuple_5.root"))
+vecInputFiles.append(os.path.join(inputMotherDir,"bTagPatTuple_6.root"))
 
 vecOutputFiles = []
 vecOutputFiles.append("histos_1.root")
 vecOutputFiles.append("histos_2.root")
 vecOutputFiles.append("histos_3.root")
+vecOutputFiles.append("histos_5.root")
+vecOutputFiles.append("histos_6.root")
 
 ############################
 ############################
