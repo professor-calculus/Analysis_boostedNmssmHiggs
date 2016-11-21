@@ -28,13 +28,25 @@
 
 // preliminary running, compile with scram b and then
 // $ $CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputfiles=XYZ outputfile=ABC orderedsecondaryfiles=0
+// nb. if you are running it on DICE, include the word runOnDice at the end of the arguments of the executable
+
+/* Notes on runOnDice mode
+
+
+// watchout!!! with this toggle the exeuctable can now overwrite outputs!!!
+
+
+
+*/
+
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::vector<std::string>, std::vector<double>, int);
 void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, pat::Jet, reco::GenParticle, double, std::vector<std::string>, std::vector<double>, std::vector<double>, int);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
+void WriteHistogramsDICE(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco::GenParticle>>, std::vector<double> &);
 bool isThereAFatJetMatch(edm::Handle<std::vector<pat::Jet>>, reco::GenParticle, double, pat::Jet&);
-
+std::string getOutputDirFromOutputFile(std::string);
 
 
 int main(int argc, char* argv[]) 
@@ -42,12 +54,23 @@ int main(int argc, char* argv[])
 	gSystem->Load("libFWCoreFWLite.so");
 	FWLiteEnabler::enable();
 	
-	// Set parameters
+	////////////////////
+	////////////////////
+	// Set parameters //
 	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.8, 0.9}; // these WP vectors must correspond to one-another
 	std::vector<std::string> doubleBtagWPname = {"loose", "medium", "tight", "veryTight"};
 	double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
 	std::vector<double> etaBinning = {0.00, 0.80, 1.60, 2.40};
 	int massCut = 100; // some plots must have mass above this value
+	/////////////////////
+	/////////////////////
+
+	// see if it is in runOnDice mode
+	bool runOnDice = false;
+    for (int i = 0; i < argc; ++i) {
+        std::string argvString(argv[i]);
+        if (argvString == "runOnDice") runOnDice = true;
+    }
 
 	// Create histograms, they are accessed by eg: h_["fatJetMass_loose"]->Fill(125.0);
 	std::map<std::string, TH1F*> h_;
@@ -57,53 +80,50 @@ int main(int argc, char* argv[])
 	// Initialize command line parser
 	optutl::CommandLineParser parser ("Analyze DoubleBTagger Efficiencies");
 
-	// Set defaults
-	parser.integerValue ("maxevents"      ) = -1;
+	//////////////////
+	// Set defaults //
+	parser.integerValue ("maxevents"      ) = 100; // -1 for all events
 	parser.integerValue ("outputevery"    ) =   1000;
 	// parser.stringVector  ("inputfiles"     ) = {"/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple.root"};
 	// parser.stringValue  ("outputfile"     ) = "output_DoubleBTaggerEfficiencyStudies_testing/output_DoubleBTaggerEfficiencyStudies.root";
 	parser.boolValue    ("orderedsecondaryfiles") = false;
+	//////////////////
 
 	// Parse arguments_
-	parser.parseArguments (argc, argv);
+	if (runOnDice) parser.parseArguments (argc-1, argv);
+	else parser.parseArguments (argc, argv);
 	int maxEvents_ = parser.integerValue("maxevents");
 	unsigned int outputEvery_ = parser.integerValue("outputevery");
 	std::vector<std::string> inputFiles_ = parser.stringVector("inputfiles");
 	std::string outputFile_ = parser.stringValue("outputfile");
 	bool justDoPlotting_ = parser.boolValue("orderedsecondaryfiles");
 
-	// Create the output directory TODO:put this in a function
-	std::string outputDirectory_;
-	std::string forwardSlash = "/";
-	// strip the directory from the outputfile name
-	for (size_t c = outputFile_.size()-1; c > 0; --c){
-		if (outputFile_[c] == forwardSlash[0]){
-			outputDirectory_ = outputFile_.substr(0, c+1);
-			break;
-		}
-	}
-	bool makeDir = !(std::system(Form("mkdir %s",outputDirectory_.c_str())));
-	if (justDoPlotting_ == false && makeDir == false){
-		std::cout << "The chosen output directory already exists, or the parent directory does not exist:" << std::endl;
-		std::cout << "Do not wish to overwrite ROOT file: Exiting..." << std::endl;
-		return 1;
-	}
+	if (runOnDice==false){ // don't do this if on DICE as it cannot do this command locally
 
-	// copy the code used to make the histogram ROOT file into the same directory (this could be out of sync if you edit after compilation)
-	// also copy the parser values that were used to a .txt file (ie the input data used)
-	if (justDoPlotting_ == false){
-		
-		std::system(Form("cp $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies.cpp %s",outputDirectory_.c_str()));
-		
-		std::ofstream parserRecord;
-		parserRecord.open(Form("%soptionsUsed.txt",outputDirectory_.c_str()));
-		parserRecord << "MaxEvents: " << maxEvents_ << "\n";
-		parserRecord << "InputFiles: " << "\n";
-		for(unsigned int iFile=0; iFile<inputFiles_.size(); ++iFile){
-			parserRecord << inputFiles_[iFile] << "\n";
+		std::string outputDirectory_ = getOutputDirFromOutputFile(outputFile_);
+		bool makeDir = !(std::system(Form("mkdir %s",outputDirectory_.c_str())));
+		if (justDoPlotting_ == false && makeDir == false){
+			std::cout << "The chosen output directory already exists, or the parent directory does not exist:" << std::endl;
+			std::cout << "Do not wish to overwrite ROOT file: Exiting..." << std::endl;
+			return 1;
 		}
-		parserRecord.close();
-	}
+		
+		// copy the code used to make the histogram ROOT file into the same directory (this could be out of sync if you edit after compilation)
+		// also copy the parser values that were used to a .txt file (ie the input data used)
+		if (justDoPlotting_ == false){
+			
+			std::system(Form("cp $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies.cpp %s",outputDirectory_.c_str()));
+			
+			std::ofstream parserRecord;
+			parserRecord.open(Form("%soptionsUsed.txt",outputDirectory_.c_str()));
+			parserRecord << "MaxEvents: " << maxEvents_ << "\n";
+			parserRecord << "InputFiles: " << "\n";
+			for(unsigned int iFile=0; iFile<inputFiles_.size(); ++iFile){
+				parserRecord << inputFiles_[iFile] << "\n";
+			}
+			parserRecord.close();
+		}
+	} // closes 'if' runOnDice
 
 
 	// Loop through the input files
@@ -168,8 +188,14 @@ int main(int argc, char* argv[])
 
 	} // closes loop through files
 
-	WriteHistograms(h_, h2_, outputFile_.c_str());
 
+	// don't do the .pdf plotting on DICE (we will want to hadd outputs first)
+	if (runOnDice==true){ 
+		WriteHistogramsDICE(h_, h2_, outputFile_.c_str());
+		return 0;
+	}  
+
+	WriteHistograms(h_, h2_, outputFile_.c_str());
 	plottingLabel:
 	if (std::system(Form("test -e %s",outputFile_.c_str())) == 0) // check the file exists
 		PlottingDoubleBTaggerEfficiencyStudies createPlots(outputFile_.c_str(), doubleBtagWPname, etaBinning, massCut);
@@ -385,18 +411,41 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 
 
 
+
 void WriteHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, std::string outputFileD)
 {
-   TFile * outFile = new TFile(outputFileD.c_str(),"RECREATE");
-   for ( auto & h : h_ ){
+	TFile * outFile = new TFile(outputFileD.c_str(),"RECREATE");
+	for ( auto & h : h_ ){
 		h.second->Write();
 	}
 	for ( auto & h : h2_ ){
 		h.second->Write();
 	}
-   outFile -> Close();
-   delete outFile;
+	outFile -> Close();
+	delete outFile;
 }
+
+
+
+
+
+
+
+void WriteHistogramsDICE(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, std::string outputFileD)
+{
+	TFile outFile(outputFileD.c_str(),"RECREATE");
+	for ( auto & h : h_ ){
+		h.second->Write();
+	}
+	for ( auto & h : h2_ ){
+		h.second->Write();
+	}
+	outFile.Close();
+	std::system("cp	*.root	../../.	"); // get the output back on soolin
+	std::system("cp *.root /users/jt15104/."); // but this does seem to work sometimes also!!!
+}
+
+
 
 
 
@@ -452,3 +501,23 @@ bool isThereAFatJetMatch(edm::Handle<std::vector<pat::Jet>> fatJetsD, reco::GenP
 
 	else return false;
 } // closes the function 'isThereAFatJetMatch'
+
+
+
+
+
+
+
+std::string getOutputDirFromOutputFile(std::string outputFile)
+{
+	std::string forwardSlash = "/";
+	std::string outputDirectory = outputFile;
+	// strip the directory from the outputfile name
+	for (size_t c = outputFile.size()-1; c > 0; --c){
+		if (outputFile[c] == forwardSlash[0]){
+			outputDirectory = outputFile.substr(0, c+1);
+			break;
+		}
+	}
+	return outputDirectory;
+}
