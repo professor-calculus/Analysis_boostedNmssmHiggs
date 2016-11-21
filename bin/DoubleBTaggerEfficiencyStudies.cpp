@@ -31,12 +31,9 @@
 // nb. if you are running it on DICE, include the word runOnDice at the end of the arguments of the executable
 
 /* Notes on runOnDice mode
-
-
-// watchout!!! with this toggle the exeuctable can now overwrite outputs!!!
-
-
-
+watchout...with this toggle the executable can now overwrite outputs!!!
+hacks the original script abit so it can do some things slightly differently
+it does so using the quantity: bool runOnDice
 */
 
 
@@ -82,7 +79,7 @@ int main(int argc, char* argv[])
 
 	//////////////////
 	// Set defaults //
-	parser.integerValue ("maxevents"      ) = 100; // -1 for all events
+	parser.integerValue ("maxevents"      ) = -1; // -1 for all events
 	parser.integerValue ("outputevery"    ) =   1000;
 	// parser.stringVector  ("inputfiles"     ) = {"/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple.root"};
 	// parser.stringValue  ("outputfile"     ) = "output_DoubleBTaggerEfficiencyStudies_testing/output_DoubleBTaggerEfficiencyStudies.root";
