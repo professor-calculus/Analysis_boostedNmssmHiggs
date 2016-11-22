@@ -58,6 +58,8 @@ void doCalculationsAndGraphs(double, double, double, double, std::vector<double>
 
 void massParamsToKinematics()
 {
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////
 	// --- USER INPUT --- //
 	////////////////////////
@@ -66,7 +68,7 @@ void massParamsToKinematics()
 	std::string motherDir = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_massParamsToKinematics_8d1008_v01/";
 
 	// Setup the mass parameters
-	std::vector<double> mass_squark_vec = {800.0, 900.0, 1000.0, 1100.0, 1200.0, 1300.0, 1400.0, 1500.0, 1600.0, 1700.0, 1800.0};
+	std::vector<double> mass_squark_vec = {1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0, 2200.0, 2400.0, 2600.0, 2800.0, 3000.0};
 	std::vector<double> mass_higgs_vec = {70.0, 75.0, 80.0, 85.0, 90.0, 95.0, 100.0, 105.0, 110.0, 115.0, 120.0, 125.0, 130.0};
 	double mass_ratio_beginPoint = 0.7; // mass_ratio = mass_higgs / mass_NLSP
 	double mass_ratio_stepSize = 0.001; // interval in ratio between each calculation
@@ -74,7 +76,8 @@ void massParamsToKinematics()
 
 	////////////////////////
 	////////////////////////
-	////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// make the output mother directory
 	std::string forwardSlash = "/";
@@ -145,11 +148,11 @@ void massParamsToKinematics()
 	latDR->SetTextFont(42);
 	latDR->SetTextAlign(11); // align from left
 	// latDR->DrawLatex(0.15,0.92,Form("Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV", mass_squark_func, mass_higgs_func));
-	latDR->DrawLatex(0.20,0.80,"distribution in higss->bb seperation, R");
+	latDR->DrawLatex(0.20,0.80,"distribution in higgs->bb seperation, R");
 	latDR->DrawLatex(0.20,0.74,"due to variation in higgs p_{T} for a given |p|");
-	latDR->DrawLatex(0.50,0.62,"PDF = #frac{(R_{0}/R)^{2}}{R#sqrt{1-(R_{0}/R)^{2}}}");
-	latDR->DrawLatex(0.50,0.45,"R_{0} = #frac{2m_{higgs}}{p_{higgs}}");	
-	latDR->DrawLatex(0.15,0.92,"Described by 'Straight Line' Dists (R_{0} to R_{mean})");	
+	latDR->DrawLatex(0.50,0.62,"PDF = #frac{(R_{min}/R)^{2}}{R#sqrt{1-(R_{min}/R)^{2}}}");
+	latDR->DrawLatex(0.50,0.45,"R_{min} = #frac{1.9m_{higgs}}{p_{higgs}}");	
+	latDR->DrawLatex(0.15,0.92,"Described by 'Straight Line' Dists (R_{min} to R_{mean})");	
 	cDR->SaveAs(Form("%sexampleDrDist.pdf", motherDir.c_str()));
 	cDR->Close();
 
@@ -271,14 +274,14 @@ void doCalculationsAndGraphs(double mass_squark, double mass_higgs, double mass_
 			double momentum_higgs_devDown = -1 * sqrt( (energy_higgs_mean-energy_higgs_dev) * (energy_higgs_mean-energy_higgs_dev) - mass_higgs * mass_higgs ) + momentum_higgs_mean;
 
 			// higgs -> bbar
-			double seperation_bb_min_higgsPtMean = 2 * mass_higgs / momentum_higgs_mean;
+			double seperation_bb_min_higgsPtMean = 1.9 * mass_higgs / momentum_higgs_mean;
 			double seperation_bb_meanMinDev_higgsPtMean = ((M_PI/2) - 1) * seperation_bb_min_higgsPtMean;
-			double seperation_bb_minDev_higgsPtMax = seperation_bb_min_higgsPtMean - 2 * mass_higgs / (momentum_higgs_mean+momentum_higgs_devUp); // smearing below
-			double seperation_bb_minDev_higgsPtMin = 2 * mass_higgs / (momentum_higgs_mean-momentum_higgs_devDown) - seperation_bb_min_higgsPtMean; // smearing above
+			double seperation_bb_minDev_higgsPtMax = seperation_bb_min_higgsPtMean - 1.9 * mass_higgs / (momentum_higgs_mean+momentum_higgs_devUp); // smearing below
+			double seperation_bb_minDev_higgsPtMin = 1.9 * mass_higgs / (momentum_higgs_mean-momentum_higgs_devDown) - seperation_bb_min_higgsPtMean; // smearing above
 			//////////////////
 			// -----END---- // 
 			// CALCULATIONS //
-			// ------------ //todo update the vector objects and graphs that handle bb sep
+			// ------------ //
 			//////////////////
 
 			mass_NLSP_vec.push_back(mass_NLSP);
@@ -373,7 +376,7 @@ void doCalculationsAndGraphs(double mass_squark, double mass_higgs, double mass_
 	drawAndSave(mg_momentum_LSP, legend, Form("%sLSP_momentum.pdf", outputDir.c_str()), "momentum_LSP (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
 	// drawAndSave(mg_energy_higgs, legend, Form("%shiggs_energy.pdf", outputDir.c_str()), "energy_higgs (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
 	drawAndSave(mg_momentum_higgs, legend, Form("%shiggs_momentum.pdf", outputDir.c_str()), "momentum_higgs (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.25, 0.46);
-	drawAndSave(mg_seperation_bb_min_different3p, legend, Form("%sseperation_bb_min_difference3p.pdf", outputDir.c_str()), "dR_{0} bb", mass_squark, mass_higgs, 0.76, 0.88, 0.65, 0.86);
+	drawAndSave(mg_seperation_bb_min_different3p, legend, Form("%sseperation_bb_min_difference3p.pdf", outputDir.c_str()), "dR_{min} bb", mass_squark, mass_higgs, 0.76, 0.88, 0.65, 0.86);
 	drawAndSave(mg_seperation_bb_minToMean, legend, Form("%sseperation_bb_minToMean.pdf", outputDir.c_str()), "dR bb", mass_squark, mass_higgs, 0.76, 0.88, 0.65, 0.86);
 } // closes the function 'doCalculationsAndGraphs'
 
@@ -399,8 +402,8 @@ void drawAndSave(TMultiGraph * mg, TLegend * leg, std::string saveName, std::str
 	latex->SetNDC();
 	latex->SetTextFont(42);
 	latex->SetTextAlign(11); // align from left
-	latex->DrawLatex(0.15,0.92,Form("Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV", mass_squark, mass_higgs));
-	if (yAxisTitle=="dR_{0} bb") latex->DrawLatex(0.30,0.83,"dist. due to different higgs |p|");
+	latex->DrawLatex(0.15,0.92,Form("Energy_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV", mass_squark, mass_higgs));
+	if (yAxisTitle=="dR_{min} bb") latex->DrawLatex(0.30,0.83,"dist. due to different higgs |p|");
 	if (yAxisTitle=="dR bb") latex->DrawLatex(0.30,0.83,"dist. due to higgs p_{T} variation");
 	cPlot->SaveAs(saveName.c_str());
 	cPlot->Close();
