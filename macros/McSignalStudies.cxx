@@ -5,6 +5,7 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <math.h> 
 
 // ROOT headers
 #include <TH1F.h>
@@ -33,6 +34,8 @@
 // $ root -l -b -q 'McSignalStudies.cxx(std::vector<std::string> inputFiles_, std::string outputFile_)'
 // eg.
 // $ root -l -b -q 'McSignalStudies.cxx({"/storage/jt15104/madGraphProjects/testing/mH125p0_mSusy1000p0_ratio0p96_splitting2p0_10000events/dirA/dirB/dirC/tag_1_delphes_events.root"}, "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/test/output.root")'
+// 
+// or use submit_McSignalStudies.cxx
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
@@ -269,6 +272,23 @@ void McSignalStudies(std::vector<std::string> inputFiles_, std::string outputFil
 				h2_["leadingBBbarSeperation_massHiggsOverPt"]->Fill(particleVec[higgsIndices[0]]->Mass / (particleVec[higgsIndices[0]]->PT) , leadingBBbarSeperation);
 				h2_["secondaryBBbarSeperation_massHiggsOverPt"]->Fill(particleVec[higgsIndices[1]]->Mass / (particleVec[higgsIndices[1]]->PT), secondaryBBbarSeperation);
 				h2_["secondaryBBbarSeperation_leadingBBbarSeperation"]->Fill(leadingBBbarSeperation, secondaryBBbarSeperation);
+				
+				// debug style plots
+				if (particleVec[higgsIndices[0]]->PT > 500 && particleVec[higgsIndices[0]]->PT < 510) h_["DEBUG_BBbarSeperation_higgsPt500to510"]->Fill(leadingBBbarSeperation);
+				if (particleVec[higgsIndices[0]]->PT > 750 && particleVec[higgsIndices[0]]->PT < 760) h_["DEBUG_BBbarSeperation_higgsPt750to760"]->Fill(leadingBBbarSeperation);
+				if (particleVec[higgsIndices[0]]->PT > 1000 && particleVec[higgsIndices[0]]->PT < 1100) h_["DEBUG_BBbarSeperation_higgsPt1000to1010"]->Fill(leadingBBbarSeperation);
+				double higgs3mom = particleVec[higgsIndices[0]]->PT * cosh(particleVec[higgsIndices[0]]->Eta);
+				if (higgs3mom > 500 && higgs3mom < 510) h_["DEBUG_BBbarSeperation_higgs3mom500to510"]->Fill(leadingBBbarSeperation);
+				if (higgs3mom > 750 && higgs3mom < 760) h_["DEBUG_BBbarSeperation_higgs3mom750to760"]->Fill(leadingBBbarSeperation);
+				if (higgs3mom > 1000 && higgs3mom < 1100) h_["DEBUG_BBbarSeperation_higgs3mom1000to1010"]->Fill(leadingBBbarSeperation);
+
+				if (particleVec[higgsIndices[1]]->PT > 500 && particleVec[higgsIndices[1]]->PT < 510) h_["DEBUG_BBbarSeperation_higgsPt500to510"]->Fill(secondaryBBbarSeperation);
+				if (particleVec[higgsIndices[1]]->PT > 750 && particleVec[higgsIndices[1]]->PT < 760) h_["DEBUG_BBbarSeperation_higgsPt750to760"]->Fill(secondaryBBbarSeperation);
+				if (particleVec[higgsIndices[1]]->PT > 1000 && particleVec[higgsIndices[1]]->PT < 1100) h_["DEBUG_BBbarSeperation_higgsPt1000to1010"]->Fill(secondaryBBbarSeperation);
+				higgs3mom = particleVec[higgsIndices[1]]->PT * cosh(particleVec[higgsIndices[1]]->Eta);
+				if (higgs3mom > 500 && higgs3mom < 510) h_["DEBUG_BBbarSeperation_higgs3mom500to510"]->Fill(secondaryBBbarSeperation);
+				if (higgs3mom > 750 && higgs3mom < 760) h_["DEBUG_BBbarSeperation_higgs3mom750to760"]->Fill(secondaryBBbarSeperation);
+				if (higgs3mom > 1000 && higgs3mom < 1100) h_["DEBUG_BBbarSeperation_higgs3mom1000to1010"]->Fill(secondaryBBbarSeperation);
 				// End of Analysis
 				// ------------------------------------------------------------------------------------------------------------//
 				// ------------------------------------------------------------------------------------------------------------//
@@ -408,6 +428,13 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h2_["secondaryBBbarSeperation_leadingBBbarSeperation"] = new TH2F("secondaryBBbarSeperation_leadingBBbarSeperation", ";leading dR_bb;secondary dR_bb", 100, 0, 2.5, 100, 0, 2.5);	
 	h2_["leadingBBbarSeperation_massHiggsOverPt"] = new TH2F("leadingBBbarSeperation_massHiggsOverPt", ";(higgs) mass / p_{T};dR_bb", 100, 0, 1.5, 100, 0, 2.5);
 	h2_["secondaryBBbarSeperation_massHiggsOverPt"] = new TH2F("secondaryBBbarSeperation_massHiggsOverPt",";(higgs) mass / p_{T};dR_bb", 100, 0, 1.5, 100, 0, 2.5);
+
+	h_["DEBUG_BBbarSeperation_higgsPt500to510"] = new TH1F("DEBUG_BBbarSeperation_higgsPt500to510",";dR_bb;a.u.", 40, 0, 2.0);
+	h_["DEBUG_BBbarSeperation_higgsPt750to760"] = new TH1F("DEBUG_BBbarSeperation_higgsPt750to760",";dR_bb;a.u.", 40, 0, 2.0);
+	h_["DEBUG_BBbarSeperation_higgsPt1000to1010"] = new TH1F("DEBUG_BBbarSeperation_higgsPt1000to1010",";dR_bb;a.u.", 40, 0, 2.0);
+	h_["DEBUG_BBbarSeperation_higgs3mom500to510"] = new TH1F("DEBUG_BBbarSeperation_higgs3mom500to510",";dR_bb;a.u.", 40, 0, 2.0);
+	h_["DEBUG_BBbarSeperation_higgs3mom750to760"] = new TH1F("DEBUG_BBbarSeperation_higgs3mom750to760",";dR_bb;a.u.", 40, 0, 2.0);
+	h_["DEBUG_BBbarSeperation_higgs3mom1000to1010"] = new TH1F("DEBUG_BBbarSeperation_higgs3mom1000to1010",";dR_bb;a.u.", 40, 0, 2.0);
 
 } //closes the function 'CreateHistograms'
 

@@ -134,6 +134,13 @@ PlottingMcSignalStudies::PlottingMcSignalStudies(std::string inputHistoFile, std
 	twoDimension_addPlots_withGradientLines("leadingBBbarSeperation_massHiggsOverPt", "secondaryBBbarSeperation_massHiggsOverPt", "BBbarSeperation_massHiggsOverPt_bothArms.pdf");
 	twoDimension_standard("secondaryBBbarSeperation_leadingBBbarSeperation", "secondaryBBbarSeperation_leadingBBbarSeperation.pdf");
 
+	oneDimension_standard("DEBUG_BBbarSeperation_higgsPt500to510", "DEBUG_BBbarSeperation_higgsPt500to510.pdf");
+	oneDimension_standard("DEBUG_BBbarSeperation_higgsPt750to760", "DEBUG_BBbarSeperation_higgsPt750to760.pdf");
+	oneDimension_standard("DEBUG_BBbarSeperation_higgsPt1000to1010", "DEBUG_BBbarSeperation_higgsPt1000to1010.pdf");
+	oneDimension_standard("DEBUG_BBbarSeperation_higgs3mom500to510", "DEBUG_BBbarSeperation_higgs3mom500to510.pdf");
+	oneDimension_standard("DEBUG_BBbarSeperation_higgs3mom750to760", "DEBUG_BBbarSeperation_higgs3mom750to760.pdf");
+	oneDimension_standard("DEBUG_BBbarSeperation_higgs3mom1000to1010", "DEBUG_BBbarSeperation_higgs3mom1000to1010.pdf");
+
 }
 
 //-----------public-----------//
