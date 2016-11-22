@@ -52,4 +52,5 @@ class htcondorExeJob:
 		submitString += "-append 'transfer_input_files = " + self.OtherInputFiles + "' "
 
 		# print submitString
-		os.system("%s" % submitString)
+		# os.system("%s" % submitString)
+		return os.popen("%s" % submitString).read().rstrip()

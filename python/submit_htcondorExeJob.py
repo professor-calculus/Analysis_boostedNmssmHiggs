@@ -4,7 +4,7 @@ from htcondorExeJob import *
 
 
 # set the user variables and then run with
-# $ python $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/python/submit_htcondorExeJob.py > submissionLog.txt
+# $ python $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/python/submit_htcondorExeJob.py
 # FROM THE DIRECTORY WHERE YOU WISH TO SAVE THE ROOT FILES!
 
 
@@ -51,6 +51,7 @@ code = os.path.join(os.popen("echo $CMSSW_BASE").read().rstrip(),code)
 os.system("cp %s ." % code)
 os.system("cp $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/python/submit_htcondorExeJob.py .")
 
+file = open("log.txt", "w")
 for i in range (0,len(vecInputFiles)):
 
 	job = htcondorExeJob()
@@ -64,4 +65,9 @@ for i in range (0,len(vecInputFiles)):
 	job.add_OtherInputFiles("") # leave empty if you do not need them
 	# job.add_Input(ntuple.root)
 	# job.add_OtherInputFiles("header1.h, header2.h")
-	job.submitJob()
+	tempStr = job.submitJob()
+	file.write(tempStr + "\n")
+	file.write("input: " + vecInputFiles[i] + "\n")
+	file.write("output: " + vecOutputFiles[i] + "\n\n")
+
+file.close()
