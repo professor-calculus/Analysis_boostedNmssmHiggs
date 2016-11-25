@@ -14,19 +14,19 @@ import os
 ### ## # USER INPUTS # ## ###
 #
 ### where is the mad-graph project stored
-projectLocation = "/afs/cern.ch/work/t/taylor/public/madGraphProjects/nmssmCascadeAnalysis_v01"
+projectLocation = "/afs/cern.ch/work/t/taylor/public/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02"
 #
 ### where the parameter cards are stored (must run madGraphParamCardGenerator.py first to create these!)
 paramCardDir = "/afs/cern.ch/user/t/taylor/MG5_aMC_v2_3_3/nmssmCascadeParamCards/type_02" 
 #
 ### parameter options
-# higgsMassScan = [70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0]
-higgsMassScan = [70.0]
-# susyMassScan = [1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0]
-susyMassScan = [1000.0]
+higgsMassScan = [70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0]
+# higgsMassScan = [70.0]
+susyMassScan = [1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0, 2200.0]
+# susyMassScan = [1000.0]
 massRatio = 0.95 # massHiggs / massNLSP
 massSplitting = 1.0 # massNLSP - massHiggs - massLSP
-numberEvents = 500
+numberEvents = 18000
 #############################
 #############################
 #############################
@@ -51,7 +51,7 @@ if os.path.isdir("%s/baseMGR/" % projectLocation):
 				# create the instructions for the madgraph job (links to the corresponding .param_card)
 				instructionText = MGProject + "/instructionsToRun.txt"		
 				f = open(instructionText, 'w')
-				f.write("launch %s;\n" % (MGProject))
+				f.write("launch %s;\n" % MGProject)
 				f.write("pythia=ON\n")
 				f.write("delphes=ON\n")
 				f.write("done\n")
