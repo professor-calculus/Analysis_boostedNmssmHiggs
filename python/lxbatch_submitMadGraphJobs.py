@@ -17,7 +17,7 @@ import os
 projectLocation = "/afs/cern.ch/work/t/taylor/public/madGraphProjects/nmssmCascadeAnalysis_v01"
 #
 ### where the parameter cards are stored (must run madGraphParamCardGenerator.py first to create these!)
-paramCardDir = "/afs/cern.ch/user/t/taylor/MG5_aMC_v2_3_3/nmssmCascadeParamCards" 
+paramCardDir = "/afs/cern.ch/user/t/taylor/MG5_aMC_v2_3_3/nmssmCascadeParamCards/type_02" 
 #
 ### parameter options
 # higgsMassScan = [70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0]
