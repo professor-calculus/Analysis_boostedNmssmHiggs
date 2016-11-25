@@ -36,6 +36,7 @@
 // $ root -l -b -q 'McSignalStudies.cxx({"/storage/jt15104/madGraphProjects/testing/mH125p0_mSusy1000p0_ratio0p96_splitting2p0_10000events/dirA/dirB/dirC/tag_1_delphes_events.root"}, "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/test/output.root")'
 // 
 // or use submit_McSignalStudies.cxx
+// NOTE THAT THE INPUT MUST CONFORM TO THE mhXXXpX_mSusyXXXXpX_ratioXpXX_splittingXpX_XXXXXevents format
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
