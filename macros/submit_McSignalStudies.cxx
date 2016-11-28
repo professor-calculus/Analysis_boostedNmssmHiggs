@@ -13,98 +13,49 @@
 
 void submit_McSignalStudies(){
 
+
 	// ***INPUT***
 	std::vector<std::vector<std::string>> vecInputFiles_; // can add more than one file if you do so wish
 	// vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/testing/mH125p0_mSusy1000p0_ratio0p96_splitting2p0_10000events/dirA/dirB/dirC/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH70p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH80p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH90p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH100p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH110p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH120p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
-	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/mH130p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/Events/run_01/tag_1_delphes_events.root"});
+	
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH110p0_mSusy1000p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH110p0_mSusy1400p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH110p0_mSusy1800p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH110p0_mSusy2200p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH130p0_mSusy1000p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH130p0_mSusy1400p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH130p0_mSusy1800p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH130p0_mSusy2200p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH70p0_mSusy1000p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH70p0_mSusy1400p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH70p0_mSusy1800p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH70p0_mSusy2200p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH90p0_mSusy1000p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH90p0_mSusy1400p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH90p0_mSusy1800p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+	vecInputFiles_.push_back({"/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/mH90p0_mSusy2200p0_ratio0p95_splitting1p0_25000events/Events/run_01/tag_1_delphes_events.root"});
+
 
 	// ***OUTPUT***
 	std::vector<std::string> vecOutputFile_; // follow the mHXXpX_mSusyXXXXpX_ratioXpXX_splittingXpX_XXXXXevents/output.root format please:)
 	// vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/test2/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH70p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH70p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH70p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH70p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH70p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH70p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH80p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH80p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH80p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH80p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH80p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH80p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH90p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH90p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH90p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH90p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH90p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH90p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH100p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH100p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH100p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH100p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH100p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH100p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH110p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH110p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH110p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH110p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH110p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH110p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH120p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH120p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH120p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH120p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH120p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH120p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH130p0_mSusy1000p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH130p0_mSusy1200p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH130p0_mSusy1400p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH130p0_mSusy1600p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH130p0_mSusy1800p0_ratio0p95_splitting1p0_10000events/output.root");
-	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/version_03/mH130p0_mSusy2000p0_ratio0p95_splitting1p0_10000events/output.root");
-
+	
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH110p0_mSusy1000p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH110p0_mSusy1400p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH110p0_mSusy1800p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH110p0_mSusy2200p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH130p0_mSusy1000p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH130p0_mSusy1400p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH130p0_mSusy1800p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH130p0_mSusy2200p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH70p0_mSusy1000p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH70p0_mSusy1400p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH70p0_mSusy1800p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH70p0_mSusy2200p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH90p0_mSusy1000p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH90p0_mSusy1400p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH90p0_mSusy1800p0_ratio0p95_splitting1p0_25000events/output.root");
+	vecOutputFile_.push_back("/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/mH90p0_mSusy2200p0_ratio0p95_splitting1p0_25000events/output.root");
 
 	if (vecInputFiles_.size() != vecOutputFile_.size()){
 		std::cout << "The size of the two inputs vectors is not the same. Exiting..." << std::endl;

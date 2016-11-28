@@ -364,7 +364,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["secondarySquarkPt"] = new TH1F("secondarySquarkPt", ";squark p_{T} (GeV);a.u.", 50, 0, 2500);
 	h_["secondarySquarkEta"] = new TH1F("secondarySquarkEta", ";#eta squark;a.u.", 50, -5, 5);
 	h2_["leadingSquarkPt_SecondarySquarkPt"] = new TH2F("leadingSquarkPt_SecondarySquarkPt", ";secondary squark p_{T} (GeV);leading squark p_{T} (GeV)", 100, 0, 2500, 100, 0, 2500);
-	h2_["leadingSquarkEta_SecondarySquarkEta"] = new TH2F("leadingSquarkEta_SecondarySquarkEta", ";#eta secondary quark;#eta leading quark", 50, -5, 5, 100, -5, 5);
+	h2_["leadingSquarkEta_SecondarySquarkEta"] = new TH2F("leadingSquarkEta_SecondarySquarkEta", ";#eta secondary quark;#eta leading quark", 100, -5, 5, 100, -5, 5);
 	h2_["leadingSquarkPhi_SecondarySquarkPhi"] = new TH2F("leadingSquarkPhi_SecondarySquarkPhi", ";secondary squark Phi;leading squark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
 	h_["leadingSquarkPt_zeroGluinos"] = new TH1F("leadingSquarkPt_zeroGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 2500);
 	h_["leadingSquarkPt_oneGluinos"] = new TH1F("leadingSquarkPt_oneGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 2500);
@@ -392,7 +392,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["secondaryNlspPt"] = new TH1F("secondaryNlspPt", ";NLSP p_{T} (GeV);a.u.", 50, 0, 2500);
 	h_["secondaryNlspEta"] = new TH1F("secondaryNlspEta", ";#eta NLSP;a.u.", 50, -5, 5);
 	h2_["leadingNlspPt_secondaryNlspPt"] = new TH2F("leadingNlspPt_secondaryNlspPt", ";secondary NLSP p_{T} (GeV);leading NLSP p_{T} (GeV)", 100, 0, 2500, 100, 0, 2500);
-	h2_["leadingNlspEta_secondaryNlspEta"] = new TH2F("leadingNlspEta_secondaryNlspEta", ";#eta secondary NLSP;#eta leading NLSP", 50, -5, 5, 100, -5, 5);
+	h2_["leadingNlspEta_secondaryNlspEta"] = new TH2F("leadingNlspEta_secondaryNlspEta", ";#eta secondary NLSP;#eta leading NLSP", 100, -5, 5, 100, -5, 5);
 	h2_["leadingNlspPhi_secondaryNlspPhi"] = new TH2F("leadingNlspPhi_secondaryNlspPhi", ";secondary NLSP Phi;leading NLSP Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
 
 	h_["leadingHiggsPt"] = new TH1F("leadingHiggsPt", ";higgs p_{T} (GeV);a.u.", 50, 0, 2500);
