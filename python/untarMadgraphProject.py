@@ -7,6 +7,7 @@ import re
 ### $ python $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/python/untarMadgraphProject.py
 ### 
 ### untars the MG projects
+### MUST SET IT OFF FROM THE CORRECT DIRECTORY!!!
 #############################
 
 #############################
