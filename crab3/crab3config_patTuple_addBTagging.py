@@ -16,7 +16,7 @@ config.General.transferOutputs = True
 config.General.transferLogs = True
 
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '../python/patTuple_addBTagging_cfg.py'
+config.JobType.psetName = 'patTuple_addBTagging_cfg.py'
 
 # DATASETS
 # for testing the X->bb tagger on single boosted higgs (use 1 unitsPerJob, 1unit here ~=9k files)
