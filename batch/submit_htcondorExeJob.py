@@ -39,7 +39,6 @@ vecOutputFiles.append("histos_6.root")
 ############################
 ############################
 
-
 if len(vecInputFiles) != len(vecOutputFiles):
 	print "Length of input vector does not equal length of output vector"
 	print "Exiting..."
