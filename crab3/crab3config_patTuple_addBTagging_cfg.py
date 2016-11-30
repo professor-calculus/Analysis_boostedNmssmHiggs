@@ -3,6 +3,10 @@ config = config()
 
 # submit, from crab directory, with $ crab submit -c crab3config_MC.py
 
+# EDIT the following
+# uniqueName, config.Data.inputDataset, config.Data.unitsPerJob
+
+
 uniqueName = 'boostedHiggsMC_25e777' # name for this ntuple production (include commit hash so it is unique and can be traced) 
 config.General.requestName = uniqueName # name of the crab job project (eg on dashboard)
 config.Data.outputDatasetTag = uniqueName # name for storage directory beneath /hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/<dataset>/
