@@ -27,7 +27,7 @@
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingDoubleBTaggerEfficiencyStudies.h"
 
 // preliminary running, compile with scram b and then
-// $ $CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies inputfiles=XYZ outputfile=ABC orderedsecondaryfiles=0
+// $ DoubleBTaggerEfficiencyStudies inputfiles=XYZ outputfile=ABC orderedsecondaryfiles=0
 // nb. if you are running it on DICE, include the word runOnDice at the end of the arguments of the executable
 
 /* Notes on runOnDice mode
