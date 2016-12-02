@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step2 --filein file:nmssmSignalV01_AODSIMstep1of2.root --fileout file:nmssmSignalV01_AODSIMstep2of2.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_v3 --step RAW2DIGI,L1Reco,RECO --era Run2_25ns --python_filename processMc03_genSimToAOD_step2of2_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
+# with command line options: step2 --filein file:nmssmSignal_AODSIMstep1of2.root --fileout file:nmssmSignal_AODSIMstep2of2.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_v3 --step RAW2DIGI,L1Reco,RECO --era Run2_25ns --python_filename processMc03_genSimToAOD_step2of2_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -29,7 +29,7 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:nmssmSignalV01_AODSIMstep1of2.root'),
+    fileNames = cms.untracked.vstring('file:nmssmSignal_AODSIMstep1of2.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
 
@@ -54,7 +54,7 @@ process.AODSIMoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(15728640),
-    fileName = cms.untracked.string('file:nmssmSignalV01_AODSIMstep2of2.root'),
+    fileName = cms.untracked.string('file:nmssmSignal_AODSIMstep2of2.root'),
     outputCommands = process.AODSIMEventContent.outputCommands
 )
 

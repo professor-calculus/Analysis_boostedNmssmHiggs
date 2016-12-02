@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step1 --filein file:nmssmSignalV01_GENSIM.root --fileout file:nmssmSignalV01_AODSIMstep1of2.root --pileup_input dbs:/MinBias_TuneCUETP8M1_13TeV-pythia8/RunIISummer15GS-MCRUN2_71_V1-v2/GEN-SIM --mc --eventcontent RAWSIM --pileup 2016_25ns_SpringMC_PUScenarioV1_PoissonOOTPU --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_v3 --step DIGI,L1,DIGI2RAW,HLT:@frozen25ns --era Run2_25ns --python_filename processMc02_genSimToAOD_step1of2_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
+# with command line options: step1 --filein file:nmssmSignal_GENSIM.root --fileout file:nmssmSignal_AODSIMstep1of2.root --pileup_input dbs:/MinBias_TuneCUETP8M1_13TeV-pythia8/RunIISummer15GS-MCRUN2_71_V1-v2/GEN-SIM --mc --eventcontent RAWSIM --pileup 2016_25ns_SpringMC_PUScenarioV1_PoissonOOTPU --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_v3 --step DIGI,L1,DIGI2RAW,HLT:@frozen25ns --era Run2_25ns --python_filename processMc02_genSimToAOD_step1of2_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -31,7 +31,7 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
     dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
-    fileNames = cms.untracked.vstring('file:nmssmSignalV01_GENSIM.root'),
+    fileNames = cms.untracked.vstring('file:nmssmSignal_GENSIM.root'),
     inputCommands = cms.untracked.vstring('keep *', 
         'drop *_genParticles_*_*', 
         'drop *_genParticlesForJets_*_*', 
@@ -71,7 +71,7 @@ process.RAWSIMoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
-    fileName = cms.untracked.string('file:nmssmSignalV01_AODSIMstep1of2.root'),
+    fileName = cms.untracked.string('file:nmssmSignal_AODSIMstep1of2.root'),
     outputCommands = process.RAWSIMEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )
