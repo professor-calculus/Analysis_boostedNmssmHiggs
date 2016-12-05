@@ -16,13 +16,15 @@ All the python configuration files direct you to what needs changing on a run by
 
 
 ONE. Processing AOD MC into patTuples with fat double B tags.
+Note that you may have to use a specific version of CMSSW to get this to work (eg CMSSW_8_0_20)
 $ crab submit -c crab3config_patTuple_addBTagging.py
 This calls on the CMSSW config file patTuple_addBTagging_cfg.py
 
 
 
 TWO. Create signal MC.
-This is composed of three stages, starting from the point where we have signal MadEvent LHE files ()
+This is composed of three stages, starting from the point where we have signal MadEvent LHE files
+Note that you may have to use a specific version of CMSSW to get this to work (eg CMSSW_8_0_3_patch1)
 (The stages are copied from the commands used by central production for recent susy MC. (Details in mcProductionWorkFlow.txt)
 
 1. Put LHE through pythia8 and simulates the CMS detector
