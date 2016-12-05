@@ -49,16 +49,16 @@ pathWithinMadgraphProject = 'Events/run_01/events.lhe' # ensure that you have un
 ##### INFO 'processMc02' INFO ############## requires valid editionNamePro01
 editionNamePro02 = "ed01"
 
-filesPerJobPro2 = 1
-totalNumberOfFilesPro2 = -1 # -1 to select them all
+filesPerJobPro02 = 1
+totalNumberOfFilesPro02 = -1 # -1 to select them all
 #-------------------------------------------
 
 #------------------------------------------- Note that running submission of processMc03
 ##### INFO 'processMc03' INFO ############## requires valid editionNamePro02
 editionNamePro03 = "ed01"
 
-filesPerJobPro3 = 1
-totalNumberOfFilesPro3 = -1 # -1 to select them all
+filesPerJobPro03 = 1
+totalNumberOfFilesPro03 = -1 # -1 to select them all
 #-------------------------------------------
 
 #------------------------------------------- Note that running submission of patTupleAddBTag
@@ -266,8 +266,8 @@ if mode == 'submit' and whichPartOfProcess == 'processMc02':
 		f.write("from CRABClient.UserUtilities import config\n")
 		f.write("config = config()\n")
 		f.write("config.Data.inputDataset = '%s'\n" % inputDataset)
-		f.write("config.Data.unitsPerJob = %d\n" % filesPerJobPro2)
-		f.write("config.Data.totalUnits = %d\n" % totalNumberOfFilesPro2)
+		f.write("config.Data.unitsPerJob = %d\n" % filesPerJobPro02)
+		f.write("config.Data.totalUnits = %d\n" % totalNumberOfFilesPro02)
 		f.write("config.Data.inputDBS = 'phys03'\n")
 		f.write("config.Data.splitting = 'FileBased'\n")
 		f.write("config.Data.publication = True\n")
@@ -295,9 +295,9 @@ if mode == 'checkStatus' and whichPartOfProcess == 'processMc02':
 	for i in range(0,len(madGraphProjects)):
 		print ""
 		print ""
-		partOneUniqueName = outputPrimaryDatasetIntro + '_processMc02_' + editionNamePro02 + '_' + madGraphProjectsStripOffEvents[i]
-		statusLines = os.popen("crab status -d crab_projects/crab_%s" % partOneUniqueName, "r").readlines()
-		print partOneUniqueName
+		partTwoUniqueName = outputPrimaryDatasetIntro + '_processMc02_' + editionNamePro02 + '_' + madGraphProjectsStripOffEvents[i]
+		statusLines = os.popen("crab status -d crab_projects/crab_%s" % partTwoUniqueName, "r").readlines()
+		print partTwoUniqueName
 		foundJobLine = False
 		for line in statusLines:
 			if foundJobLine == False and line[:12] == "Jobs status:":
@@ -325,9 +325,101 @@ if mode == 'checkStatus' and whichPartOfProcess == 'processMc02':
 if mode == 'resubmit' and whichPartOfProcess == 'processMc02':
 
 	for i in range(0,len(madGraphProjects)):
-		partOneUniqueName = outputPrimaryDatasetIntro + '_processMc02_' + editionNamePro02 + '_' + madGraphProjectsStripOffEvents[i]
-		os.system("crab resubmit -d crab_projects/crab_%s" % partOneUniqueName)
+		partTwoUniqueName = outputPrimaryDatasetIntro + '_processMc02_' + editionNamePro02 + '_' + madGraphProjectsStripOffEvents[i]
+		os.system("crab resubmit -d crab_projects/crab_%s" % partTwoUniqueName)
 
+
+
+		
+#-----------------------------------------------------------#
+#----------------------processMc03--------------------------#
+#-----------------------------------------------------------#
+
+if mode == 'submit' and whichPartOfProcess == 'processMc03':
+
+	for i in range(0,len(madGraphProjects)):
+		partTwoUniqueName = outputPrimaryDatasetIntro + '_processMc02_' + editionNamePro02 + '_' + madGraphProjectsStripOffEvents[i]
+		partThreeUniqueName = outputPrimaryDatasetIntro + '_processMc03_' + editionNamePro03 + '_' + madGraphProjectsStripOffEvents[i]
+
+		# get the name of the DAS input dataset name
+		inputDataset = []
+		statusLines = os.popen("crab status -d crab_projects/crab_%s" % partTwoUniqueName, "r").readlines()
+		for line in statusLines:
+			if line[:15] == "Output dataset:":
+				inputDataset = line.rstrip()
+				for c in range(15,len(inputDataset)):
+					if inputDataset[c] == '/':
+						inputDataset = inputDataset[c:]
+						# print inputDataset # for debugging
+						break
+				break
+
+		# create the tempory crab config file to submit
+		f = open("temp_crab3config_processMc03.py", 'w')
+		f.write("from CRABClient.UserUtilities import config\n")
+		f.write("config = config()\n")
+		f.write("config.Data.inputDataset = '%s'\n" % inputDataset)
+		f.write("config.Data.unitsPerJob = %d\n" % filesPerJobPro03)
+		f.write("config.Data.totalUnits = %d\n" % totalNumberOfFilesPro03)
+		f.write("config.Data.inputDBS = 'phys03'\n")
+		f.write("config.Data.splitting = 'FileBased'\n")
+		f.write("config.Data.publication = True\n")
+		f.write("config.Data.outputDatasetTag = '%s'\n" % partThreeUniqueName)
+		f.write("config.General.requestName = '%s'\n" % partThreeUniqueName)
+		f.write("config.General.workArea = 'crab_projects'\n")
+		f.write("config.General.transferOutputs = True\n")
+		f.write("config.General.transferLogs = True\n")
+		f.write("config.JobType.pluginName = 'Analysis'\n")
+		f.write("config.JobType.psetName = 'processMc03_genSimToAOD_step2of2_cfg.py'\n")
+		f.write("config.Site.storageSite = '%s'\n" % storageSite)
+		f.close()
+		print ""
+		os.system("cat temp_crab3config_processMc03.py") # for testing
+		# os.system("crab submit -c temp_crab3config_processMc03.py") # for the real deal
+		os.system("rm temp_crab3config_processMc03.py")
+		print ""
+
+
+
+if mode == 'checkStatus' and whichPartOfProcess == 'processMc03':
+	print ""
+	print "*** CHECKING STATUS FOR PROCESSMC03 ***"
+	print "NB if no info printed the task is most likely not bootstrapped yet"
+	for i in range(0,len(madGraphProjects)):
+		print ""
+		print ""
+		partThreeUniqueName = outputPrimaryDatasetIntro + '_processMc03_' + editionNamePro03 + '_' + madGraphProjectsStripOffEvents[i]
+		statusLines = os.popen("crab status -d crab_projects/crab_%s" % partThreeUniqueName, "r").readlines()
+		print partThreeUniqueName
+		foundJobLine = False
+		for line in statusLines:
+			if foundJobLine == False and line[:12] == "Jobs status:":
+				print line.rstrip()
+				foundJobLine = True
+				continue
+			if foundJobLine == True:
+				if line == "\n":
+					break
+				print line.rstrip()
+		foundPubLine = False
+		for line in statusLines:
+			if foundPubLine == False and line[:19] == "Publication status:":
+				print line.rstrip()
+				foundPubLine = True
+				continue
+			if foundPubLine == True:
+				if line == "\n":
+					break
+				print line.rstrip()
+	print ""
+
+
+
+if mode == 'resubmit' and whichPartOfProcess == 'processMc03':
+
+	for i in range(0,len(madGraphProjects)):
+		partThreeUniqueName = outputPrimaryDatasetIntro + '_processMc03_' + editionNamePro03 + '_' + madGraphProjectsStripOffEvents[i]
+		os.system("crab resubmit -d crab_projects/crab_%s" % partThreeUniqueName)
 
 
 
