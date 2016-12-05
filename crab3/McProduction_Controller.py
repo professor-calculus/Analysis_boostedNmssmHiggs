@@ -78,7 +78,7 @@ totalNumberOfFilesPAT = -1 # -1 to select them all
 # partOneUniqueName = outputPrimaryDatasetIntro + '_processMc01_' + editionNamePro01 + '_' + madGraphProjectsStripOffEvents[i]
 # partTwoUniqueName = outputPrimaryDatasetIntro + '_processMc02_' + editionNamePro02 + '_' + madGraphProjectsStripOffEvents[i]
 # partThreeUniqueName = outputPrimaryDatasetIntro + '_processMc03_' + editionNamePro03 + '_' + madGraphProjectsStripOffEvents[i]
-# patTupleUniqueName = outputPrimaryDatasetIntro + '_patTuple_' + editionNamePAT + '_' + madGraphProjectsStripOffEvents[i]
+# patTupleUniqueName = outputPrimaryDatasetIntro + '_patTupleAddBTag_' + editionNamePAT + '_' + madGraphProjectsStripOffEvents[i]
 # (the unique names must be less than 100 characters)
 #
 # the public location of the ouput will go here:
@@ -148,11 +148,6 @@ for madGraphProject in madGraphProjects:
 			break
 
 
-# within thingys...useful for copy and paste whilst writing it down
-# partOneUniqueName = outputPrimaryDatasetIntro + '_processMc01_' + editionNamePro01 + '_' + madGraphProjectsStripOffEvents[i]
-# partTwoUniqueName = outputPrimaryDatasetIntro + '_processMc02_' + editionNamePro02 + '_' + madGraphProjectsStripOffEvents[i]
-# partThreeUniqueName = outputPrimaryDatasetIntro + '_processMc03_' + editionNamePro03 + '_' + madGraphProjectsStripOffEvents[i]
-# patTupleUniqueName = outputPrimaryDatasetIntro + '_patTuple_' + editionNamePAT + '_' + madGraphProjectsStripOffEvents[i]
 
 
 #-----------------------------------------------------------#
@@ -421,6 +416,98 @@ if mode == 'resubmit' and whichPartOfProcess == 'processMc03':
 		partThreeUniqueName = outputPrimaryDatasetIntro + '_processMc03_' + editionNamePro03 + '_' + madGraphProjectsStripOffEvents[i]
 		os.system("crab resubmit -d crab_projects/crab_%s" % partThreeUniqueName)
 
+
+
+
+#-----------------------------------------------------------#
+#----------------------patTupleAddBTag----------------------#
+#-----------------------------------------------------------#
+
+if mode == 'submit' and whichPartOfProcess == 'patTupleAddBTag':
+
+	for i in range(0,len(madGraphProjects)):
+		partThreeUniqueName = outputPrimaryDatasetIntro + '_processMc03_' + editionNamePro03 + '_' + madGraphProjectsStripOffEvents[i]
+		patTupleUniqueName = outputPrimaryDatasetIntro + '_patTupleAddBTag_' + editionNamePAT + '_' + madGraphProjectsStripOffEvents[i]
+
+		# get the name of the DAS input dataset name
+		inputDataset = []
+		statusLines = os.popen("crab status -d crab_projects/crab_%s" % partThreeUniqueName, "r").readlines()
+		for line in statusLines:
+			if line[:15] == "Output dataset:":
+				inputDataset = line.rstrip()
+				for c in range(15,len(inputDataset)):
+					if inputDataset[c] == '/':
+						inputDataset = inputDataset[c:]
+						# print inputDataset # for debugging
+						break
+				break
+
+		# create the tempory crab config file to submit
+		f = open("temp_crab3config_patTuple.py", 'w')
+		f.write("from CRABClient.UserUtilities import config\n")
+		f.write("config = config()\n")
+		f.write("config.Data.inputDataset = '%s'\n" % inputDataset)
+		f.write("config.Data.unitsPerJob = %d\n" % filesPerJobPAT)
+		f.write("config.Data.totalUnits = %d\n" % totalNumberOfFilesPAT)
+		f.write("config.Data.inputDBS = 'phys03'\n")
+		f.write("config.Data.splitting = 'FileBased'\n")
+		f.write("config.Data.publication = False\n")
+		f.write("config.Data.outputDatasetTag = '%s'\n" % patTupleUniqueName)
+		f.write("config.General.requestName = '%s'\n" % patTupleUniqueName)
+		f.write("config.General.workArea = 'crab_projects'\n")
+		f.write("config.General.transferOutputs = True\n")
+		f.write("config.General.transferLogs = True\n")
+		f.write("config.JobType.pluginName = 'Analysis'\n")
+		f.write("config.JobType.psetName = 'patTuple_addBTagging_cfg.py'\n")
+		f.write("config.Site.storageSite = '%s'\n" % storageSite)
+		f.close()
+		print ""
+		os.system("cat temp_crab3config_patTuple.py") # for testing
+		# os.system("crab submit -c temp_crab3config_patTuple.py") # for the real deal
+		os.system("rm temp_crab3config_patTuple.py")
+		print ""
+
+
+
+if mode == 'checkStatus' and whichPartOfProcess == 'patTupleAddBTag':
+	print ""
+	print "*** CHECKING STATUS FOR PROCESSMC03 ***"
+	print "NB if no info printed the task is most likely not bootstrapped yet"
+	for i in range(0,len(madGraphProjects)):
+		print ""
+		print ""
+		patTupleUniqueName = outputPrimaryDatasetIntro + '_patTupleAddBTag_' + editionNamePAT + '_' + madGraphProjectsStripOffEvents[i]
+		statusLines = os.popen("crab status -d crab_projects/crab_%s" % patTupleUniqueName, "r").readlines()
+		print partThreeUniqueName
+		foundJobLine = False
+		for line in statusLines:
+			if foundJobLine == False and line[:12] == "Jobs status:":
+				print line.rstrip()
+				foundJobLine = True
+				continue
+			if foundJobLine == True:
+				if line == "\n":
+					break
+				print line.rstrip()
+		foundPubLine = False
+		for line in statusLines:
+			if foundPubLine == False and line[:19] == "Publication status:":
+				print line.rstrip()
+				foundPubLine = True
+				continue
+			if foundPubLine == True:
+				if line == "\n":
+					break
+				print line.rstrip()
+	print ""
+
+
+
+if mode == 'resubmit' and whichPartOfProcess == 'patTupleAddBTag':
+
+	for i in range(0,len(madGraphProjects)):
+		patTupleUniqueName = outputPrimaryDatasetIntro + '_patTupleAddBTag_' + editionNamePAT + '_' + madGraphProjectsStripOffEvents[i]
+		os.system("crab resubmit -d crab_projects/crab_%s" % patTupleUniqueName)
 
 
 #################################################################
