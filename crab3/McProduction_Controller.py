@@ -12,9 +12,9 @@ import sys
 ###### @ U S E R @ O P T I O N S @ ##############################
 
 
-mode = 'submit'
+# mode = 'submit'
 # mode = 'resubmit'
-# mode = 'checkStatus'
+mode = 'checkStatus'
 
 # whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
@@ -31,6 +31,8 @@ madGraphProjects = [
                     'mH70p0_mSusy2200p0_ratio0p95_splitting1p0_25000events',
                    ]
 outputPrimaryDatasetIntro = 'nmssmSignalCascadeV01_13TeV'
+
+storageSite = 'T2_UK_SGrid_Bristol'
 #-----------------------------------------------
 
 #-------------------------------------------
@@ -116,6 +118,12 @@ totalNumberOfFilesPAT = -1 # -1 to select them all
 #################################################################
 #################################################################
 
+#################################################################
+#################################################################
+#################################################################
+#################################################################
+#################################################################
+
 # check that you submit from the correct directory
 cmsswBase = os.popen("echo $CMSSW_BASE", "r").readline()
 dirShouldBe = cmsswBase.rstrip() + "/src/Analysis/Analysis_boostedNmssmHiggs/crab3"
@@ -177,7 +185,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc01':
 		f.write("config.JobType.pluginName = 'PrivateMC'\n")
 		f.write("config.JobType.psetName = 'processMc01_mgLheToGenSim_cfg.py'\n")
 		f.write("config.JobType.inputFiles = ['%s']\n" % inputFiles)
-		f.write("config.Site.storageSite = 'T2_UK_SGrid_Bristol'\n")
+		f.write("config.Site.storageSite = '%s'\n" % storageSite)
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_processMc01.py") # for testing
@@ -229,7 +237,7 @@ if mode == 'resubmit' and whichPartOfProcess == 'processMc01':
 
 
 
-
+		
 #-----------------------------------------------------------#
 #----------------------processMc02--------------------------#
 #-----------------------------------------------------------#
@@ -254,25 +262,23 @@ if mode == 'submit' and whichPartOfProcess == 'processMc02':
 				break
 
 		# create the tempory crab config file to submit
-		# TODO UPDATE THIS TO THE CORRECT VERSION ONCE WE KNOW IT WORKS
 		f = open("temp_crab3config_processMc02.py", 'w')
 		f.write("from CRABClient.UserUtilities import config\n")
 		f.write("config = config()\n")
-		f.write("config.Data.unitsPerJob = %d\n" % eventsPerJob)
-		f.write("config.Data.totalUnits = %d\n" % totalNumberOfEvents)
-		f.write("config.Data.splitting = 'EventBased'\n")
-		f.write("config.Data.inputDBS = 'global'\n")
+		f.write("config.Data.inputDataset = '%s'\n" % inputDataset)
+		f.write("config.Data.unitsPerJob = %d\n" % filesPerJobPro2)
+		f.write("config.Data.totalUnits = %d\n" % totalNumberOfFilesPro2)
+		f.write("config.Data.inputDBS = 'phys03'\n")
+		f.write("config.Data.splitting = 'FileBased'\n")
 		f.write("config.Data.publication = True\n")
-		f.write("config.Data.outputPrimaryDataset = '%s'\n" % outputPrimaryDataset)
-		f.write("config.Data.outputDatasetTag = '%s'\n" % partOneUniqueName)
-		f.write("config.General.requestName = '%s'\n" % partOneUniqueName)
+		f.write("config.Data.outputDatasetTag = '%s'\n" % partTwoUniqueName)
+		f.write("config.General.requestName = '%s'\n" % partTwoUniqueName)
 		f.write("config.General.workArea = 'crab_projects'\n")
 		f.write("config.General.transferOutputs = True\n")
-		f.write("config.General.transferLogs    = True\n")
-		f.write("config.JobType.pluginName = 'PrivateMC'\n")
-		f.write("config.JobType.psetName = 'processMc01_mgLheToGenSim_cfg.py'\n")
-		f.write("config.JobType.inputFiles = ['%s']\n" % inputFiles)
-		f.write("config.Site.storageSite = 'T2_UK_SGrid_Bristol'\n")
+		f.write("config.General.transferLogs = True\n")
+		f.write("config.JobType.pluginName = 'Analysis'\n")
+		f.write("config.JobType.psetName = 'processMc02_genSimToAOD_step1of2_cfg.py'\n")
+		f.write("config.Site.storageSite = '%s'\n" % storageSite)
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_processMc02.py") # for testing
@@ -325,3 +331,8 @@ if mode == 'resubmit' and whichPartOfProcess == 'processMc02':
 
 
 
+#################################################################
+#################################################################
+#################################################################
+#################################################################
+#################################################################
