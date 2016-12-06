@@ -1,7 +1,7 @@
 import os
 import sys
 
-# select the correct options
+# select the correct options!!!
 # make sure you are in the Analysis_boostedNmssmHiggs/crab3 repo
 # run with $ python McProduction_Controller.py
 
@@ -12,12 +12,12 @@ import sys
 ###### @ U S E R @ O P T I O N S @ ##############################
 
 
-# mode = 'submit'
+mode = 'submit'
 # mode = 'resubmit'
-mode = 'checkStatus'
+# mode = 'checkStatus'
 
-# whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
-whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
+whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
+# whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
 # whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
 # whichPartOfProcess = 'patTupleAddBTag' # formats the AOD into patTuple form
 
@@ -369,8 +369,8 @@ if mode == 'submit' and whichPartOfProcess == 'processMc03':
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
 		f.close()
 		print ""
-		os.system("cat temp_crab3config_processMc03.py") # for testing
-		# os.system("crab submit -c temp_crab3config_processMc03.py") # for the real deal
+		# os.system("cat temp_crab3config_processMc03.py") # for testing
+		os.system("crab submit -c temp_crab3config_processMc03.py") # for the real deal
 		os.system("rm temp_crab3config_processMc03.py")
 		print ""
 
