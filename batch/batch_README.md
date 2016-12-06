@@ -3,7 +3,9 @@ Information on running batch code.
 lxbatch_submitMadGraphJobs.py info.
 Use to submit Madgraph jobs onto lxplus.
 Will scan over mass of higgs and mass susy for a given mass ratio and mass splitting.
-(The corresponding param cards must have been created first, see 'madGraphParamCardGenerator.py')
+Can select whether or not to do the pythia and delphes steps.
+(The corresponding param cards must have been created first, see 'python/madGraphParamCardGenerator.py')
+(Also requires you to have done the madGraph initial step locally and saved the project as 'baseMGR' in the correct directory)
 It calls upon lxbatch_madGraphJob.sh
 The output will be tarred up and ready to copy over to soolins /storage for safe keeping
 from the correct soolin storage location...

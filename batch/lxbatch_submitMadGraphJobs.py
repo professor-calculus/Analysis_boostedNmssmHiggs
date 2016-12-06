@@ -2,7 +2,7 @@ import os
 
 #############################
 ### run with
-### $ python $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/python/lxbatch_submitMadGraphJobs.py
+### $ python $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_submitMadGraphJobs.py
 ### (best to run from within a jobs log dir)
 ### copies the base madgraph project (have a baseMGR and a testMGR project dir to being with)
 ### creates the .txt file instructions for madGraph
@@ -26,7 +26,10 @@ susyMassScan = [1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0, 2200.0]
 # susyMassScan = [1000.0]
 massRatio = 0.95 # massHiggs / massNLSP
 massSplitting = 1.0 # massNLSP - massHiggs - massLSP
-numberEvents = 18000
+numberEvents = 65000
+
+# usePythiaAndDelplhes = True
+usePythiaAndDelplhes = False
 #############################
 #############################
 #############################
@@ -52,10 +55,12 @@ if os.path.isdir("%s/baseMGR/" % projectLocation):
 				instructionText = MGProject + "/instructionsToRun.txt"		
 				f = open(instructionText, 'w')
 				f.write("launch %s;\n" % MGProject)
-				f.write("pythia=ON\n")
-				f.write("delphes=ON\n")
+				if usePythiaAndDelplhes == True:
+					f.write("pythia=ON\n")
+					f.write("delphes=ON\n")
 				f.write("done\n")
-				f.write("%s/Cards/delphes_card_CMS.dat\n" % MGProject)
+				if usePythiaAndDelplhes == True:
+					f.write("%s/Cards/delphes_card_CMS.dat\n" % MGProject)
 				f.write("%s\n" % paramCard)
 				f.write("set nevents %d\n" % numberEvents)
 				f.write("done\n")
