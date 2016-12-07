@@ -12,12 +12,12 @@ import os
 ### ## # USER INPUTS # ## ###
 
 ### where you wish to store the parameter cards
-paramCardDir = "/afs/cern.ch/user/t/taylor/MG5_aMC_v2_3_3/nmssmCascadeParamCards/type_02" 
+paramCardDir = "/afs/cern.ch/user/t/taylor/MG5_aMC_v2_3_3/nmssmCascadeParamCards/type_03" 
 # paramCardDir = "/users/jt15104/MG5_aMC_v2_3_3/nmssmCascadeParamCards/type_02"
 
 ### parameter options
 higgsMassScan = [70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0]
-susyMassScan = [1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0]
+susyMassScan = [1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0, 2200.0]
 massRatio = 0.95 # massHiggs / massNLSP
 massSplitting = 1.0 # massNLSP - massHiggs - massLSP
 #############################
@@ -736,25 +736,25 @@ for higgsMass in higgsMassScan:
 		f.write("#                    scharm_L 2-body decays\n")
 		f.write("#          BR         NDA      ID1       ID2\n")
 		f.write("#     1.0E-0        2     1000021         4   # BR(~c_L -> ~g      c)\n")
-		f.write("     1.0E-0    2     1000023         2   # BR(~c_L -> ~chi_20 u)\n")
+		f.write("     1.0E-0    2     1000023         4   # BR(~c_L -> ~chi_20 c)\n")
 		f.write("#         PDG            Width\n")
 		f.write("DECAY   2000004     4.94113563E+00   # scharm_R\n")
 		f.write("#                    scharm_R 2-body decays\n")
 		f.write("#          BR         NDA      ID1       ID2\n")
 		f.write("#     1.0E-0        2     1000021         4   # BR(~c_R -> ~g      c)\n")
-		f.write("     1.0E-0    2     1000023         2   # BR(~c_R -> ~chi_20 u)\n")
+		f.write("     1.0E-0    2     1000023         4   # BR(~c_R -> ~chi_20 c)\n")
 		f.write("#         PDG            Width\n")
 		f.write("DECAY   1000003     3.89523283E+00   # sstrange_L\n")
 		f.write("#                    sstrange_L 2-body decays\n")
 		f.write("#          BR         NDA      ID1       ID2\n")
 		f.write("#     1.0E-0        2     1000021         3   # BR(~s_L -> ~g      s)\n")
-		f.write("     1.0E-0    2     1000023         1   # BR(~s_L -> ~chi_20 d)\n")
+		f.write("     1.0E-0    2     1000023         3   # BR(~s_L -> ~chi_20 s)\n")
 		f.write("#         PDG            Width\n")
 		f.write("DECAY   2000003     2.50415451E+00   # sstrange_R\n")
 		f.write("#                    sstrange_R 2-body decays\n")
 		f.write("#          BR         NDA      ID1       ID2\n")
 		f.write("#     1.0E-0        2     1000021         3   # BR(~s_R -> ~g      s)\n")
-		f.write("     1.0E-0    2     1000023         1   # BR(~s_R -> ~chi_20 d)\n")
+		f.write("     1.0E-0    2     1000023         3   # BR(~s_R -> ~chi_20 s)\n")
 		f.write("#         PDG            Width\n")
 		f.write("DECAY   1000006     1.31961371E+00   # stop1\n")
 		f.write("#                    stop1 2-body decays\n")
