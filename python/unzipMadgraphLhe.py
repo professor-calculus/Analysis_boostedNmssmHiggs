@@ -14,7 +14,7 @@ import re
 ### ## # USER INPUTS # ## ###
 
 motherDir = "/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type01/"
-pathWithinMadgraphProject = "Events/run_01/events.lhe.gz"
+pathWithinMadgraphProject = "Events/run_01/unweighted_events.lhe.gz"
 
 #############################
 #############################

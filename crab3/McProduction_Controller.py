@@ -42,7 +42,7 @@ editionNamePro01 = "ed01"
 eventsPerJob = 20
 totalNumberOfEvents = 100 # -1 to select them all
 localMadGraphProjectStore = '/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/'
-pathWithinMadgraphProject = 'Events/run_01/events.lhe' # ensure that you have unzipped these files using python/unzipMadgraphLhe.py
+pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that you have unzipped these files using python/unzipMadgraphLhe.py
 #-------------------------------------------
 
 #------------------------------------------- Note that running submission of processMc02

@@ -16,7 +16,7 @@ partOneUniqueName = 'processMc01_nmssmSignalV01_TEST10'
 
 # 3. MAKE SURE THAT THE FOLLOWING ARE UP TO DATE
 madGraphProjectStore = '/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type02/'
-pathWithinMadgraphProject = "Events/run_01/events.lhe"
+pathWithinMadgraphProject = "Events/run_01/unweighted_events.lhe"
 
 # 4. MAKE SURE unitsPerJob (and totalUnits) ARE SET CORRECTLY
 config.Data.unitsPerJob = 5 # number of events per job
