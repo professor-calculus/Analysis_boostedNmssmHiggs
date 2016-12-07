@@ -27,6 +27,7 @@ This is composed of three stages, starting from the point where we have signal M
 Note that you may have to use a specific version of CMSSW to get this to work (eg CMSSW_8_0_3_patch1)
 (The stages are copied from the commands used by central production for recent susy MC. (Details in mcProductionWorkFlow.txt)
 
+Old
 1. Put LHE through pythia8 and simulates the CMS detector
 $ crab submit -c crab3config_processMc01_mgLheToGenSim.py
 
@@ -36,5 +37,9 @@ $ crab submit -c crab3config_processMc02_genSimToAOD_step1of2.py
 3. Second step going from GenSim to AOD (with genParticles)
 $ crab submit -c crab3config_processMc03_genSimToAOD_step2of2.py
 
-nb. You can now put the output of three into the patTuple configuration
-TODO: create a controller script for all of this
+New
+This is now all controlled my McProduction_Controller.py
+it easily does submission, resubmission, and status checks
+and passes the jobs through the necessary stages easily.
+Select the correct settings then...
+$ python McProduction_Controller.py (from the crab3 directory)
