@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: Configuration/Generator/python/Hadronizer_TuneCUETP8M1_13TeV_generic_LHE_pythia8_cff.py --filein file:events.lhe --fileout nmssmSignal_GENSIM.root --mc --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --era Run2_25ns --datatier GEN-SIM --conditions auto:mc --beamspot Realistic50ns13TeVCollision --step GEN,SIM --magField 38T_PostLS1 --python_filename processMc01_mgLheToGenSim_cfg.py --no_exec -n 5
+# with command line options: Configuration/Generator/python/Hadronizer_TuneCUETP8M1_13TeV_generic_LHE_pythia8_cff.py --filein file:unweighted_events.lhe --fileout nmssmSignal_GENSIM.root --mc --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --era Run2_25ns --datatier GEN-SIM --conditions auto:mc --beamspot Realistic50ns13TeVCollision --step GEN,SIM --magField 38T_PostLS1 --python_filename processMc01_mgLheToGenSim_cfg.py --no_exec -n 5
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -26,7 +26,7 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(5)
+    input = cms.untracked.int32(20)
 )
 
 # Input source
