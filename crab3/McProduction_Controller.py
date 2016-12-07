@@ -322,7 +322,7 @@ if mode == 'resubmit' and whichPartOfProcess == 'processMc02':
 	for i in range(0,len(madGraphProjects)):
 		partTwoUniqueName = outputPrimaryDatasetIntro + '_processMc02_' + editionNamePro02 + '_' + madGraphProjectsStripOffEvents[i]
 		os.system("crab resubmit -d crab_projects/crab_%s" % partTwoUniqueName)
-
+		print ""
 
 
 		
@@ -415,7 +415,7 @@ if mode == 'resubmit' and whichPartOfProcess == 'processMc03':
 	for i in range(0,len(madGraphProjects)):
 		partThreeUniqueName = outputPrimaryDatasetIntro + '_processMc03_' + editionNamePro03 + '_' + madGraphProjectsStripOffEvents[i]
 		os.system("crab resubmit -d crab_projects/crab_%s" % partThreeUniqueName)
-
+		print ""
 
 
 
@@ -508,7 +508,7 @@ if mode == 'resubmit' and whichPartOfProcess == 'patTupleAddBTag':
 	for i in range(0,len(madGraphProjects)):
 		patTupleUniqueName = outputPrimaryDatasetIntro + '_patTupleAddBTag_' + editionNamePAT + '_' + madGraphProjectsStripOffEvents[i]
 		os.system("crab resubmit -d crab_projects/crab_%s" % patTupleUniqueName)
-
+		print ""
 
 #################################################################
 #################################################################
