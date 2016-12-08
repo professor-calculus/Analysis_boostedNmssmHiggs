@@ -48,13 +48,8 @@ void quickTestForBtagger()
 
 	int maxEvents_ = 10;
 	unsigned int outputEvery_ = 1;
-	std::vector<std::string> inputFiles_ = {"/users/jt15104/testCMSSW/CMSSW_8_0_3_patch1/src/bTagPatTuple.root"};
+	std::vector<std::string> inputFiles_ = {"/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/nmssmSignalCascadeV01_13TeV_mH70p0_mSusy1000p0_ratio0p95_splitting1p0/nmssmSignalCascadeV01_13TeV_patTupleAddBTag_ed01_mH70p0_mSusy1000p0_ratio0p95_splitting1p0/161208_094431/0000/bTagPatTuple_1.root"};
 	double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
-
-	double doubleBtagWP = 0.3; // loose
-	// double doubleBtagWP = 0.6; // medium
-	// double doubleBtagWP = 0.8; // tight
-	// double doubleBtagWP = 0.9; // very tight
 
 	/////////////////////	/////////////////////
 	/////////////////////	/////////////////////
@@ -68,13 +63,11 @@ void quickTestForBtagger()
 	    TFile* inFile = TFile::Open(inputFiles_[iFile].c_str());
 	    if( inFile ){
 
-	    	std::cout << "debug1" << std::endl;		
 			fwlite::Event ev(inFile);
 
 			// Loop through the events for this file
 			for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){
 				edm::EventBase const & event = ev;
-				std::cout << "debug2" << std::endl;
 
 				// break loop if maximal number of events is reached 
 				if(maxEvents_>0 ? ievt+1>maxEvents_ : false) break;
@@ -109,10 +102,11 @@ void quickTestForBtagger()
 					pat::Jet fatJetMatch; // if there is a matching fatJet, this object will contain it
 					bool isMatch =isThereAFatJetMatch(fatJets, higgsBbParticle, dRMaxMatch, fatJetMatch);
 					std::cout << "debug: we have a matched fat jet" << std::endl;
+					std::cout << "debug: this fat jet has a double btag disc of " << fatJetMatch.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") << std::endl;
 
 				} // closes loop through higgsBb Particles
 				// ------------------------------------------------------------------------------------------------------------//
-
+				std::cout << "" << std::endl;
 
 			} // closes loop through events for this file
 			inFile->Close();
