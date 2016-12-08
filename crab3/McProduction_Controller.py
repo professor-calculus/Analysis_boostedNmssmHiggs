@@ -462,8 +462,8 @@ if mode == 'submit' and whichPartOfProcess == 'patTupleAddBTag':
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
 		f.close()
 		print ""
-		os.system("cat temp_crab3config_patTuple.py") # for testing
-		# os.system("crab submit -c temp_crab3config_patTuple.py") # for the real deal
+		# os.system("cat temp_crab3config_patTuple.py") # for testing
+		os.system("crab submit -c temp_crab3config_patTuple.py") # for the real deal
 		os.system("rm temp_crab3config_patTuple.py")
 		print ""
 
