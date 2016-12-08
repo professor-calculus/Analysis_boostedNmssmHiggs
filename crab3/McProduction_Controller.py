@@ -17,9 +17,9 @@ import sys
 ###### @ U S E R @ O P T I O N S @ ##############################
 
 
-mode = 'submit'
+# mode = 'submit'
 # mode = 'resubmit'
-# mode = 'checkStatus'
+mode = 'checkStatus'
 
 # whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 # whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
@@ -493,7 +493,7 @@ if mode == 'submit' and whichPartOfProcess == 'patTupleAddBTag':
 
 if mode == 'checkStatus' and whichPartOfProcess == 'patTupleAddBTag':
 	print ""
-	print "*** CHECKING STATUS FOR PROCESSMC03 ***"
+	print "*** CHECKING STATUS FOR PAT.TUPLE.ADDBTAG ***"
 	print "NB if no info printed the task is most likely not bootstrapped yet"
 	for i in range(0,len(madGraphProjects)):
 		print ""
