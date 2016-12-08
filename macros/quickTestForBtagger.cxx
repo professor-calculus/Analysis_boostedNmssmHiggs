@@ -48,7 +48,8 @@ void quickTestForBtagger()
 
 	int maxEvents_ = 10;
 	unsigned int outputEvery_ = 1;
-	std::vector<std::string> inputFiles_ = {"/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/nmssmSignalCascadeV01_13TeV_mH70p0_mSusy1000p0_ratio0p95_splitting1p0/nmssmSignalCascadeV01_13TeV_patTupleAddBTag_ed01_mH70p0_mSusy1000p0_ratio0p95_splitting1p0/161208_094431/0000/bTagPatTuple_1.root"};
+	// std::vector<std::string> inputFiles_ = {"/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/nmssmSignalCascadeV01_13TeV_mH70p0_mSusy1000p0_ratio0p95_splitting1p0/nmssmSignalCascadeV01_13TeV_patTupleAddBTag_ed01_mH70p0_mSusy1000p0_ratio0p95_splitting1p0/161208_094431/0000/bTagPatTuple_1.root"};
+	std::vector<std::string> inputFiles_ = {"../crab3/bTagPatTuple.root"};
 	double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
 
 	/////////////////////	/////////////////////

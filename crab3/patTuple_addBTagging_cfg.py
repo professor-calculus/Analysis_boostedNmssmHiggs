@@ -10,7 +10,7 @@ process.load("PhysicsTools.PatAlgos.selectionLayer1.selectedPatCandidates_cff")
 # input file for local running (requires AOD input)
 process.source = cms.Source("PoolSource",
     # fileNames = cms.untracked.vstring('/store/mc/RunIISpring16reHLT80/GluGluToRadionToHHTo2B2G_M-900_narrow_13TeV-madgraph/AODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v3/20000/4C3007FC-F83F-E611-8B27-0090FAA577A0.root'),
-    fileNames = cms.untracked.vstring('file:nmssmSignal_AODSIMstep2of2.root'),
+    fileNames = cms.untracked.vstring('file:/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/nmssmSignalCascadeV01_13TeV_mH70p0_mSusy1000p0_ratio0p95_splitting1p0/nmssmSignalCascadeV01_13TeV_processMc03_ed01_mH70p0_mSusy1000p0_ratio0p95_splitting1p0/161206_092718/0000/nmssmSignal_AODSIMstep2of2_1.root'),
 )
 
 # max number of events when running locally
