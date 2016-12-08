@@ -12,14 +12,14 @@ import sys
 ###### @ U S E R @ O P T I O N S @ ##############################
 
 
-mode = 'submit'
+# mode = 'submit'
 # mode = 'resubmit'
-# mode = 'checkStatus'
+mode = 'checkStatus'
 
-whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
+# whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 # whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
 # whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
-# whichPartOfProcess = 'patTupleAddBTag' # formats the AOD into patTuple form
+whichPartOfProcess = 'patTupleAddBTag' # formats the AOD into patTuple form
 
 
 #-----------------------------------------------
@@ -478,7 +478,7 @@ if mode == 'checkStatus' and whichPartOfProcess == 'patTupleAddBTag':
 		print ""
 		patTupleUniqueName = outputPrimaryDatasetIntro + '_patTupleAddBTag_' + editionNamePAT + '_' + madGraphProjectsStripOffEvents[i]
 		statusLines = os.popen("crab status -d crab_projects/crab_%s" % patTupleUniqueName, "r").readlines()
-		print partThreeUniqueName
+		print patTupleUniqueName
 		foundJobLine = False
 		for line in statusLines:
 			if foundJobLine == False and line[:12] == "Jobs status:":
