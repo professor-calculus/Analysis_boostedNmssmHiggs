@@ -1,9 +1,14 @@
 import os
 import sys
 
-# select the correct options!!!
-# make sure you are in the Analysis_boostedNmssmHiggs/crab3 repo
-# run with $ python McProduction_Controller.py
+# 1. select the correct options in this script!!!
+# 2. make sure you are in the Analysis_boostedNmssmHiggs/crab3 repo*
+# 3. run with $ python McProduction_Controller.py
+
+# *for processMc 01,02,03 you need to be in one CMSSW environment
+# *for patTuple you need to be in another CMSSW environment
+# this is kind of annoying, sorry!
+# make sure you have a valid grid certificate and the correct (for your CMSSW env) crab loaded
 
 #################################################################
 #################################################################
@@ -12,9 +17,9 @@ import sys
 ###### @ U S E R @ O P T I O N S @ ##############################
 
 
-# mode = 'submit'
+mode = 'submit'
 # mode = 'resubmit'
-mode = 'checkStatus'
+# mode = 'checkStatus'
 
 # whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 # whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
@@ -33,6 +38,11 @@ madGraphProjects = [
 outputPrimaryDatasetIntro = 'nmssmSignalCascadeV01_13TeV'
 
 storageSite = 'T2_UK_SGrid_Bristol'
+
+processMc_cmsswVersion = 'CMSSW_8_0_3_patch1'
+pathTo_processMc_cmsswVersion = '/users/jt15104/' # little hack so patTuple stage (uses different CMSSW) knows how to find info for collecting the input dataset
+
+patTuple_cmsswVersion = 'CMSSW_8_0_20'
 #-----------------------------------------------
 
 #-------------------------------------------
@@ -91,7 +101,7 @@ totalNumberOfFilesPAT = -1 # -1 to select them all
 # 1. ./crab_projects/crab_<partOneUniqueName>/
 # 2. ./crab_projects/crab_<partTwoUniqueName>/
 # 3. ./crab_projects/crab_<partThreeUniqueName>/
-# 4. ./crab_projects/crab_<patTupleUniqueName>/
+# 4. ./crab_projects/crab_<patTupleUniqueName>/ *NOTE THAT WE WILL BE IN A DIFFERENT REPO FOR THIS PROCESS
 #
 # output ROOT files will go here:
 # 1. /hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/<outputPrimaryDataset>/<partOneUniqueName>/<dateStamp>/0000/
@@ -124,20 +134,31 @@ totalNumberOfFilesPAT = -1 # -1 to select them all
 #################################################################
 #################################################################
 
-# check that you submit from the correct directory
+
+cmsswVersion = os.popen("echo $CMSSW_VERSION", "r").readline()
+cmsswVersion = cmsswVersion.rstrip()
+# check that you are using the correct cmssw version
+if (whichPartOfProcess == "processMc01" or whichPartOfProcess == "processMc02" or whichPartOfProcess == "processMc03") and cmsswVersion != processMc_cmsswVersion:
+	print "You are using " + cmsswVersion
+	print "You should be using " + processMc_cmsswVersion + " for this process!!!"
+	print "You Fool"
+	sys.exit()
+
+if whichPartOfProcess == "patTupleAddBTag" and cmsswVersion != patTuple_cmsswVersion:
+	print "You are using " + cmsswVersion
+	print "You should be using " + patTuple_cmsswVersion + " for this process!!!"
+	print "You Fool"
+	sys.exit()
+
 cmsswBase = os.popen("echo $CMSSW_BASE", "r").readline()
-dirShouldBe = cmsswBase.rstrip() + "/src/Analysis/Analysis_boostedNmssmHiggs/crab3"
+cmsswBase = cmsswBase.rstrip()
+# check that you submit from the correct directory
+dirShouldBe = cmsswBase + "/src/Analysis/Analysis_boostedNmssmHiggs/crab3"
 if os.getcwd() != dirShouldBe:
 	print "We are not in the correct directory to run this script"
 	print "Get yourself in $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/crab3"
 	print "You Fool"
 	sys.exit()
-
-# load crab3
-os.system("source /cvmfs/cms.cern.ch/crab3/crab_standalone.sh")
-
-# load GRID certificate for a week
-# os.system("voms-proxy-init -voms cms --valid 168:00")
 
 # strip events section off madGraph info
 madGraphProjectsStripOffEvents = []
@@ -431,7 +452,8 @@ if mode == 'submit' and whichPartOfProcess == 'patTupleAddBTag':
 
 		# get the name of the DAS input dataset name
 		inputDataset = []
-		statusLines = os.popen("crab status -d crab_projects/crab_%s" % partThreeUniqueName, "r").readlines()
+		pathToCrabProjects = os.path.join(pathTo_processMc_cmsswVersion,processMc_cmsswVersion,"src/Analysis/Analysis_boostedNmssmHiggs/crab3/crab_projects") # HACK, sorry
+		statusLines = os.popen("crab status -d %s/crab_%s" % (pathToCrabProjects,partThreeUniqueName), "r").readlines()
 		for line in statusLines:
 			if line[:15] == "Output dataset:":
 				inputDataset = line.rstrip()

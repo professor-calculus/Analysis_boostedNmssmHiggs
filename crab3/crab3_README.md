@@ -43,3 +43,6 @@ it easily does submission, resubmission, and status checks
 and passes the jobs through the necessary stages easily.
 Select the correct settings then...
 $ python McProduction_Controller.py (from the crab3 directory)
+The one main pain in the bum is that the main MC stages use a different CMSSW version to the patTuple stage
+So there are options related to this you must check are correct
+(don't worry, the code won't let you submit from the wrong version)
