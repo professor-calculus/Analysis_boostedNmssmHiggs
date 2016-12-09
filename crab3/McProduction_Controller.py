@@ -41,7 +41,6 @@ storageSite = 'T2_UK_SGrid_Bristol'
 
 processMc_cmsswVersion = 'CMSSW_8_0_3_patch1'
 pathTo_processMc_cmsswVersion = '/users/jt15104/' # little hack so patTuple stage (uses different CMSSW) knows how to find info for collecting the input dataset
-
 patTuple_cmsswVersion = 'CMSSW_8_0_20'
 #-----------------------------------------------
 
