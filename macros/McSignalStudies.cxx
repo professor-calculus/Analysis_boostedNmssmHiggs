@@ -460,7 +460,7 @@ void WriteHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F
 
 
 
-
+// NOTE THAT THIS GETS THE PYTHIA HARD PROCESS PARTICLES. not the fully hadronization-showered particles
 bool indexAllCascadeParticles(std::vector<GenParticle*> particleVec, int ievt, std::string filename, std::ofstream & errorRecord, unsigned int & gluinoCount, std::vector<int> & squarkIndices, std::vector<int> & qjetIndices, std::vector<int> & nlspIndices, std::vector<int> & lspIndices, std::vector<int> & higgsIndices, std::vector<int> & bIndices, std::vector<int> & bbarIndices)
 {
 // *** SQUARKS ***
@@ -493,10 +493,10 @@ if (particleVec[squarkIndices[1]]->PT > particleVec[squarkIndices[0]]->PT) std::
 
 // *** QJET ***
 // loop through gen particle entries to find the quarks (squark->QUARK+nlsp)
-// nb: currently these are set in madgraph to only be u or d quarks
+// nb: currently these are set in madgraph to only be u or d quarks (added s and c)
 // leading arm quark
 for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-	if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 ){
+	if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 || particleVec[iPar]->PID) == 3 || abs(particleVec[iPar]->PID) == 4){
 		if (particleVec[iPar]->M1 == squarkIndices[0]){
 			qjetIndices.push_back(iPar);  
 			break;
@@ -505,7 +505,7 @@ for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
 } // closes loop through gen particle vector
 // secondary arm quark
 for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-	if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 ){
+	if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 || particleVec[iPar]->PID) == 3 || abs(particleVec[iPar]->PID) == 4){
 		if (particleVec[iPar]->M1 == squarkIndices[1]){
 			qjetIndices.push_back(iPar);  
 			break;
