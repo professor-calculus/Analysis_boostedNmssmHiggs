@@ -30,6 +30,9 @@ numberEvents = 100000
 
 # usePythiaAndDelplhes = True
 usePythiaAndDelplhes = False
+
+# willWeNeedMatching = True
+willWeNeedMatching = False
 #############################
 #############################
 #############################
@@ -63,6 +66,8 @@ if os.path.isdir("%s/baseMGR/" % projectLocation):
 					f.write("%s/Cards/delphes_card_CMS.dat\n" % MGProject)
 				f.write("%s\n" % paramCard)
 				f.write("set nevents %d\n" % numberEvents)
+				if willWeNeedMatching == True:
+					f.write("set ickkw 1\n")
 				f.write("done\n")
 				f.close()
 
