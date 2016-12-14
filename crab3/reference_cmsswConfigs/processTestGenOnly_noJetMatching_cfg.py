@@ -30,7 +30,7 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("LHESource",
     dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
-    fileNames = cms.untracked.vstring('file:unweighted_events.lhe'),
+    fileNames = cms.untracked.vstring('file:/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v05/paramCard_type03/mH100p0_mSusy2200p0_ratio0p95_splitting1p0_5000events/Events/run_01/unweighted_events.lhe'),
     inputCommands = cms.untracked.vstring('keep *', 
         'drop LHEXMLStringProduct_*_*_*')
 )
