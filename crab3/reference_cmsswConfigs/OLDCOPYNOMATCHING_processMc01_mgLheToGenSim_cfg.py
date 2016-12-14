@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: Configuration/Generator/python/Hadronizer_TuneCUETP8M1_13TeV_MLM_5f_max4j_LHE_pythia8_cff.py --filein file:unweighted_events.lhe --fileout nmssmSignal_GENSIM.root --mc --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --era Run2_25ns --datatier GEN-SIM --conditions auto:mc --beamspot Realistic50ns13TeVCollision --step GEN,SIM --magField 38T_PostLS1 --python_filename processMc01_mgLheToGenSim_cfg.py --no_exec -n 5
+# with command line options: Configuration/Generator/python/Hadronizer_TuneCUETP8M1_13TeV_generic_LHE_pythia8_cff.py --filein file:unweighted_events.lhe --fileout nmssmSignal_GENSIM.root --mc --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --era Run2_25ns --datatier GEN-SIM --conditions auto:mc --beamspot Realistic50ns13TeVCollision --step GEN,SIM --magField 38T_PostLS1 --python_filename processMc01_mgLheToGenSim_cfg.py --no_exec -n 5
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -26,7 +26,7 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(20)
 )
 
 # Input source
@@ -43,7 +43,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('Configuration/Generator/python/Hadronizer_TuneCUETP8M1_13TeV_MLM_5f_max4j_LHE_pythia8_cff.py nevts:5'),
+    annotation = cms.untracked.string('Configuration/Generator/python/Hadronizer_TuneCUETP8M1_13TeV_generic_LHE_pythia8_cff.py nevts:5'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -73,20 +73,8 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:mc', '')
 
 process.generator = cms.EDFilter("Pythia8HadronizerFilter",
     PythiaParameters = cms.PSet(
-        JetMatchingParameters = cms.vstring('JetMatching:setMad = off', 
-            'JetMatching:scheme = 1', 
-            'JetMatching:merge = on', 
-            'JetMatching:jetAlgorithm = 2', 
-            'JetMatching:etaJetMax = 5.', 
-            'JetMatching:coneRadius = 1.', 
-            'JetMatching:slowJetPower = 1', 
-            'JetMatching:qCut = 80.', # this was 20. after cmsDriver.py 
-            'JetMatching:nQmatch = 5', 
-            'JetMatching:nJetMax = 1', # this was 4 after cmsDriver.py
-            'JetMatching:doShowerKt = off'),
         parameterSets = cms.vstring('pythia8CommonSettings', 
-            'pythia8CUEP8M1Settings', 
-            'JetMatchingParameters'),
+            'pythia8CUEP8M1Settings'),
         pythia8CUEP8M1Settings = cms.vstring('Tune:pp 14', 
             'Tune:ee 7', 
             'MultipartonInteractions:pT0Ref=2.4024', 
@@ -95,7 +83,7 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
         pythia8CommonSettings = cms.vstring('Tune:preferLHAPDF = 2', 
             'Main:timesAllowErrors = 10000', 
             'Check:epTolErr = 0.01', 
-            'Beams:setProductionScalesFromLHEF = off', 
+            'Beams:setProductionScalesFromLHEF = off',
             'SLHA:keepSM = on', # default = on
             'SLHA:minMassSM = 10.', # default = 100. cmsswDefault = 1000.
             'SLHA:useDecayTable = on', # default = on
