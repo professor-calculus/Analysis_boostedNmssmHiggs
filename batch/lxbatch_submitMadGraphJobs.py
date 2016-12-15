@@ -14,23 +14,24 @@ import os
 ### ## # USER INPUTS # ## ###
 #
 ### where is the mad-graph project stored
-projectLocation = "/afs/cern.ch/work/t/taylor/public/madGraphProjects/nmssmCascadeAnalysis_v03/paramCard_type03"
+projectLocation = "/afs/cern.ch/work/t/taylor/public/madGraphProjects/nmssmCascadeAnalysis_v05/paramCard_type03"
 #
 ### where the parameter cards are stored (must run madGraphParamCardGenerator.py first to create these!)
 paramCardDir = "/afs/cern.ch/user/t/taylor/MG5_aMC_v2_3_3/nmssmCascadeParamCards/type_03" 
 #
 ### parameter options
-# higgsMassScan = [70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0]
-higgsMassScan = [70.0]
-# susyMassScan = [1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0, 2200.0]
-susyMassScan = [1000.0]
-massRatio = 0.95 # massHiggs / massNLSP
-massSplitting = 1.0 # massNLSP - massHiggs - massLSP
-numberEvents = 100000
+higgsMassScan = [70.0, 90.0, 110.0, 125.0]
+# higgsMassScan = [70.0]
+susyMassScan = [1000.0, 1400.0, 1800.0, 2200.0]
+# susyMassScan = [1000.0]
+massRatio = 0.99 # massHiggs / massNLSP
+massSplitting = 0.5 # massNLSP - massHiggs - massLSP
+numberEvents = 600000
 
 # usePythiaAndDelplhes = True
 usePythiaAndDelplhes = False
 
+# Only need True if you are Matching in MadGraphs built in pythia
 # willWeNeedMatching = True
 willWeNeedMatching = False
 #############################

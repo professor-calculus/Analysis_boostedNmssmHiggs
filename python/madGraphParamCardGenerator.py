@@ -16,16 +16,17 @@ paramCardDir = "/afs/cern.ch/user/t/taylor/MG5_aMC_v2_3_3/nmssmCascadeParamCards
 # paramCardDir = "/users/jt15104/MG5_aMC_v2_3_3/nmssmCascadeParamCards/type_02"
 
 ### parameter options
-higgsMassScan = [70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0]
+higgsMassScan = [70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 125.0]
 susyMassScan = [1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0, 2200.0]
-massRatio = 0.95 # massHiggs / massNLSP
-massSplitting = 1.0 # massNLSP - massHiggs - massLSP
+massRatio = 0.99 # massHiggs / massNLSP
+massSplitting = 0.5 # massNLSP - massHiggs - massLSP
 #############################
 #############################
 
 for higgsMass in higgsMassScan:
 	nlspMass = higgsMass / massRatio
 	lspMass = nlspMass - higgsMass - massSplitting
+	# print lspMass
 
 	for susyMass in susyMassScan:
 		gluinoMass = 1.01 * susyMass # don't change this
