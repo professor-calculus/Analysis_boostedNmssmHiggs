@@ -23,19 +23,32 @@ mode = 'checkStatus'
 
 # whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 # whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
-# whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
-whichPartOfProcess = 'patTupleAddBTag' # formats the AOD into patTuple form
+whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
+# whichPartOfProcess = 'patTupleAddBTag' # formats the AOD into patTuple form
 
 
 #-----------------------------------------------
 ##### INFO constant workflow INFO ##############
 madGraphProjects = [
-                    'mH70p0_mSusy1000p0_ratio0p95_splitting1p0_25000events',
-                    'mH70p0_mSusy1400p0_ratio0p95_splitting1p0_25000events',
-                    'mH70p0_mSusy1800p0_ratio0p95_splitting1p0_25000events',
-                    'mH70p0_mSusy2200p0_ratio0p95_splitting1p0_25000events',
+						# 'mH110p0_mSusy1000p0_ratio0p99_splitting0p5_600001events',
+						# 'mH110p0_mSusy1400p0_ratio0p99_splitting0p5_600001events',
+						# 'mH110p0_mSusy1800p0_ratio0p99_splitting0p5_600001events',
+						# 'mH110p0_mSusy2200p0_ratio0p99_splitting0p5_600000events',
+						# 'mH125p0_mSusy1000p0_ratio0p99_splitting0p5_600000events',
+						# 'mH125p0_mSusy1400p0_ratio0p99_splitting0p5_600001events',
+						# 'mH125p0_mSusy1800p0_ratio0p99_splitting0p5_600000events',
+						# 'mH125p0_mSusy2200p0_ratio0p99_splitting0p5_600000events',
+						'mH70p0_mSusy1000p0_ratio0p99_splitting0p5_600000events', # tHIS iS gOING sOLO
+						# 'mH70p0_mSusy1400p0_ratio0p99_splitting0p5_600000events',
+						# 'mH70p0_mSusy1800p0_ratio0p99_splitting0p5_600001events',
+						# 'mH70p0_mSusy2200p0_ratio0p99_splitting0p5_600001events',
+						# 'mH90p0_mSusy1000p0_ratio0p99_splitting0p5_600000events',
+						# 'mH90p0_mSusy1400p0_ratio0p99_splitting0p5_600002events',
+						# 'mH90p0_mSusy1800p0_ratio0p99_splitting0p5_600000events',
+						# 'mH90p0_mSusy2200p0_ratio0p99_splitting0p5_600000events',
                    ]
-outputPrimaryDatasetIntro = 'nmssmSignalCascadeV01_13TeV'
+
+outputPrimaryDatasetIntro = 'nmssmSignalCascadeV05_13TeV'
 
 storageSite = 'T2_UK_SGrid_Bristol'
 
@@ -46,17 +59,17 @@ patTuple_cmsswVersion = 'CMSSW_8_0_20'
 
 #-------------------------------------------
 ##### INFO 'processMc01' INFO ##############
-editionNamePro01 = "ed01"
+editionNamePro01 = "ed12"
 
-eventsPerJob = 20
-totalNumberOfEvents = 100 # -1 to select them all
-localMadGraphProjectStore = '/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v01/paramCard_type03/'
+eventsPerJob = 600
+totalNumberOfEvents = 600000 # -1 to select them all
+localMadGraphProjectStore = '/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v05/paramCard_type03/'
 pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that you have unzipped these files using python/unzipMadgraphLhe.py
 #-------------------------------------------
 
 #------------------------------------------- Note that running submission of processMc02
 ##### INFO 'processMc02' INFO ############## requires valid editionNamePro01
-editionNamePro02 = "ed01"
+editionNamePro02 = "ed12"
 
 filesPerJobPro02 = 1
 totalNumberOfFilesPro02 = -1 # -1 to select them all
@@ -64,7 +77,7 @@ totalNumberOfFilesPro02 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc03
 ##### INFO 'processMc03' INFO ############## requires valid editionNamePro02
-editionNamePro03 = "ed01"
+editionNamePro03 = "ed12"
 
 filesPerJobPro03 = 1
 totalNumberOfFilesPro03 = -1 # -1 to select them all
@@ -72,7 +85,7 @@ totalNumberOfFilesPro03 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of patTupleAddBTag
 ##### INFO 'patTupleAddBTag' INFO ########## requires valid editionNamePro03
-editionNamePAT = "ed01"
+editionNamePAT = "ed12"
 
 filesPerJobPAT = 1
 totalNumberOfFilesPAT = -1 # -1 to select them all
@@ -249,7 +262,7 @@ if mode == 'resubmit' and whichPartOfProcess == 'processMc01':
 	for i in range(0,len(madGraphProjects)):
 		partOneUniqueName = outputPrimaryDatasetIntro + '_processMc01_' + editionNamePro01 + '_' + madGraphProjectsStripOffEvents[i]
 		os.system("crab resubmit -d crab_projects/crab_%s" % partOneUniqueName)
-
+		print ""
 
 
 		
