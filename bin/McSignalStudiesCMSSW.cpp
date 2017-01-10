@@ -54,7 +54,7 @@ void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 void WriteHistogramsDICE(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 std::string getOutputDirFromOutputFile(std::string);
-bool indexAllCascadeParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles, int ievt, std::string filename, unsigned int & gluinoCount, std::vector<int> & squarkIndices, std::vector<int> & qjetIndices, std::vector<int> & nlspIndices, std::vector<int> & lspIndices, std::vector<int> & higgsIndices, std::vector<int> & bIndices, std::vector<int> & bbarIndices);
+bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>>,int,std::string,unsigned int&,std::vector<reco::GenParticle>&,std::vector<reco::Candidate*>&,std::vector<reco::Candidate*>&,std::vector<reco::Candidate*>&,std::vector<reco::Candidate*>&,std::vector<reco::Candidate*>&,std::vector<reco::Candidate*>&);
 
 
 int main(int argc, char* argv[]) 
@@ -193,25 +193,18 @@ int main(int argc, char* argv[])
 
 				// count how many gluinos are involved, we know we expect 2 squarks
 				unsigned int gluinoCount = 0;
-				// the first element is leading arm (decay from highest pt squark)
-				// the second element is for the secondary arm (decay from secondary pt squark)
-				// access leading lsp PT like so: genParticles[lspIndices[0]]->PT
-				// access secondary lsp PT like so: genParticles[lspIndices[1]]->PT
-				std::vector<int> squarkIndices;
-				std::vector<int> qjetIndices;
-				std::vector<int> nlspIndices;
-				std::vector<int> lspIndices;
-				std::vector<int> higgsIndices;
-				std::vector<int> bIndices;
-				std::vector<int> bbarIndices;
-				bool allParticlesPresent = indexAllCascadeParticles(genParticles,ievt,inputFiles_[iFile],gluinoCount,squarkIndices,qjetIndices,nlspIndices,lspIndices,higgsIndices,bIndices,bbarIndices);
-				if (allParticlesPresent==false) continue;
+				// the first element is leading arm version of particle(decay from highest pt squark)
+				// the second element is for the secondary arm version of particle (decay from secondary pt squark)
+				std::vector<reco::GenParticle> squarkVec;
+				std::vector<reco::Candidate*> qjetVec;
+				std::vector<reco::Candidate*> nlspVec;
+				std::vector<reco::Candidate*> lspVec;
+				std::vector<reco::Candidate*> higgsVec;
+				std::vector<reco::Candidate*> bVec;
+				std::vector<reco::Candidate*> bbarVec;
 
-
-
-
-
-
+				bool gotCascadeParticles = getCascadeParticles(genParticles,ievt,inputFiles_[iFile],gluinoCount,squarkVec,qjetVec,nlspVec,lspVec,higgsVec,bVec,bbarVec);
+				if (gotCascadeParticles == false) continue;
 
 
 
@@ -260,315 +253,6 @@ return 0;
 
 
 
-std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles)
-{
-	// this is a vector containing the h->bb higgs'
-	std::vector<reco::GenParticle> hBbGenParticles;
-
-	for (size_t iGen = 0; iGen < genParticles->size(); ++iGen){
-
-		const reco::GenParticle & genParticle = (*genParticles)[iGen];
-
-			if (genParticle.pdgId()==35){ // particle is a higgs						
-				if (genParticle.numberOfDaughters()==2 && abs(genParticle.daughter(0)->pdgId())==5 && abs(genParticle.daughter(1)->pdgId())==5){ // higgs decays to two b-quarks
-
-					hBbGenParticles.push_back(genParticle);
-
-				} // closes 'if' higgs decays to two b-quarks			
-			} // closes 'if' genParticle is a higgs
-		} // closes loop through genParticles
-	return hBbGenParticles;
-}	
-
-
-
-
-
-
-
-
-
-
-bool indexAllCascadeParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles, int ievt, std::string filename, unsigned int & gluinoCount, std::vector<int> & squarkIndices, std::vector<int> & qjetIndices, std::vector<int> & nlspIndices, std::vector<int> & lspIndices, std::vector<int> & higgsIndices, std::vector<int> & bIndices, std::vector<int> & bbarIndices)
-{
-
-// *** SQUARKS ***
-// loop through gen particle entries to find the squarks (and count the gluons)
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( abs(genParticle.pdgId()) == 1000021 ) gluinoCount++;
-	if ( abs(genParticle.pdgId()) == 1000001
-	|| abs(genParticle.pdgId()) == 2000001
-	|| abs(genParticle.pdgId()) == 1000002
-	|| abs(genParticle.pdgId()) == 2000002
-	|| abs(genParticle.pdgId()) == 1000003
-	|| abs(genParticle.pdgId()) == 2000003
-	|| abs(genParticle.pdgId()) == 1000004
-	|| abs(genParticle.pdgId()) == 2000004) squarkIndices.push_back(iGen);
-} // closes loop through genParticles vector
-
-if (squarkIndices.size() != 2){
-	std::cerr << "ERROR - Do not have 2 Squarks in the event" << std::endl;
-	std::cerr << "File: " << filename << std::endl;
-	std::cerr << "Event: " << ievt << std::endl;
-	std::cerr << std::endl;
-	return false;
-} // closes 'if' we don't have the 2 squarks
-
-// arrange so first element is the highest pt squark
-if ((*genParticles)[squarkIndices[1]].pt() > (*genParticles)[squarkIndices[0]].pt()) std::swap(squarkIndices[0],squarkIndices[1]);
-
-
-
-// *** QJET ***
-// loop through gen particle entries to find the quarks (squark->QUARK+nlsp)
-
-// leading arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( abs(genParticle.pdgId()) == 1 || abs(genParticle.pdgId()) == 2 || abs(genParticle.pdgId()) == 3 || abs(genParticle.pdgId()) == 4){
-		if (genParticle.mother() == squarkIndices[0]){
-			qjetIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-// secondary arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( abs(genParticle.pdgId()) == 1 || abs(genParticle.pdgId()) == 2 || abs(genParticle.pdgId()) == 3 || abs(genParticle.pdgId()) == 4){
-		if (genParticle.mother() == squarkIndices[1]){
-			qjetIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-if (qjetIndices.size() != 2){
-	std::cerr << "ERROR - Not 2 qjets matching to squarks" << std::endl;
-	std::cerr << "File: " << filename << std::endl;
-	std::cerr << "Event: " << ievt << std::endl;
-	std::cerr << std::endl;
-	return false;
-} // closes 'if' we don't have the 2 qjets
-
-
-
-// *** NLSP *** should put a counter, to count two of these, in
-// loop through gen particle entries to find the nlsp's (squark->quark+NLSP)
-
-// leading arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( abs(genParticle.pdgId()) == 1000023 ){
-		if (genParticle.mother() == squarkIndices[0]){
-			nlspIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-// secondary arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( abs(genParticle.pdgId()) == 1000023 ){
-		if (genParticle.mother() == squarkIndices[1]){
-			nlspIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-if (nlspIndices.size() != 2){
-	std::cerr << "ERROR - Not 2 nlsp's matching to squarks" << std::endl;
-	std::cerr << "File: " << filename << std::endl;
-	std::cerr << "Event: " << ievt << std::endl;
-	std::cerr << std::endl;
-	return false;
-} // closes 'if' we don't have the 2 nlsps's
-
-// sanity check whilst testing
-int nlspCount = 0;
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( abs(genParticle.pdgId()) == 1000023 ) nlspCount++;
-}
-if (nlspCount != 2){
-	std::cerr << "ERROR - Not 2 nlsp's in the event outright!" << std::endl;
-	std::cerr << "File: " << filename << std::endl;
-	std::cerr << "Event: " << ievt << std::endl;
-	std::cerr << std::endl;
-	return false;
-} // closes 'if' we don't have the 2 nlsps's
-
-
-
-// *** LSP ***
-// loop through gen particle entries to find the lsp's (nlsp->LSP+higgs)
-
-// leading arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( abs(genParticle.pdgId()) == 1000022 ){
-		if (genParticle.mother() == nlspIndices[0]){
-			lspIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-// secondary arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( abs(genParticle.pdgId()) == 1000022 ){
-		if (genParticle.mother() == nlspIndices[1]){
-			lspIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-if (lspIndices.size() != 2){
-	std::cerr << "ERROR - Not 2 lsp's matching to nlsp's" << std::endl;
-	std::cerr << "File: " << filename << std::endl;
-	std::cerr << "Event: " << ievt << std::endl;
-	std::cerr << std::endl;
-	return false;
-} // closes 'if' we don't have the 2 lsp's
-
-
-
-// *** HIGGS ***
-// loop through gen particle entries to find the lsp's (nlsp->lsp+HIGGS)
-
-// leading arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( abs(genParticle.pdgId()) == 35 ){
-		if (genParticle.mother() == nlspIndices[0]){
-			higgsIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-// secondary arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( abs(genParticle.pdgId()) == 35 ){
-		if (genParticle.mother() == nlspIndices[1]){
-			higgsIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-if (higgsIndices.size() != 2){
-	std::cerr << "ERROR - Not 2 higgs' matching to nlsp's" << std::endl;
-	std::cerr << "File: " << filename << std::endl;
-	std::cerr << "Event: " << ievt << std::endl;
-	std::cerr << std::endl;
-	return false;
-} // closes 'if' we don't have the 2 higgs
-
-
-
-//  *** b ***
-// loop through gen particle entries to find the b's (higgs->B+bbar)
-
-// leading arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( genParticle.pdgId() == 5 ){
-		if (genParticle.mother() == higgsIndices[0]){
-			bIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-// secondary arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( genParticle.pdgId() == 5 ){
-		if (genParticle.mother() == higgsIndices[1]){
-			bIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-if (bIndices.size() != 2){
-	std::cerr << "ERROR - Not 2 b's matching to higgs'" << std::endl;
-	std::cerr << "File: " << filename << std::endl;
-	std::cerr << "Event: " << ievt << std::endl;
-	std::cerr << std::endl;
-	return false;
-} // closes 'if' we don't have the 2 b's				
-
-
-
-//  *** bbar ***
-// loop through gen particle entries to find the b's (higgs->b+BBAR)
-
-// leading arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( genParticle.pdgId() == -5 ){
-		if (genParticle.mother() == higgsIndices[0]){
-			bbarIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-// secondary arm quark
-for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
-	const reco::GenParticle & genParticle = (*genParticles)[iGen];
-	if ( genParticle.pdgId() == -5 ){
-		if (genParticle.mother() == higgsIndices[1]){
-			bbarIndices.push_back(iGen);  
-			break;
-		}
-	}
-} // closes loop through genParticles vector
-
-if (bIndices.size() != 2){
-	std::cerr << "ERROR - Not 2 bbars's matching to higgs'" << std::endl;
-	std::cerr << "File: " << filename << std::endl;
-	std::cerr << "Event: " << ievt << std::endl;
-	std::cerr << std::endl;
-	return false;
-} // closes 'if' we don't have the 2 bbar's	
-
-return true;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_)
 {
 	// create the debugging histograms
@@ -580,6 +264,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["DEBUG_higgsBbDRpreMatching_3p450to465_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_3p450to465_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
 	h_["DEBUG_higgsBbDRpreMatching_3p500to515_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_3p500to515_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
 } //closes the function 'CreateHistograms'
+
 
 
 
@@ -638,3 +323,146 @@ std::string getOutputDirFromOutputFile(std::string outputFile)
 	}
 	return outputDirectory;
 }
+
+
+
+
+
+
+
+bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles, int ievt, std::string filename, unsigned int & gluinoCount, std::vector<reco::GenParticle> & squarkVec, std::vector<reco::Candidate*> & qjetVec, std::vector<reco::Candidate*> & nlspVec, std::vector<reco::Candidate*> & lspVec, std::vector<reco::Candidate*> & higgsVec, std::vector<reco::Candidate*> & bVec, std::vector<reco::Candidate*> & bbarVec)
+{
+	for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
+		const reco::GenParticle & genParticle = (*genParticles)[iGen];
+		// get the squarks
+		if ( abs(genParticle.pdgId()) == 1000021 ) gluinoCount++;
+		if ( (abs(genParticle.pdgId()) == 1000001
+		     || abs(genParticle.pdgId()) == 2000001
+		     || abs(genParticle.pdgId()) == 1000002
+		     || abs(genParticle.pdgId()) == 2000002
+		     || abs(genParticle.pdgId()) == 1000003
+		     || abs(genParticle.pdgId()) == 2000003
+		     || abs(genParticle.pdgId()) == 1000004
+		     || abs(genParticle.pdgId()) == 2000004) 
+			 && genParticle.numberOfDaughters() == 2){
+
+			int pdgId_0 = abs(genParticle.daughter(0)->pdgId());
+			int pdgId_1 = abs(genParticle.daughter(1)->pdgId());
+
+			// reco::Candidate * d0 = genParticle.daughter(0);
+			// reco::Candidate * d1 = genParticle.daughter(1);
+
+			// if ()
+
+			// squarkVec.push_back(genParticle);
+
+			
+
+					
+
+
+std::cerr << "Event: " << ievt << std::endl;
+std::cerr << "ID: " << genParticle.pdgId() << std::endl; 
+std::cerr << "daughter IDs: " << pdgId_0 << " " << pdgId_1 << std::endl;
+
+// ***the holding the items in vectors seems to be the issue***
+
+
+
+				if ( (pdgId_0 == 1 || pdgId_0 == 2 || pdgId_0 == 3 || pdgId_0 ==4) && pdgId_1 == 1000023 ){
+					squarkVec.push_back(genParticle);					
+					qjetVec.push_back(squarkVec.back().daughter(0));
+					nlspVec.push_back(squarkVec.back().daughter(1));
+
+
+					std::cout << "qjet pt " << qjetVec.back()->pt() << std::endl;
+				}
+				else if ( (pdgId_1 == 1 || pdgId_1 == 2 || pdgId_1 == 3 || pdgId_1 ==4) && pdgId_0 == 1000023 ){
+					squarkVec.push_back(genParticle);					
+					qjetVec.push_back(genParticle.daughter(1));
+					nlspVec.push_back(squarkVec.back().daughter(0));		
+				std::cout << "squark pt " << squarkVec.back().pt() << std::endl;		
+				std::cout << "qjet pt " << qjetVec.back()->pt() << std::endl;
+				} 
+
+
+			
+
+	// 		// nlsp decays
+	// 		if (nlspVec.back()->numberOfDaughters() != 2 ){
+	// 			std::cerr << "ERROR: nlsp does not have two daughters" << std::endl;
+	// 			std::cerr << "File: " << filename << std::endl;
+	// 			std::cerr << "Event: " << ievt << std::endl;
+	// 			std::cerr << std::endl;
+	// 			return false;
+	// 		}
+	// 		pdgId_0 = abs(nlspVec.back()->daughter(0)->pdgId());
+	// 		pdgId_1 = abs(nlspVec.back()->daughter(1)->pdgId());
+	// 		if ( pdgId_0 == 35 && pdgId_1 == 1000022 ){
+	// 			higgsVec.push_back(nlspVec.back()->daughter(0));
+	// 			lspVec.push_back(nlspVec.back()->daughter(1));
+	// 		}
+	// 		else if ( pdgId_1 == 35 && pdgId_0 == 1000022 ){
+	// 			higgsVec.push_back(nlspVec.back()->daughter(1));
+	// 			lspVec.push_back(nlspVec.back()->daughter(0));			
+	// 		} 
+	// 		else {
+	// 			std::cerr << "ERROR: nlsp does not have the correct daughters" << std::endl;
+	// 			std::cerr << "File: " << filename << std::endl;
+	// 			std::cerr << "Event: " << ievt << std::endl;
+	// 			std::cerr << std::endl;
+	// 			return false;
+	// 		}
+
+	// 		// higgs decays
+	// 		if (higgsVec.back()->numberOfDaughters() != 2 ){
+	// 			std::cerr << "ERROR: higgs does not have two daughters" << std::endl;
+	// 			std::cerr << "File: " << filename << std::endl;
+	// 			std::cerr << "Event: " << ievt << std::endl;
+	// 			std::cerr << std::endl;
+	// 			return false;
+	// 		}
+	// 		pdgId_0 = higgsVec.back()->daughter(0)->pdgId();
+	// 		pdgId_1 = higgsVec.back()->daughter(1)->pdgId();
+	// 		if ( pdgId_0 == 5 && pdgId_1 == -5 ){
+	// 			bVec.push_back(higgsVec.back()->daughter(0));
+	// 			bbarVec.push_back(higgsVec.back()->daughter(1));
+	// 		}
+	// 		else if ( pdgId_1 == 5 && pdgId_0 == -5 ){
+	// 			bVec.push_back(higgsVec.back()->daughter(1));
+	// 			bbarVec.push_back(higgsVec.back()->daughter(0));			
+	// 		} 
+	// 		else {
+	// 			std::cerr << "ERROR: higgs does not have the correct daughters" << std::endl;
+	// 			std::cerr << "File: " << filename << std::endl;
+	// 			std::cerr << "Event: " << ievt << std::endl;
+	// 			std::cerr << std::endl;
+	// 			return false;
+	// 		}
+
+		} // closes 'if' genParticle is a squark with two daughters
+	} // closes loop through genParticles
+
+
+	// // check we have the right number of squarks
+	// if (squarkVec.size() != 2){
+	// 	std::cerr << "ERROR: more than two correctly decaying squarks found" << std::endl;
+	// 	std::cerr << "File: " << filename << std::endl;
+	// 	std::cerr << "Event: " << ievt << std::endl;
+	// 	std::cerr << std::endl;
+	// 	return false;	
+	// }
+
+	// // ensure squarkVec entries are in pt order, and that decay arms follow this rule
+	// if (squarkVec[1].pt() > squarkVec[0].pt()){
+	// 	std::swap(squarkVec[0],squarkVec[1]);
+	// 	std::swap(qjetVec[0],qjetVec[1]);
+	// 	std::swap(nlspVec[0],nlspVec[1]);
+	// 	std::swap(lspVec[0],lspVec[1]);
+	// 	std::swap(higgsVec[0],higgsVec[1]);
+	// 	std::swap(bVec[0],bVec[1]);
+	// 	std::swap(bbarVec[0],bbarVec[1]);
+	// }
+
+	return true;
+} // closes the funciton getCascadeParticles
