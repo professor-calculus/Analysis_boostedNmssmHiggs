@@ -54,7 +54,7 @@ void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 void WriteHistogramsDICE(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 std::string getOutputDirFromOutputFile(std::string);
-bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>>,int,std::string,unsigned int&,std::vector<reco::GenParticle>&,std::vector<reco::Candidate*>&,std::vector<reco::Candidate*>&,std::vector<reco::Candidate*>&,std::vector<reco::Candidate*>&,std::vector<reco::Candidate*>&,std::vector<reco::Candidate*>&);
+bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>>,int,std::string,unsigned int&,std::vector<reco::GenParticle>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&);
 
 
 int main(int argc, char* argv[]) 
@@ -190,31 +190,23 @@ int main(int argc, char* argv[])
 				// }				
 
 
-
 				// count how many gluinos are involved, we know we expect 2 squarks
 				unsigned int gluinoCount = 0;
 				// the first element is leading arm version of particle(decay from highest pt squark)
 				// the second element is for the secondary arm version of particle (decay from secondary pt squark)
-				std::vector<reco::GenParticle> squarkVec;
-				std::vector<reco::Candidate*> qjetVec;
-				std::vector<reco::Candidate*> nlspVec;
-				std::vector<reco::Candidate*> lspVec;
-				std::vector<reco::Candidate*> higgsVec;
-				std::vector<reco::Candidate*> bVec;
-				std::vector<reco::Candidate*> bbarVec;
+				std::vector<reco::GenParticle> squarkVec; // note that this object is slightly different to the others
+				std::vector<const reco::Candidate*> qjetVec;
+				std::vector<const reco::Candidate*> nlspVec;
+				std::vector<const reco::Candidate*> lspVec;
+				std::vector<const reco::Candidate*> higgsVec;
+				std::vector<const reco::Candidate*> bVec;
+				std::vector<const reco::Candidate*> bbarVec;
 
 				bool gotCascadeParticles = getCascadeParticles(genParticles,ievt,inputFiles_[iFile],gluinoCount,squarkVec,qjetVec,nlspVec,lspVec,higgsVec,bVec,bbarVec);
 				if (gotCascadeParticles == false) continue;
 
-
-
-
-
-
-
-
-
-
+				std::cout << "leading squark pt: " << squarkVec[0].pt() << "   secondary squark pt: " << squarkVec[1].pt() << std::endl;
+				std::cout << "leading lsp pt: " << lspVec[0]->pt() << "   second lsp pt: " << lspVec[1]->pt();
 				// ------------------------------------------------------------------------------------------------------------//
 				// ------------------------------------------------------------------------------------------------------------//
 
@@ -329,8 +321,8 @@ std::string getOutputDirFromOutputFile(std::string outputFile)
 
 
 
-
-bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles, int ievt, std::string filename, unsigned int & gluinoCount, std::vector<reco::GenParticle> & squarkVec, std::vector<reco::Candidate*> & qjetVec, std::vector<reco::Candidate*> & nlspVec, std::vector<reco::Candidate*> & lspVec, std::vector<reco::Candidate*> & higgsVec, std::vector<reco::Candidate*> & bVec, std::vector<reco::Candidate*> & bbarVec)
+// function to get the nmssm cascade particles, returns true if does so sucessfully:)
+bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles, int ievt, std::string filename, unsigned int & gluinoCount, std::vector<reco::GenParticle> & squarkVec, std::vector<const reco::Candidate*> & qjetVec, std::vector<const reco::Candidate*> & nlspVec, std::vector<const reco::Candidate*> & lspVec, std::vector<const reco::Candidate*> & higgsVec, std::vector<const reco::Candidate*> & bVec, std::vector<const reco::Candidate*> & bbarVec)
 {
 	for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
 		const reco::GenParticle & genParticle = (*genParticles)[iGen];
@@ -349,120 +341,91 @@ bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>> genParticle
 			int pdgId_0 = abs(genParticle.daughter(0)->pdgId());
 			int pdgId_1 = abs(genParticle.daughter(1)->pdgId());
 
-			// reco::Candidate * d0 = genParticle.daughter(0);
-			// reco::Candidate * d1 = genParticle.daughter(1);
+			if ( (pdgId_1 == 1 || pdgId_1 == 2 || pdgId_1 == 3 || pdgId_1 ==4) && pdgId_0 == 1000023 ){
+				squarkVec.push_back(genParticle);
+				qjetVec.push_back(genParticle.daughter(1));
+				nlspVec.push_back(genParticle.daughter(0));		
+			} 
+			else if ( (pdgId_0 == 1 || pdgId_0 == 2 || pdgId_0 == 3 || pdgId_0 ==4) && pdgId_1 == 1000023 ){
+				squarkVec.push_back(genParticle);					
+				qjetVec.push_back(genParticle.daughter(0));
+				nlspVec.push_back(genParticle.daughter(1));
+			}
+			else continue; // go look at the next candidate genParticle
 
-			// if ()
+			// nlsp decays
+			// loop to ensure we get the decaying version of the nlsp
+			while (nlspVec.back()->numberOfDaughters() != 0){
+				if (nlspVec.back()->numberOfDaughters() == 2) break;
+				else nlspVec.back() = nlspVec.back()->daughter(0);
+			}
 
-			// squarkVec.push_back(genParticle);
+			pdgId_0 = abs(nlspVec.back()->daughter(0)->pdgId());
+			pdgId_1 = abs(nlspVec.back()->daughter(1)->pdgId());
+			if ( pdgId_1 == 35 && pdgId_0 == 1000022 ){
+				higgsVec.push_back(nlspVec.back()->daughter(1));
+				lspVec.push_back(nlspVec.back()->daughter(0));			
+			} 
+			else if ( pdgId_0 == 35 && pdgId_1 == 1000022 ){
+				higgsVec.push_back(nlspVec.back()->daughter(0));
+				lspVec.push_back(nlspVec.back()->daughter(1));
+			}
+			else {
+				std::cerr << "ERROR: nlsp does not have the correct daughters" << std::endl;
+				std::cerr << "File: " << filename << std::endl;
+				std::cerr << "Event: " << ievt << std::endl;
+				std::cerr << std::endl;
+				return false;
+			}
 
-			
-
-					
-
-
-std::cerr << "Event: " << ievt << std::endl;
-std::cerr << "ID: " << genParticle.pdgId() << std::endl; 
-std::cerr << "daughter IDs: " << pdgId_0 << " " << pdgId_1 << std::endl;
-
-// ***the holding the items in vectors seems to be the issue***
-
-
-
-				if ( (pdgId_0 == 1 || pdgId_0 == 2 || pdgId_0 == 3 || pdgId_0 ==4) && pdgId_1 == 1000023 ){
-					squarkVec.push_back(genParticle);					
-					qjetVec.push_back(squarkVec.back().daughter(0));
-					nlspVec.push_back(squarkVec.back().daughter(1));
-
-
-					std::cout << "qjet pt " << qjetVec.back()->pt() << std::endl;
-				}
-				else if ( (pdgId_1 == 1 || pdgId_1 == 2 || pdgId_1 == 3 || pdgId_1 ==4) && pdgId_0 == 1000023 ){
-					squarkVec.push_back(genParticle);					
-					qjetVec.push_back(genParticle.daughter(1));
-					nlspVec.push_back(squarkVec.back().daughter(0));		
-				std::cout << "squark pt " << squarkVec.back().pt() << std::endl;		
-				std::cout << "qjet pt " << qjetVec.back()->pt() << std::endl;
-				} 
-
-
-			
-
-	// 		// nlsp decays
-	// 		if (nlspVec.back()->numberOfDaughters() != 2 ){
-	// 			std::cerr << "ERROR: nlsp does not have two daughters" << std::endl;
-	// 			std::cerr << "File: " << filename << std::endl;
-	// 			std::cerr << "Event: " << ievt << std::endl;
-	// 			std::cerr << std::endl;
-	// 			return false;
-	// 		}
-	// 		pdgId_0 = abs(nlspVec.back()->daughter(0)->pdgId());
-	// 		pdgId_1 = abs(nlspVec.back()->daughter(1)->pdgId());
-	// 		if ( pdgId_0 == 35 && pdgId_1 == 1000022 ){
-	// 			higgsVec.push_back(nlspVec.back()->daughter(0));
-	// 			lspVec.push_back(nlspVec.back()->daughter(1));
-	// 		}
-	// 		else if ( pdgId_1 == 35 && pdgId_0 == 1000022 ){
-	// 			higgsVec.push_back(nlspVec.back()->daughter(1));
-	// 			lspVec.push_back(nlspVec.back()->daughter(0));			
-	// 		} 
-	// 		else {
-	// 			std::cerr << "ERROR: nlsp does not have the correct daughters" << std::endl;
-	// 			std::cerr << "File: " << filename << std::endl;
-	// 			std::cerr << "Event: " << ievt << std::endl;
-	// 			std::cerr << std::endl;
-	// 			return false;
-	// 		}
-
-	// 		// higgs decays
-	// 		if (higgsVec.back()->numberOfDaughters() != 2 ){
-	// 			std::cerr << "ERROR: higgs does not have two daughters" << std::endl;
-	// 			std::cerr << "File: " << filename << std::endl;
-	// 			std::cerr << "Event: " << ievt << std::endl;
-	// 			std::cerr << std::endl;
-	// 			return false;
-	// 		}
-	// 		pdgId_0 = higgsVec.back()->daughter(0)->pdgId();
-	// 		pdgId_1 = higgsVec.back()->daughter(1)->pdgId();
-	// 		if ( pdgId_0 == 5 && pdgId_1 == -5 ){
-	// 			bVec.push_back(higgsVec.back()->daughter(0));
-	// 			bbarVec.push_back(higgsVec.back()->daughter(1));
-	// 		}
-	// 		else if ( pdgId_1 == 5 && pdgId_0 == -5 ){
-	// 			bVec.push_back(higgsVec.back()->daughter(1));
-	// 			bbarVec.push_back(higgsVec.back()->daughter(0));			
-	// 		} 
-	// 		else {
-	// 			std::cerr << "ERROR: higgs does not have the correct daughters" << std::endl;
-	// 			std::cerr << "File: " << filename << std::endl;
-	// 			std::cerr << "Event: " << ievt << std::endl;
-	// 			std::cerr << std::endl;
-	// 			return false;
-	// 		}
+			// higgs decays
+			if (higgsVec.back()->numberOfDaughters() != 2 ){
+				std::cerr << "ERROR: higgs does not have two daughters" << std::endl;
+				std::cerr << "File: " << filename << std::endl;
+				std::cerr << "Event: " << ievt << std::endl;
+				std::cerr << std::endl;
+				return false;
+			}
+			pdgId_0 = higgsVec.back()->daughter(0)->pdgId();
+			pdgId_1 = higgsVec.back()->daughter(1)->pdgId();
+			if ( pdgId_0 == 5 && pdgId_1 == -5 ){
+				bVec.push_back(higgsVec.back()->daughter(0));
+				bbarVec.push_back(higgsVec.back()->daughter(1));
+			}
+			else if ( pdgId_1 == 5 && pdgId_0 == -5 ){
+				bVec.push_back(higgsVec.back()->daughter(1));
+				bbarVec.push_back(higgsVec.back()->daughter(0));			
+			} 
+			else {
+				std::cerr << "ERROR: higgs does not have the correct daughters" << std::endl;
+				std::cerr << "File: " << filename << std::endl;
+				std::cerr << "Event: " << ievt << std::endl;
+				std::cerr << std::endl;
+				return false;
+			}
 
 		} // closes 'if' genParticle is a squark with two daughters
 	} // closes loop through genParticles
 
+	// check we have the right number of correctly decaying squarks
+	if (squarkVec.size() != 2){
+		std::cerr << "ERROR: haven't got two correctly decaying squarks" << std::endl;
+		std::cerr << "File: " << filename << std::endl;
+		std::cerr << "Event: " << ievt << std::endl;
+		std::cerr << std::endl;
+		return false;	
+	}
 
-	// // check we have the right number of squarks
-	// if (squarkVec.size() != 2){
-	// 	std::cerr << "ERROR: more than two correctly decaying squarks found" << std::endl;
-	// 	std::cerr << "File: " << filename << std::endl;
-	// 	std::cerr << "Event: " << ievt << std::endl;
-	// 	std::cerr << std::endl;
-	// 	return false;	
-	// }
-
-	// // ensure squarkVec entries are in pt order, and that decay arms follow this rule
-	// if (squarkVec[1].pt() > squarkVec[0].pt()){
-	// 	std::swap(squarkVec[0],squarkVec[1]);
-	// 	std::swap(qjetVec[0],qjetVec[1]);
-	// 	std::swap(nlspVec[0],nlspVec[1]);
-	// 	std::swap(lspVec[0],lspVec[1]);
-	// 	std::swap(higgsVec[0],higgsVec[1]);
-	// 	std::swap(bVec[0],bVec[1]);
-	// 	std::swap(bbarVec[0],bbarVec[1]);
-	// }
+	// ensure squarkVec entries are in pt order, and that decay arms follow this rule also
+	if (squarkVec[1].pt() > squarkVec[0].pt()){
+		std::swap(squarkVec[0],squarkVec[1]);
+		std::swap(qjetVec[0],qjetVec[1]);
+		std::swap(nlspVec[0],nlspVec[1]);
+		std::swap(lspVec[0],lspVec[1]);
+		std::swap(higgsVec[0],higgsVec[1]);
+		std::swap(bVec[0],bVec[1]);
+		std::swap(bbarVec[0],bbarVec[1]);
+	}
 
 	return true;
 } // closes the funciton getCascadeParticles
