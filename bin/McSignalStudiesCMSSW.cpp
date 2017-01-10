@@ -33,10 +33,9 @@
 
 // TODO:
 // TChain instead of TTree?
-// New headers for MET and Gen and stuff?
 
-				// the first element is leading arm (decay from highest pt squark)
-				// the second element is for the secondary arm (decay from secondary pt squark)
+
+
 
 
 // preliminary running, compile with scram b and then
@@ -49,6 +48,8 @@ hacks the original script abit so it can do some things slightly differently
 it does so using the quantity: bool runOnDice
 */
 
+// NOTE: the first element is leading arm (decay from highest pt squark)
+// NOTE: the second element is for the secondary arm (decay from secondary pt squark)
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
@@ -174,7 +175,129 @@ int main(int argc, char* argv[])
 
 				// A N A L Y S I S
 				// ------------------------------------------------------------------------------------------------------------//
-				// first get all the gen particles in the cascade
+				
+
+				// first get all the Gen Particles in the cascade
+				//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+				// count how many gluinos are involved, we know we expect 2 squarks
+				unsigned int gluinoCount = 0;
+				// the first element is leading arm version of particle(decay from highest pt squark)
+				// the second element is for the secondary arm version of particle (decay from secondary pt squark)
+				std::vector<reco::GenParticle> squarkVec; // note that this object is slightly different to the others
+				std::vector<const reco::Candidate*> qjetVec;
+				std::vector<const reco::Candidate*> nlspVec;
+				std::vector<const reco::Candidate*> lspVec;
+				std::vector<const reco::Candidate*> higgsVec;
+				std::vector<const reco::Candidate*> bVec;
+				std::vector<const reco::Candidate*> bbarVec;
+
+				bool gotCascadeParticles = getCascadeParticles(genParticles,ievt,inputFiles_[iFile],gluinoCount,squarkVec,qjetVec,nlspVec,lspVec,higgsVec,bVec,bbarVec);
+				if (gotCascadeParticles == false) continue;
+				//  e.g.
+				// std::cout << "leading squark pt: " << squarkVec[0].pt() << "   secondary squark pt: " << squarkVec[1].pt() << std::endl;
+				// std::cout << "leading lsp pt: " << lspVec[0]->pt() << "   second lsp pt: " << lspVec[1]->pt();
+				//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+				// Gen Particle Plots
+				std::cout << gluinoCount << std::endl;
+				h_["numberOfGluinos"]->Fill(gluinoCount);
+				
+				h_["leadingSquarkPt"]->Fill(squarkVec[0].pt());
+				if (gluinoCount == 0) h_["leadingSquarkPt_zeroGluinos"]->Fill(squarkVec[0].pt());
+				if (gluinoCount == 1) h_["leadingSquarkPt_oneGluinos"]->Fill(squarkVec[0].pt());
+				if (gluinoCount == 2) h_["leadingSquarkPt_twoGluinos"]->Fill(squarkVec[0].pt());
+
+				h_["leadingSquarkEta"]->Fill(squarkVec[0].eta());
+				if (gluinoCount == 0) h_["leadingSquarkEta_zeroGluinos"]->Fill(squarkVec[0].eta());
+				if (gluinoCount == 1) h_["leadingSquarkEta_oneGluinos"]->Fill(squarkVec[0].eta());
+				if (gluinoCount == 2) h_["leadingSquarkEta_twoGluinos"]->Fill(squarkVec[0].eta());
+
+				h_["secondarySquarkPt"]->Fill(squarkVec[1].pt());
+				if (gluinoCount == 0) h_["secondarySquarkPt_zeroGluinos"]->Fill(squarkVec[1].pt());
+				if (gluinoCount == 1) h_["secondarySquarkPt_oneGluinos"]->Fill(squarkVec[1].pt());
+				if (gluinoCount == 2) h_["secondarySquarkPt_twoGluinos"]->Fill(squarkVec[1].pt());
+
+				h_["secondarySquarkEta"]->Fill(squarkVec[1].eta());
+				if (gluinoCount == 0) h_["secondarySquarkEta_zeroGluinos"]->Fill(squarkVec[1].eta());
+				if (gluinoCount == 1) h_["secondarySquarkEta_oneGluinos"]->Fill(squarkVec[1].eta());
+				if (gluinoCount == 2) h_["secondarySquarkEta_twoGluinos"]->Fill(squarkVec[1].eta());
+
+				h2_["leadingSquarkPt_SecondarySquarkPt"]->Fill(squarkVec[1].pt(),squarkVec[0].pt());
+				h2_["leadingSquarkEta_SecondarySquarkEta"]->Fill(squarkVec[1].eta(),squarkVec[0].eta());
+				h2_["leadingSquarkPhi_SecondarySquarkPhi"]->Fill(squarkVec[1].phi(),squarkVec[0].phi());
+
+				h_["leadingQjetPt"]->Fill(qjetVec[0]->pt());
+				h_["leadingQjetEta"]->Fill(qjetVec[0]->eta());
+				h_["secondaryQjetPt"]->Fill(qjetVec[1]->pt());
+				h_["secondaryQjetEta"]->Fill(qjetVec[1]->eta());
+				h2_["leadingQjetPt_secondaryQjetPt"]->Fill(qjetVec[1]->pt(), qjetVec[0]->pt());
+				h2_["leadingQjetEta_secondaryQjetEta"]->Fill(qjetVec[1]->eta(), qjetVec[0]->eta());
+				h2_["leadingQjetPhi_secondaryQjetPhi"]->Fill(qjetVec[1]->phi(), qjetVec[0]->phi());
+
+				h_["leadingNlspPt"]->Fill(nlspVec[0]->pt());
+				h_["leadingNlspEta"]->Fill(nlspVec[0]->eta());
+				h_["secondaryNlspPt"]->Fill(nlspVec[1]->pt());
+				h_["secondaryNlspEta"]->Fill(nlspVec[1]->eta());
+				h2_["leadingNlspPt_secondaryNlspPt"]->Fill(nlspVec[1]->pt(), nlspVec[0]->pt());
+				h2_["leadingNlspEta_secondaryNlspEta"]->Fill(nlspVec[1]->eta(), nlspVec[0]->eta());
+				h2_["leadingNlspPhi_secondaryNlspPhi"]->Fill(nlspVec[1]->phi(), nlspVec[0]->phi());
+
+				h2_["leadingQjetPt_leadingHiggsPt"]->Fill(higgsVec[0]->pt(), qjetVec[0]->pt());
+				h2_["leadingQjetEta_leadingHiggsEta"]->Fill(higgsVec[0]->eta(), qjetVec[0]->eta());
+				h2_["leadingQjetPhi_leadingHiggsPhi"]->Fill(higgsVec[0]->phi(), qjetVec[0]->phi());
+				h2_["secondaryQjetPt_secondaryHiggsPt"]->Fill(higgsVec[1]->pt(), qjetVec[1]->pt());
+				h2_["secondaryQjetEta_secondaryHiggsEta"]->Fill(higgsVec[1]->eta(), qjetVec[1]->eta());
+				h2_["secondaryQjetPhi_secondaryHiggsPhi"]->Fill(higgsVec[1]->phi(), qjetVec[1]->phi());
+
+				h_["leadingHiggsPt"]->Fill(higgsVec[0]->pt());
+				h_["leadingHiggsEta"]->Fill(higgsVec[0]->eta());
+				h_["secondaryHiggsPt"]->Fill(higgsVec[1]->pt());
+				h_["secondaryHiggsEta"]->Fill(higgsVec[1]->eta());
+				double dphiLeadingHiggsQjet = delPhi(higgsVec[0]->phi(),qjetVec[0]->phi());
+				if (dphiLeadingHiggsQjet < 0) dphiLeadingHiggsQjet += 2*M_PI;
+				h_["leadingHiggsQjetDphi"]->Fill(dphiLeadingHiggsQjet);
+				double dphiSecondaryHiggsQjet = delPhi(higgsVec[1]->phi(),qjetVec[1]->phi());
+				if (dphiSecondaryHiggsQjet < 0) dphiSecondaryHiggsQjet += 2*M_PI;
+				h_["secondaryHiggsQjetDphi"]->Fill(dphiSecondaryHiggsQjet);
+
+				h_["leadingLspPt"]->Fill(lspVec[0]->pt());
+				h_["leadingLspEta"]->Fill(lspVec[0]->eta());
+				h_["secondaryLspPt"]->Fill(lspVec[1]->pt());
+				h_["secondaryLspEta"]->Fill(lspVec[1]->eta());
+				//function: adds two pt vectors together in the (2d) transverse plane
+				//output: first element is magnitude, second element is phi
+				std::vector<double> lspMet = addTwoPtVectors(lspVec[0]->pt(), lspVec[0]->phi(), lspVec[1]->pt(), lspVec[1]->phi());
+				h_["lspMET"]->Fill(lspMet[0]);
+
+
+				double leadingBBbarSeperation = delR( delPhi(bVec[0]->phi(), bbarVec[0]->phi()), delEta(bVec[0]->eta(), bbarVec[0]->eta()) );
+				h_["leadingBBbarSeperation"]->Fill(leadingBBbarSeperation);
+				double secondaryBBbarSeperation = delR( delPhi(bVec[1]->phi(), bbarVec[1]->phi()), delEta(bVec[1]->eta(), bbarVec[1]->eta()) );
+				h_["secondaryBBbarSeperation"]->Fill(secondaryBBbarSeperation);
+
+
+
+
+				// NEED TO TOTALLY DO UP THE DETECTOR SIDE OF THINGS
+				// // get the leading and second leading detector jets
+				// double leadingDetJetPt = 0.0;
+				// double secondaryDetJetPt = 0.0;
+				// for (size_t iJet=0; iJet<jetVec.size(); ++iJet){
+				// 	if (jetVec[iJet]->pt() > leadingDetJetPt){
+				// 		secondaryDetJetPt = leadingDetJetPt;
+				// 		leadingDetJetPt = jetVec[iJet]->pt();
+				// 	}
+				// 	else if (jetVec[iJet]->pt() > secondaryDetJetPt) secondaryDetJetPt = jetVec[iJet]->pt();
+				// }
+				// h_["numberOfDetectorJets"]->Fill(jetVec.size());
+				// h_["detectorLeadingJet"]->Fill(leadingDetJetPt);
+				// h_["detectorSecondaryJet"]->Fill(secondaryDetJetPt);
+				// h2_["detectorSecondaryJet_detectorLeadingJet"]->Fill(leadingDetJetPt,secondaryDetJetPt);
+				// h2_["detectorSecondaryJet_detectorHT"]->Fill(htDetector->HT,secondaryDetJetPt);
+				// h2_["detectorLeadingJet_detectorHT"]->Fill(htDetector->HT,leadingDetJetPt);
+
+				// h_["detectorMET"]->Fill(metDetector->MET);
+				// h_["detectorHT"]->Fill(htDetector->HT);
 
 				// for (size_t iJ = 0; iJ < ak4Jets->size(); ++iJ){
 				// 	const pat::Jet & ak4Jet = (*ak4Jets)[iJ];
@@ -190,23 +313,7 @@ int main(int argc, char* argv[])
 				// }				
 
 
-				// count how many gluinos are involved, we know we expect 2 squarks
-				unsigned int gluinoCount = 0;
-				// the first element is leading arm version of particle(decay from highest pt squark)
-				// the second element is for the secondary arm version of particle (decay from secondary pt squark)
-				std::vector<reco::GenParticle> squarkVec; // note that this object is slightly different to the others
-				std::vector<const reco::Candidate*> qjetVec;
-				std::vector<const reco::Candidate*> nlspVec;
-				std::vector<const reco::Candidate*> lspVec;
-				std::vector<const reco::Candidate*> higgsVec;
-				std::vector<const reco::Candidate*> bVec;
-				std::vector<const reco::Candidate*> bbarVec;
 
-				bool gotCascadeParticles = getCascadeParticles(genParticles,ievt,inputFiles_[iFile],gluinoCount,squarkVec,qjetVec,nlspVec,lspVec,higgsVec,bVec,bbarVec);
-				if (gotCascadeParticles == false) continue;
-
-				std::cout << "leading squark pt: " << squarkVec[0].pt() << "   secondary squark pt: " << squarkVec[1].pt() << std::endl;
-				std::cout << "leading lsp pt: " << lspVec[0]->pt() << "   second lsp pt: " << lspVec[1]->pt();
 				// ------------------------------------------------------------------------------------------------------------//
 				// ------------------------------------------------------------------------------------------------------------//
 
@@ -247,14 +354,77 @@ return 0;
 
 void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_)
 {
-	// create the debugging histograms
-	h_["DEBUG_higgsBbDRpreMatching"] = new TH1F("DEBUG_higgsBbDRpreMatching", ";dR_bb;a.u.", 50, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_pt400to415_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_pt400to415_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_pt450to465_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_pt450to465_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_pt500to515_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_pt500to515_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_3p400to415_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_3p400to415_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_3p450to465_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_3p450to465_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
-	h_["DEBUG_higgsBbDRpreMatching_3p500to515_eta0to2p4"] = new TH1F("DEBUG_higgsBbDRpreMatching_3p500to515_eta0to2p4", ";dR_bb;a.u.", 100, 0, 2.50);
+    h_["numberOfGluinos"] = new TH1F("numberOfGluinos", ";Number of Gluinos;a.u.", 4, 0, 4);
+	
+	h_["leadingSquarkPt"] = new TH1F("leadingSquarkPt", ";squark p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["leadingSquarkEta"] = new TH1F("leadingSquarkEta", ";#eta squark;a.u.", 50, -5, 5);
+	h_["secondarySquarkPt"] = new TH1F("secondarySquarkPt", ";squark p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["secondarySquarkEta"] = new TH1F("secondarySquarkEta", ";#eta squark;a.u.", 50, -5, 5);
+	h2_["leadingSquarkPt_SecondarySquarkPt"] = new TH2F("leadingSquarkPt_SecondarySquarkPt", ";secondary squark p_{T} (GeV);leading squark p_{T} (GeV)", 100, 0, 2500, 100, 0, 2500);
+	h2_["leadingSquarkEta_SecondarySquarkEta"] = new TH2F("leadingSquarkEta_SecondarySquarkEta", ";#eta secondary quark;#eta leading quark", 100, -5, 5, 100, -5, 5);
+	h2_["leadingSquarkPhi_SecondarySquarkPhi"] = new TH2F("leadingSquarkPhi_SecondarySquarkPhi", ";secondary squark Phi;leading squark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
+	h_["leadingSquarkPt_zeroGluinos"] = new TH1F("leadingSquarkPt_zeroGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 2500);
+	h_["leadingSquarkPt_oneGluinos"] = new TH1F("leadingSquarkPt_oneGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 2500);
+	h_["leadingSquarkPt_twoGluinos"] = new TH1F("leadingSquarkPt_twoGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 2500);
+	h_["leadingSquarkEta_zeroGluinos"] = new TH1F("leadingSquarkEta_zeroGluinos", ";#eta squark;a.u.", 25, -5, 5);
+	h_["leadingSquarkEta_oneGluinos"] = new TH1F("leadingSquarkEta_oneGluinos", ";#eta squark;a.u.", 25, -5, 5);
+	h_["leadingSquarkEta_twoGluinos"] = new TH1F("leadingSquarkEta_twoGluinos", ";#eta squark;a.u.", 25, -5, 5);
+	h_["secondarySquarkPt_zeroGluinos"] = new TH1F("secondarySquarkPt_zeroGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 2500);
+	h_["secondarySquarkPt_oneGluinos"] = new TH1F("secondarySquarkPt_oneGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 2500);
+	h_["secondarySquarkPt_twoGluinos"] = new TH1F("secondarySquarkPt_twoGluinos", ";squark p_{T} (GeV);a.u.", 25, 0, 2500);
+	h_["secondarySquarkEta_zeroGluinos"] = new TH1F("secondarySquarkEta_zeroGluinos", ";#eta squark;a.u.", 25, -5, 5);
+	h_["secondarySquarkEta_oneGluinos"] = new TH1F("secondarySquarkEta_oneGluinos", ";#eta squark;a.u.", 25, -5, 5);
+	h_["secondarySquarkEta_twoGluinos"] = new TH1F("secondarySquarkEta_twoGluinos", ";#eta squark;a.u.", 25, -5, 5);
+
+	h_["leadingQjetPt"] = new TH1F("leadingQjetPt", ";quark p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["leadingQjetEta"] = new TH1F("leadingQjetEta", ";#eta quark;a.u.", 50, -5, 5);
+	h_["secondaryQjetPt"] = new TH1F("secondaryQjetPt", ";quark p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["secondaryQjetEta"] = new TH1F("secondaryQjetEta", ";#eta quark;a.u.", 50, -5, 5);
+	h2_["leadingQjetPt_secondaryQjetPt"] = new TH2F("leadingQjetPt_secondaryQjetPt", ";secondary quark p_{T} (GeV);leading quark p_{T} (GeV)", 100, 0, 2500, 100, 0, 2500);
+	h2_["leadingQjetEta_secondaryQjetEta"] = new TH2F("leadingQjetEta_secondaryQjetEta", ";#eta secondary quark;#eta leading quark", 100, -5, 5, 100, -5, 5);
+	h2_["leadingQjetPhi_secondaryQjetPhi"] = new TH2F("leadingQjetPhi_secondaryQjetPhi", ";secondary quark Phi;leading quark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
+
+	h_["leadingNlspPt"] = new TH1F("leadingNlspPt", ";NLSP p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["leadingNlspEta"] = new TH1F("leadingNlspEta", ";#eta NLSP;a.u.", 50, -5, 5);
+	h_["secondaryNlspPt"] = new TH1F("secondaryNlspPt", ";NLSP p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["secondaryNlspEta"] = new TH1F("secondaryNlspEta", ";#eta NLSP;a.u.", 50, -5, 5);
+	h2_["leadingNlspPt_secondaryNlspPt"] = new TH2F("leadingNlspPt_secondaryNlspPt", ";secondary NLSP p_{T} (GeV);leading NLSP p_{T} (GeV)", 100, 0, 2500, 100, 0, 2500);
+	h2_["leadingNlspEta_secondaryNlspEta"] = new TH2F("leadingNlspEta_secondaryNlspEta", ";#eta secondary NLSP;#eta leading NLSP", 100, -5, 5, 100, -5, 5);
+	h2_["leadingNlspPhi_secondaryNlspPhi"] = new TH2F("leadingNlspPhi_secondaryNlspPhi", ";secondary NLSP Phi;leading NLSP Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
+
+	h_["leadingHiggsPt"] = new TH1F("leadingHiggsPt", ";higgs p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["leadingHiggsEta"] = new TH1F("leadingHiggsEta", "; #eta higgs;a.u.", 50, -5, 5);
+	h_["secondaryHiggsPt"] = new TH1F("secondaryHiggsPt", ";higgs p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["secondaryHiggsEta"] = new TH1F("secondaryHiggsEta", ";#eta higgs;a.u.", 50, -5, 5);
+	h2_["leadingQjetPt_leadingHiggsPt"] = new TH2F("leadingQjetPt_leadingHiggsPt", ";higgs p_{T} (GeV);quark p_{T} (GeV)", 100, 0, 2500, 100, 0, 2500);
+	h2_["leadingQjetEta_leadingHiggsEta"] = new TH2F("leadingQjetEta_leadingHiggsEta", ";#eta higgs;#eta quark", 100, -5, 5, 100, -5, 5);
+	h2_["leadingQjetPhi_leadingHiggsPhi"] = new TH2F("leadingQjetPhi_leadingHiggsPhi", ";higgs Phi;quark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
+	h2_["secondaryQjetPt_secondaryHiggsPt"] = new TH2F("secondaryQjetPt_secondaryHiggsPt", ";higgs p_{T};quark p_{T}", 100, 0, 2500, 100, 0, 2500);
+	h2_["secondaryQjetEta_secondaryHiggsEta"] = new TH2F("secondaryQjetEta_secondaryHiggsEta", ";#eta higgs;#eta quark", 100, -5, 5, 100, -5, 5);
+	h2_["secondaryQjetPhi_secondaryHiggsPhi"] = new TH2F("secondaryQjetPhi_secondaryHiggsPhi", ";higgs Phi;quark Phi", 100, -M_PI, M_PI, 100, -M_PI, M_PI);
+	h_["leadingHiggsQjetDphi"] = new TH1F("leadingHiggsQjetDphi", ";higgs Phi - qjet Phi;a.u.", 50, 0, 2*M_PI);
+	h_["secondaryHiggsQjetDphi"] = new TH1F("secondaryHiggsQjetDphi", ";higgs Phi - qjet Phi;a.u.", 50, 0, 2*M_PI);
+
+	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 200);
+	h_["leadingLspEta"] = new TH1F("leadingLspEta", ";#eta LSP;a.u.", 50, -5, 5);
+	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 200);
+	h_["secondaryLspEta"] = new TH1F("secondaryLspEta", ";#eta LSP;a.u.", 50, -5, 5);
+	h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss} (GeV);a.u.", 50, 0, 200);
+
+	h_["leadingBBbarSeperation"] = new TH1F("leadingBBbarSeperation", ";dR_bb;a.u.", 50, 0, 2.5);
+	h_["secondaryBBbarSeperation"] = new TH1F("secondaryBBbarSeperation", ";dR_bb;a.u.", 50, 0, 2.5);
+	h2_["secondaryBBbarSeperation_leadingBBbarSeperation"] = new TH2F("secondaryBBbarSeperation_leadingBBbarSeperation", ";leading dR_bb;secondary dR_bb", 100, 0, 2.5, 100, 0, 2.5);	
+
+// detector stuff
+	h_["detectorMET"] = new TH1F("detectorMET", ";detector E_{T}^{miss} (GeV);a.u.", 50, 0, 800);
+	h_["detectorHT"] = new TH1F("detectorHT", ";detector HT (GeV);a.u.", 50, 0, 7000);
+	h_["detectorLeadingJet"] = new TH1F("detectorLeadingJet", ";detector Jet p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["detectorSecondaryJet"] = new TH1F("detectorSecondaryJet", ";detector Jet p_{T} (GeV);a.u.", 50, 0, 2500);
+	h2_["detectorSecondaryJet_detectorLeadingJet"] = new TH2F("detectorSecondaryJet_detectorLeadingJet", ";detector Leading Jet p_{T} (GeV);detector Secondary Jet p_{T} (GeV)", 100, 0, 2500, 100, 0, 2500);
+	h2_["detectorSecondaryJet_detectorHT"] = new TH2F("detectorSecondaryJet_detectorHT", ";detector HT (GeV);detector Secondary Jet p_{T} (GeV)", 100, 0, 7000, 100, 0, 2500);
+	h2_["detectorLeadingJet_detectorHT"] = new TH2F("detectorLeadingJet_detectorHT", ";detector HT (GeV);detector Leading Jet p_{T} (GeV)", 100, 0, 7000, 100, 0, 2500);
+	h_["numberOfDetectorJets"] = new TH1F("numberOfDetectorJets", ";Number of detector Jets;a.u.", 20, 0, 20);
+
 } //closes the function 'CreateHistograms'
 
 
@@ -326,8 +496,19 @@ bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>> genParticle
 {
 	for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
 		const reco::GenParticle & genParticle = (*genParticles)[iGen];
+		
+		// count the gluinos
+		if ( abs(genParticle.pdgId()) == 1000021 && genParticle.numberOfDaughters() == 2){
+			
+			int pdgId_0 = abs(genParticle.daughter(0)->pdgId());
+			int pdgId_1 = abs(genParticle.daughter(1)->pdgId());				
+			if (   (pdgId_0 == 1000001 || pdgId_0 == 1000002 || pdgId_0 == 1000003 || pdgId_0 == 1000004 || pdgId_0 == 2000001 || pdgId_0 == 2000002 || pdgId_0 == 2000003 || pdgId_0 == 2000004)
+			    || (pdgId_1 == 1000001 || pdgId_1 == 1000002 || pdgId_1 == 1000003 || pdgId_1 == 1000004 || pdgId_1 == 2000001 || pdgId_1 == 2000002 || pdgId_1 == 2000003 || pdgId_1 == 2000004))
+				gluinoCount++;
+
+		}
+		
 		// get the squarks
-		if ( abs(genParticle.pdgId()) == 1000021 ) gluinoCount++;
 		if ( (abs(genParticle.pdgId()) == 1000001
 		     || abs(genParticle.pdgId()) == 2000001
 		     || abs(genParticle.pdgId()) == 1000002
