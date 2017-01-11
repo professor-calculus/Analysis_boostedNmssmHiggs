@@ -17,9 +17,6 @@
 #include "DataFormats/JetReco/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
-
-
-// do i need more of the above for met and stuff???
 #include "DataFormats/FWLite/interface/Event.h"
 #include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/FWLite/interface/FWLiteEnabler.h"
@@ -29,13 +26,6 @@
 // Headers from this package
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/Kinematics.h"
 // #include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingDoubleBTaggerEfficiencyStudies.h"
-
-
-// TODO:
-// TChain instead of TTree?
-
-
-
 
 
 // preliminary running, compile with scram b and then
@@ -50,6 +40,7 @@ it does so using the quantity: bool runOnDice
 
 // NOTE: the first element is leading arm (decay from highest pt squark)
 // NOTE: the second element is for the secondary arm (decay from secondary pt squark)
+
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
@@ -88,8 +79,8 @@ int main(int argc, char* argv[])
 	//////////////////
 	// Set defaults //
 	parser.integerValue ("maxevents"      ) = -1; // -1 for all events
-	parser.integerValue ("outputevery"    ) = 100;
-	parser.stringVector  ("inputfiles"    ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_888.root"};
+	parser.integerValue ("outputevery"    ) = 500;
+	// parser.stringVector  ("inputfiles"    ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_888.root"};
 	parser.stringValue  ("outputfile"     ) = "output_McSignalStudiesCMSSW/output_McSignalStudiesCMSSW.root";
 	parser.boolValue    ("orderedsecondaryfiles") = false;
 	//////////////////
@@ -143,6 +134,7 @@ int main(int argc, char* argv[])
 	    if( inFile ){
 		
 			fwlite::Event ev(inFile);
+
 			// Loop through the events for this file
 			for(ev.toBegin(); !ev.atEnd(); ++ev, ++ievt){
 				edm::EventBase const & event = ev;
@@ -199,7 +191,6 @@ int main(int argc, char* argv[])
 				//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 				// Gen Particle Plots
-				std::cout << gluinoCount << std::endl;
 				h_["numberOfGluinos"]->Fill(gluinoCount);
 				
 				h_["leadingSquarkPt"]->Fill(squarkVec[0].pt());
@@ -505,7 +496,6 @@ bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>> genParticle
 			if (   (pdgId_0 == 1000001 || pdgId_0 == 1000002 || pdgId_0 == 1000003 || pdgId_0 == 1000004 || pdgId_0 == 2000001 || pdgId_0 == 2000002 || pdgId_0 == 2000003 || pdgId_0 == 2000004)
 			    || (pdgId_1 == 1000001 || pdgId_1 == 1000002 || pdgId_1 == 1000003 || pdgId_1 == 1000004 || pdgId_1 == 2000001 || pdgId_1 == 2000002 || pdgId_1 == 2000003 || pdgId_1 == 2000004))
 				gluinoCount++;
-
 		}
 		
 		// get the squarks
