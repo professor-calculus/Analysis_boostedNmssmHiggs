@@ -78,9 +78,9 @@ int main(int argc, char* argv[])
 	optutl::CommandLineParser parser ("McSignalStudiesCMSSW ");
 	//////////////////
 	// Set defaults //
-	parser.integerValue ("maxevents"      ) = -1; // -1 for all events
-	parser.integerValue ("outputevery"    ) = 500;
-	// parser.stringVector  ("inputfiles"    ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_888.root"};
+	parser.integerValue ("maxevents"      ) = 20; // -1 for all events
+	parser.integerValue ("outputevery"    ) = 1;
+	parser.stringVector  ("inputfiles"    ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_888.root"};
 	parser.stringValue  ("outputfile"     ) = "output_McSignalStudiesCMSSW/output_McSignalStudiesCMSSW.root";
 	parser.boolValue    ("orderedsecondaryfiles") = false;
 	//////////////////
@@ -267,6 +267,68 @@ int main(int argc, char* argv[])
 				h_["secondaryBBbarSeperation"]->Fill(secondaryBBbarSeperation);
 
 
+				// Detector Plots
+
+				// MET
+				const pat::MET & MET = (*METvec)[0];
+				h_["detectorMET"]->Fill(MET.et());
+
+				// ak4 Jets (and HT/MHT) nb: they are not in pt order
+				unsigned int numAk4JetsOver10GeV = 0;
+				unsigned int numAk4JetsOver40GeV = 0;
+				unsigned int numAk4JetsOver100GeV = 0;
+				double ht = 0.0;
+				std::vector<double> mhtVec = {0,0}; // first element magnitude, second element phi
+				double leadingAk4JetPt = 0.0;
+				double leadingAk4JetEta = 999.99;
+				double secondaryAk4JetPt = 0.0;
+				double secondaryAk4JetEta = 999.99;
+
+				for (size_t iJ = 0; iJ < ak4Jets->size(); ++iJ){
+					const pat::Jet & ak4Jet = (*ak4Jets)[iJ];
+
+					if (ak4Jet.pt() > 10.0) numAk4JetsOver10GeV++;
+					if (ak4Jet.pt() > 40.0) numAk4JetsOver40GeV++;
+					if (ak4Jet.pt() > 100.0) numAk4JetsOver100GeV++;
+
+					if (ak4Jet.pt() > 40.0 && abs(ak4Jet.eta())<3.0){ // corresponds to the alpha_t HT definition
+						ht = ht + ak4Jet.pt();
+						//function: adds two pt vectors together in the (2d) transverse plane
+						//output: first element is magnitude, second element is phi
+						mhtVec = addTwoPtVectors(mhtVec[0], mhtVec[1], ak4Jet.pt(), ak4Jet.phi());
+					}
+
+					if (ak4Jet.pt() > leadingAk4JetPt){
+						secondaryAk4JetPt = leadingAk4JetPt;
+						leadingAk4JetPt = ak4Jet.pt();
+						secondaryAk4JetEta = leadingAk4JetEta;
+						leadingAk4JetEta = ak4Jet.eta();
+					}
+					else if (ak4Jet.pt() > secondaryAk4JetPt){
+						secondaryAk4JetPt = ak4Jet.pt();
+						secondaryAk4JetEta = ak4Jet.eta();
+					}
+				} // closes loop through the ak4 jets	
+				h_["detectorNumAk4JetsOver10GeV"]->Fill(numAk4JetsOver10GeV);
+				h_["detectorNumAk4JetsOver40GeV"]->Fill(numAk4JetsOver40GeV);
+				h_["detectorNumAk4JetsOver100GeV"]->Fill(numAk4JetsOver100GeV);
+				h_["detectorLeadingAk4JetPt"]->Fill(leadingAk4JetPt);
+				if (ak4Jets->size() > 0) h_["detectorLeadingAk4JetEta"]->Fill(leadingAk4JetEta);
+				h_["detectorSecondaryAk4JetPt"]->Fill(secondaryAk4JetPt);
+				if (ak4Jets->size() > 1) h_["detectorSecondaryAk4JetEta"]->Fill(secondaryAk4JetEta);
+				h2_["detectorSecondaryAk4JetPt_detectorLeadingAk4JetPt"]->Fill(leadingAk4JetPt,secondaryAk4JetPt);
+				h2_["detectorSecondaryAk4JetPt_detectorHT"]->Fill(ht,secondaryAk4JetPt);
+				h2_["detectorLeadingAk4JetPt_detectorHT"]->Fill(ht,leadingAk4JetPt);
+				h_["detectorHT"]->Fill(ht);
+
+
+
+
+				// BTAGZZZZ
+				// fat Jets
+				for (size_t iFJ = 0; iFJ < fatJets->size(); ++iFJ){
+					const pat::Jet & fatJet = (*fatJets)[iFJ];
+				}
 
 
 				// NEED TO TOTALLY DO UP THE DETECTOR SIDE OF THINGS
@@ -274,34 +336,15 @@ int main(int argc, char* argv[])
 				// double leadingDetJetPt = 0.0;
 				// double secondaryDetJetPt = 0.0;
 				// for (size_t iJet=0; iJet<jetVec.size(); ++iJet){
-				// 	if (jetVec[iJet]->pt() > leadingDetJetPt){
-				// 		secondaryDetJetPt = leadingDetJetPt;
-				// 		leadingDetJetPt = jetVec[iJet]->pt();
-				// 	}
-				// 	else if (jetVec[iJet]->pt() > secondaryDetJetPt) secondaryDetJetPt = jetVec[iJet]->pt();
-				// }
-				// h_["numberOfDetectorJets"]->Fill(jetVec.size());
-				// h_["detectorLeadingJet"]->Fill(leadingDetJetPt);
-				// h_["detectorSecondaryJet"]->Fill(secondaryDetJetPt);
-				// h2_["detectorSecondaryJet_detectorLeadingJet"]->Fill(leadingDetJetPt,secondaryDetJetPt);
-				// h2_["detectorSecondaryJet_detectorHT"]->Fill(htDetector->HT,secondaryDetJetPt);
-				// h2_["detectorLeadingJet_detectorHT"]->Fill(htDetector->HT,leadingDetJetPt);
 
-				// h_["detectorMET"]->Fill(metDetector->MET);
-				// h_["detectorHT"]->Fill(htDetector->HT);
 
-				// for (size_t iJ = 0; iJ < ak4Jets->size(); ++iJ){
-				// 	const pat::Jet & ak4Jet = (*ak4Jets)[iJ];
-				// }
+
+
 
 				// unsigned int numberOfFatJets = fatJets->size();
-				// for (size_t iFJ = 0; iFJ < fatJets->size(); ++iFJ){
-				// 	const pat::Jet & fatJet = (*fatJets)[iFJ];
-				// }
 
-				// for (size_t iM = 0; iM < METvec->size(); ++iM){
-				// 	const pat::MET & MET = (*METvec)[iM];
-				// }				
+
+			
 
 
 
@@ -345,6 +388,7 @@ return 0;
 
 void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_)
 {
+	// Gen Particle Histograms
     h_["numberOfGluinos"] = new TH1F("numberOfGluinos", ";Number of Gluinos;a.u.", 4, 0, 4);
 	
 	h_["leadingSquarkPt"] = new TH1F("leadingSquarkPt", ";squark p_{T} (GeV);a.u.", 50, 0, 2500);
@@ -406,15 +450,19 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["secondaryBBbarSeperation"] = new TH1F("secondaryBBbarSeperation", ";dR_bb;a.u.", 50, 0, 2.5);
 	h2_["secondaryBBbarSeperation_leadingBBbarSeperation"] = new TH2F("secondaryBBbarSeperation_leadingBBbarSeperation", ";leading dR_bb;secondary dR_bb", 100, 0, 2.5, 100, 0, 2.5);	
 
-// detector stuff
+	// Detector Histograms
 	h_["detectorMET"] = new TH1F("detectorMET", ";detector E_{T}^{miss} (GeV);a.u.", 50, 0, 800);
 	h_["detectorHT"] = new TH1F("detectorHT", ";detector HT (GeV);a.u.", 50, 0, 7000);
-	h_["detectorLeadingJet"] = new TH1F("detectorLeadingJet", ";detector Jet p_{T} (GeV);a.u.", 50, 0, 2500);
-	h_["detectorSecondaryJet"] = new TH1F("detectorSecondaryJet", ";detector Jet p_{T} (GeV);a.u.", 50, 0, 2500);
-	h2_["detectorSecondaryJet_detectorLeadingJet"] = new TH2F("detectorSecondaryJet_detectorLeadingJet", ";detector Leading Jet p_{T} (GeV);detector Secondary Jet p_{T} (GeV)", 100, 0, 2500, 100, 0, 2500);
-	h2_["detectorSecondaryJet_detectorHT"] = new TH2F("detectorSecondaryJet_detectorHT", ";detector HT (GeV);detector Secondary Jet p_{T} (GeV)", 100, 0, 7000, 100, 0, 2500);
-	h2_["detectorLeadingJet_detectorHT"] = new TH2F("detectorLeadingJet_detectorHT", ";detector HT (GeV);detector Leading Jet p_{T} (GeV)", 100, 0, 7000, 100, 0, 2500);
-	h_["numberOfDetectorJets"] = new TH1F("numberOfDetectorJets", ";Number of detector Jets;a.u.", 20, 0, 20);
+	h_["detectorLeadingAk4JetPt"] = new TH1F("detectorLeadingAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["detectorSecondaryAk4JetPt"] = new TH1F("detectorSecondaryAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["detectorLeadingAk4JetEta"] = new TH1F("detectorLeadingAk4JetEta", ";#eta AK4 Jet;a.u.", 50, -5, 5);
+	h_["detectorSecondaryAk4JetEta"] = new TH1F("detectorSecondaryAk4JetEta", ";#eta AK4 Jet;a.u.", 50, -5, 5);
+	h2_["detectorSecondaryAk4JetPt_detectorLeadingAk4JetPt"] = new TH2F("detectorSecondaryJetPt_detectorLeadingJetPt", ";Leading AK4 Jet p_{T} (GeV);Secondary AK4 Jet p_{T} (GeV)", 100, 0, 2500, 100, 0, 2500);
+	h2_["detectorSecondaryAk4JetPt_detectorHT"] = new TH2F("detectorSecondaryAk4JetPt_detectorHT", ";detector HT (GeV);Secondary AK4 Jet p_{T} (GeV)", 100, 0, 7000, 100, 0, 2500);
+	h2_["detectorLeadingAk4JetPt_detectorHT"] = new TH2F("detectorLeadingAk4JetPt_detectorHT", ";detector HT (GeV);Leading AK4 Jet p_{T} (GeV)", 100, 0, 7000, 100, 0, 2500);
+	h_["detectorNumAk4JetsOver10GeV"] = new TH1F("etectorNumAk4JetsOver10GeV", ";Number of ak4 Jets (p_{T} > 10 GeV);a.u.", 20, 0, 20);
+	h_["detectorNumAk4JetsOver40GeV"] = new TH1F("etectorNumAk4JetsOver40GeV", ";Number of ak4 Jets (p_{T} > 40 GeV);a.u.", 20, 0, 20);
+	h_["detectorNumAk4JetsOver100GeV"] = new TH1F("etectorNumAk4JetsOver100GeV", ";Number of ak4 Jets (p_{T} > 100 GeV);a.u.", 20, 0, 20);
 
 } //closes the function 'CreateHistograms'
 
