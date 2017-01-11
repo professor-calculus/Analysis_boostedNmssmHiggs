@@ -496,7 +496,7 @@ if (particleVec[squarkIndices[1]]->PT > particleVec[squarkIndices[0]]->PT) std::
 // nb: currently these are set in madgraph to only be u or d quarks (added s and c)
 // leading arm quark
 for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-	if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 || particleVec[iPar]->PID) == 3 || abs(particleVec[iPar]->PID) == 4){
+	if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 || abs(particleVec[iPar]->PID) == 3 || abs(particleVec[iPar]->PID) == 4){
 		if (particleVec[iPar]->M1 == squarkIndices[0]){
 			qjetIndices.push_back(iPar);  
 			break;
@@ -505,7 +505,7 @@ for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
 } // closes loop through gen particle vector
 // secondary arm quark
 for (size_t iPar=0; iPar<particleVec.size(); ++iPar){
-	if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 || particleVec[iPar]->PID) == 3 || abs(particleVec[iPar]->PID) == 4){
+	if ( abs(particleVec[iPar]->PID) == 1 || abs(particleVec[iPar]->PID) == 2 || abs(particleVec[iPar]->PID) == 3 || abs(particleVec[iPar]->PID) == 4){
 		if (particleVec[iPar]->M1 == squarkIndices[1]){
 			qjetIndices.push_back(iPar);  
 			break;
