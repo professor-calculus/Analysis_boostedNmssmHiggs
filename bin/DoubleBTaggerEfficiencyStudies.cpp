@@ -57,8 +57,9 @@ int main(int argc, char* argv[])
 	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.8, 0.9}; // these WP vectors must correspond to one-another
 	std::vector<std::string> doubleBtagWPname = {"loose", "medium", "tight", "veryTight"};
 	double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
-	std::vector<double> etaBinning = {0.00, 0.80, 1.60, 2.40};
-	int massCut = 100; // some plots must have mass above this value
+	// std::vector<double> etaBinning = {0.00, 0.80, 1.60, 2.40};
+	std::vector<double> etaBinning = {0.00, 2.40};
+	int massCut = 50; // some plots must have mass above this value
 	/////////////////////
 	/////////////////////
 
@@ -213,15 +214,15 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 {
 	// set the binning for histograms
     std::vector<double> ptBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 100.0; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
-    for(double binLowerEdge=  100.0; binLowerEdge< 200.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
-    for(double binLowerEdge=  200.0; binLowerEdge< 350.0; binLowerEdge+= 25.0) ptBinning.push_back(binLowerEdge);
-    for(double binLowerEdge=  350.0; binLowerEdge< 500.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);    	
-    for(double binLowerEdge=  500.0; binLowerEdge< 600.0; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
-    for(double binLowerEdge=  600.0; binLowerEdge< 800.1; binLowerEdge+= 200.0) ptBinning.push_back(binLowerEdge);
+    // for(double binLowerEdge=  0.0; binLowerEdge< 100.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
+    // for(double binLowerEdge=  100.0; binLowerEdge< 150.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
+    // for(double binLowerEdge=  150.0; binLowerEdge< 350.0; binLowerEdge+= 25.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 1000.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);    	
+    for(double binLowerEdge=  1000.0; binLowerEdge< 1500.1; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
+    // for(double binLowerEdge=  600.0; binLowerEdge< 800.1; binLowerEdge+= 200.0) ptBinning.push_back(binLowerEdge);
 
     std::vector<double> ptScatXBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 800.1; binLowerEdge+= 5.0) ptScatXBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 1500.1; binLowerEdge+= 5.0) ptScatXBinning.push_back(binLowerEdge);
 
     std::vector<double> ptScatYBinning = ptScatXBinning;
     // for(double binLowerEdge=  0.0; binLowerEdge< 800.1; binLowerEdge+= 20.0) ptScatYBinning.push_back(binLowerEdge);	
@@ -239,9 +240,9 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
     for(double binLowerEdge=  0.0; binLowerEdge< 2.501; binLowerEdge+= 0.05) bbDeltaRDistBinning.push_back(binLowerEdge); 
 
     std::vector<double> dREffBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 0.40; binLowerEdge+= 0.20) dREffBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 0.40; binLowerEdge+= 0.10) dREffBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  0.40; binLowerEdge< 0.70; binLowerEdge+= 0.10) dREffBinning.push_back(binLowerEdge);
-    for(double binLowerEdge=  0.70; binLowerEdge< 1.00; binLowerEdge+= 0.05) dREffBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.70; binLowerEdge< 1.00; binLowerEdge+= 0.10) dREffBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  1.00; binLowerEdge< 1.10; binLowerEdge+= 0.10) dREffBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  1.10; binLowerEdge< 1.70; binLowerEdge+= 0.20) dREffBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  1.70; binLowerEdge< 2.501; binLowerEdge+= 0.40) dREffBinning.push_back(binLowerEdge);
@@ -457,7 +458,7 @@ std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco:
 
 		const reco::GenParticle & genParticle = (*genParticles)[iGen];
 
-			if (genParticle.pdgId()==25){ // particle is a higgs						
+			if (genParticle.pdgId()==35){ // particle is a higgs						
 				if (genParticle.numberOfDaughters()==2 && abs(genParticle.daughter(0)->pdgId())==5 && abs(genParticle.daughter(1)->pdgId())==5){ // higgs decays to two b-quarks
 
 					hBbGenParticles.push_back(genParticle);

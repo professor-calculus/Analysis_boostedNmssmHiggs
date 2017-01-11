@@ -110,7 +110,7 @@ PlottingDoubleBTaggerEfficiencyStudies::PlottingDoubleBTaggerEfficiencyStudies(s
 void PlottingDoubleBTaggerEfficiencyStudies::hBbMassDist()
 {
 	std::vector<TH1F*> vecHistos;
-    TLegend * legend = new TLegend(0.20, 0.60, 0.45, 0.85); //(xmin, ymin, xmax, ymax)
+    TLegend * legend = new TLegend(0.17, 0.60, 0.42, 0.85); //(xmin, ymin, xmax, ymax)
 
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
 		
