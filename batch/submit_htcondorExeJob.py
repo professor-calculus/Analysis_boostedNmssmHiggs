@@ -19,6 +19,7 @@ code = "src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudi
 inputMotherDir = "/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/" # should be on hdfs
 logLocation = "/storage/jt15104/jobLog_Analysis_boostedNmssmHiggs/DoubleBTaggerEfficiencyStudies/"
 
+
 # Option A: INPUT FILES ONE AT A TIME BY HAND
 # Note that you can put multiple files in a single element of vecInputFiles by just comma seperating them with no spaces (within the same set of "")
 # vecInputFiles = []
@@ -51,6 +52,8 @@ for i in range (0,len(vecInputFiles)):
 			vecOutputFiles.append(dummyString)
 			break
 # # #
+# print vecInputFiles
+
 ############################
 ############################
 ############################
