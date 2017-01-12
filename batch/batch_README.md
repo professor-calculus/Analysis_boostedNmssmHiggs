@@ -18,5 +18,7 @@ A class for submitting jobs to DICE, used by submit_htcondorExeJob.py
 submit_htcondorExeJob.py info.
 Choose an executable and input and output files. It will run them on DICE (as long as the cpp is set up for it)
 Will need to hadd the outputs
-$ hadd combinedHistos.root *.root
+$ hadd histosCombined.root *.root
 Then run the plotter on this output.
+Get rid of all the other files
+$ rm histos_*.root
