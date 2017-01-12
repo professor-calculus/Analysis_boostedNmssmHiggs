@@ -30,6 +30,7 @@
 
 // preliminary running, compile with scram b and then
 // $ McSignalStudiesCMSSW inputfiles=XYZ outputfile=ABC orderedsecondaryfiles=0
+// ($CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/McSignalStudiesCMSSW/McSignalStudiesCMSSW)
 // nb. if you are running it on DICE, include the word runOnDice at the end of the arguments of the executable
 
 /* Notes on runOnDice mode
@@ -57,8 +58,8 @@ int main(int argc, char* argv[])
 	////////////////////
 	////////////////////
 	// SET PARAMETERS //
-	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.8, 0.9}; // these WP vectors must correspond to one-another
-	std::vector<std::string> doubleBtagWPname = {"loose", "medium", "tight", "veryTight"};
+	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.8, 0.9}; // these WP's correspond to loose, medium, tight, veryTight
+	double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
 	/////////////////////
 	/////////////////////
 
@@ -80,8 +81,8 @@ int main(int argc, char* argv[])
 	// Set defaults //
 	parser.integerValue ("maxevents"      ) = 20; // -1 for all events
 	parser.integerValue ("outputevery"    ) = 1;
-	parser.stringVector  ("inputfiles"    ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_888.root"};
-	parser.stringValue  ("outputfile"     ) = "output_McSignalStudiesCMSSW/output_McSignalStudiesCMSSW.root";
+	parser.stringVector ("inputfiles"   ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_888.root"};
+	parser.stringValue  ("outputfile"     ) = "output_McSignalStudiesCMSSW/histos.root";
 	parser.boolValue    ("orderedsecondaryfiles") = false;
 	//////////////////
 
@@ -185,6 +186,8 @@ int main(int argc, char* argv[])
 
 				bool gotCascadeParticles = getCascadeParticles(genParticles,ievt,inputFiles_[iFile],gluinoCount,squarkVec,qjetVec,nlspVec,lspVec,higgsVec,bVec,bbarVec);
 				if (gotCascadeParticles == false) continue;
+
+				std::cout << higgsVec[0]->mass() << "  " << higgsVec[1]->mass() << std::endl;
 				//  e.g.
 				// std::cout << "leading squark pt: " << squarkVec[0].pt() << "   secondary squark pt: " << squarkVec[1].pt() << std::endl;
 				// std::cout << "leading lsp pt: " << lspVec[0]->pt() << "   second lsp pt: " << lspVec[1]->pt();
@@ -267,6 +270,7 @@ int main(int argc, char* argv[])
 				h_["secondaryBBbarSeperation"]->Fill(secondaryBBbarSeperation);
 
 
+
 				// Detector Plots
 
 				// MET
@@ -323,30 +327,69 @@ int main(int argc, char* argv[])
 
 
 
+				// BTAGZZZZ fatJets
+				unsigned int numberLooseDoubleBTagsNoMatching = 0;
+				unsigned int numberMediumDoubleBTagsNoMatching = 0;
+				unsigned int numberTightDoubleBTagsNoMatching = 0;
+				unsigned int numberVeryTightDoubleBTagsNoMatching = 0;
 
-				// BTAGZZZZ
-				// fat Jets
+				unsigned int numberLooseDoubleBTagsWithMatching = 0;
+				unsigned int numberMediumDoubleBTagsWithMatching = 0;
+				unsigned int numberTightDoubleBTagsWithMatching = 0;
+				unsigned int numberVeryTightDoubleBTagsWithMatching = 0;
+				
+				double dR_fJhiggs0_min = 99999.99; 
+				double dR_fJhiggs1_min = 99999.99;
+				unsigned int dR_fJhiggs0_min_index = 99999;
+				unsigned int dR_fJhiggs1_min_index = 99999;
+
 				for (size_t iFJ = 0; iFJ < fatJets->size(); ++iFJ){
 					const pat::Jet & fatJet = (*fatJets)[iFJ];
+
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[0]) numberLooseDoubleBTagsNoMatching++;
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[1]) numberMediumDoubleBTagsNoMatching++; 
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[2]) numberTightDoubleBTagsNoMatching++;
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[3]) numberVeryTightDoubleBTagsNoMatching++;
+
+					double dR_fJhiggs0 = delR( delPhi( fatJet.phi(),higgsVec[0]->phi() ), delEta( fatJet.eta(),higgsVec[0]->eta() ) );
+					double dR_fJhiggs1 = delR( delPhi( fatJet.phi(),higgsVec[1]->phi() ), delEta( fatJet.eta(),higgsVec[1]->eta() ) );
+
+					if (dR_fJhiggs0 < dR_fJhiggs1 && dR_fJhiggs0 < dR_fJhiggs0_min){
+						dR_fJhiggs0_min = dR_fJhiggs0;
+						dR_fJhiggs0_min_index = iFJ;						
+					}						
+
+					if (dR_fJhiggs1 < dR_fJhiggs0 && dR_fJhiggs1 < dR_fJhiggs1_min){
+						dR_fJhiggs1_min = dR_fJhiggs1;
+						dR_fJhiggs1_min_index = iFJ;						
+					}	
+
+				} // closes loop through fat Jets
+
+				if (dR_fJhiggs0_min < dRMaxMatch){
+					const pat::Jet & fatJet = (*fatJets)[dR_fJhiggs0_min_index];
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[0]) numberLooseDoubleBTagsWithMatching++;
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[1]) numberMediumDoubleBTagsWithMatching++; 
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[2]) numberTightDoubleBTagsWithMatching++;
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[3]) numberVeryTightDoubleBTagsWithMatching++;		
 				}
 
+				if (dR_fJhiggs1_min < dRMaxMatch){
+					const pat::Jet & fatJet = (*fatJets)[dR_fJhiggs1_min_index];
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[0]) numberLooseDoubleBTagsWithMatching++;
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[1]) numberMediumDoubleBTagsWithMatching++; 
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[2]) numberTightDoubleBTagsWithMatching++;
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[3]) numberVeryTightDoubleBTagsWithMatching++;		
+				}
 
-				// NEED TO TOTALLY DO UP THE DETECTOR SIDE OF THINGS
-				// // get the leading and second leading detector jets
-				// double leadingDetJetPt = 0.0;
-				// double secondaryDetJetPt = 0.0;
-				// for (size_t iJet=0; iJet<jetVec.size(); ++iJet){
-
-
-
-
-
-				// unsigned int numberOfFatJets = fatJets->size();
-
-
-			
-
-
+				h_["fatJetNumberLooseDoubleBTagsNoMatching"]->Fill(numberLooseDoubleBTagsNoMatching);
+				h_["fatJetNumberMediumDoubleBTagsNoMatching"]->Fill(numberMediumDoubleBTagsNoMatching);
+				h_["fatJetNumberTightDoubleBTagsNoMatching"]->Fill(numberTightDoubleBTagsNoMatching);
+				h_["fatJetNumberVeryTightDoubleBTagsNoMatching"]->Fill(numberVeryTightDoubleBTagsNoMatching);
+				h_["fatJetNumberLooseDoubleBTagsWithMatching"]->Fill(numberLooseDoubleBTagsWithMatching);
+				h_["fatJetNumberMediumDoubleBTagsWithMatching"]->Fill(numberMediumDoubleBTagsWithMatching);
+				h_["fatJetNumberTightDoubleBTagsWithMatching"]->Fill(numberTightDoubleBTagsWithMatching);
+				h_["fatJetNumberVeryTightDoubleBTagsWithMatching"]->Fill(numberVeryTightDoubleBTagsWithMatching);
 
 				// ------------------------------------------------------------------------------------------------------------//
 				// ------------------------------------------------------------------------------------------------------------//
@@ -463,6 +506,16 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["detectorNumAk4JetsOver10GeV"] = new TH1F("etectorNumAk4JetsOver10GeV", ";Number of ak4 Jets (p_{T} > 10 GeV);a.u.", 20, 0, 20);
 	h_["detectorNumAk4JetsOver40GeV"] = new TH1F("etectorNumAk4JetsOver40GeV", ";Number of ak4 Jets (p_{T} > 40 GeV);a.u.", 20, 0, 20);
 	h_["detectorNumAk4JetsOver100GeV"] = new TH1F("etectorNumAk4JetsOver100GeV", ";Number of ak4 Jets (p_{T} > 100 GeV);a.u.", 20, 0, 20);
+
+	// fatJet Btag histograms
+	h_["fatJetNumberLooseDoubleBTagsNoMatching"] = new TH1F("fatJetNumberLooseDoubleBTagsNoMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
+	h_["fatJetNumberMediumDoubleBTagsNoMatching"] = new TH1F("fatJetNumberMediumDoubleBTagsNoMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
+	h_["fatJetNumberTightDoubleBTagsNoMatching"] = new TH1F("fatJetNumberTightDoubleBTagsNoMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
+	h_["fatJetNumberVeryTightDoubleBTagsNoMatching"] = new TH1F("fatJetNumberVeryTightDoubleBTagsNoMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
+	h_["fatJetNumberLooseDoubleBTagsWithMatching"] = new TH1F("fatJetNumberLooseDoubleBTagsWithMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
+	h_["fatJetNumberMediumDoubleBTagsWithMatching"] = new TH1F("fatJetNumberMediumDoubleBTagsWithMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
+	h_["fatJetNumberTightDoubleBTagsWithMatching"] = new TH1F("fatJetNumberTightDoubleBTagsWithMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
+	h_["fatJetNumberVeryTightDoubleBTagsWithMatching"] = new TH1F("fatJetNumberVeryTightDoubleBTagsWithMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
 
 } //closes the function 'CreateHistograms'
 
