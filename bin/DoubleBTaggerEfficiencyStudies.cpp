@@ -28,6 +28,7 @@
 
 // preliminary running, compile with scram b and then
 // $ DoubleBTaggerEfficiencyStudies inputfiles=XYZ outputfile=ABC orderedsecondaryfiles=0
+// ($CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies)
 // nb. if you are running it on DICE, include the word runOnDice at the end of the arguments of the executable
 
 /* Notes on runOnDice mode
@@ -50,7 +51,7 @@ int main(int argc, char* argv[])
 {
 	gSystem->Load("libFWCoreFWLite.so");
 	FWLiteEnabler::enable();
-	
+
 	////////////////////
 	////////////////////
 	// Set parameters //
@@ -59,7 +60,7 @@ int main(int argc, char* argv[])
 	double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
 	// std::vector<double> etaBinning = {0.00, 0.80, 1.60, 2.40};
 	std::vector<double> etaBinning = {0.00, 2.40};
-	int massCut = 50; // some plots must have mass above this value
+	int massCut = 50; // some plots must have mass above this value. Not really a useful feature anymore, but CBA getting rid of it
 	/////////////////////
 	/////////////////////
 
@@ -81,9 +82,9 @@ int main(int argc, char* argv[])
 	//////////////////
 	// Set defaults //
 	parser.integerValue ("maxevents"      ) = -1; // -1 for all events
-	parser.integerValue ("outputevery"    ) =   1000;
-	// parser.stringVector  ("inputfiles"     ) = {"/users/jt15104/CMSSW_8_0_20/src/Analysis/Analysis_boostedNmssmHiggs/python/bTagPatTuple.root"};
-	// parser.stringValue  ("outputfile"     ) = "output_DoubleBTaggerEfficiencyStudies_testing/output_DoubleBTaggerEfficiencyStudies.root";
+	parser.integerValue ("outputevery"    ) =   100;
+	parser.stringVector ("inputfiles"    ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_888.root"};
+	parser.stringValue  ("outputfile"     ) = "output_DoubleBTaggerEfficiencyStudies/histos.root";
 	parser.boolValue    ("orderedsecondaryfiles") = false;
 	//////////////////
 
@@ -218,11 +219,11 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
     // for(double binLowerEdge=  100.0; binLowerEdge< 150.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
     // for(double binLowerEdge=  150.0; binLowerEdge< 350.0; binLowerEdge+= 25.0) ptBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  0.0; binLowerEdge< 1000.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);    	
-    for(double binLowerEdge=  1000.0; binLowerEdge< 1500.1; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  1000.0; binLowerEdge< 1800.1; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
     // for(double binLowerEdge=  600.0; binLowerEdge< 800.1; binLowerEdge+= 200.0) ptBinning.push_back(binLowerEdge);
 
     std::vector<double> ptScatXBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 1500.1; binLowerEdge+= 5.0) ptScatXBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 1800.1; binLowerEdge+= 5.0) ptScatXBinning.push_back(binLowerEdge);
 
     std::vector<double> ptScatYBinning = ptScatXBinning;
     // for(double binLowerEdge=  0.0; binLowerEdge< 800.1; binLowerEdge+= 20.0) ptScatYBinning.push_back(binLowerEdge);	
