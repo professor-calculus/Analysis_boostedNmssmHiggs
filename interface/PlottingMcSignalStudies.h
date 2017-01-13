@@ -1,5 +1,5 @@
-#ifndef Analysis_Analysis_boostedNmssmHiggs_PlottingDoubleBTaggerEfficiencyStudies_h
-#define Analysis_Analysis_boostedNmssmHiggs_PlottingDoubleBTaggerEfficiencyStudies_h
+#ifndef Analysis_Analysis_boostedNmssmHiggs_PlottingMcSignalStudies_h
+#define Analysis_Analysis_boostedNmssmHiggs_PlottingMcSignalStudies_h
 
 // CPP headers
 #include <string>
