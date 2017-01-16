@@ -10,11 +10,11 @@ process.load("PhysicsTools.PatAlgos.selectionLayer1.selectedPatCandidates_cff")
 # input file for local running (requires AOD input)
 process.source = cms.Source("PoolSource",
     # fileNames = cms.untracked.vstring('/store/mc/RunIISpring16reHLT80/GluGluToRadionToHHTo2B2G_M-900_narrow_13TeV-madgraph/AODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v3/20000/4C3007FC-F83F-E611-8B27-0090FAA577A0.root'),
-    fileNames = cms.untracked.vstring('file:/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/nmssmSignalCascadeV01_13TeV_mH70p0_mSusy1000p0_ratio0p95_splitting1p0/nmssmSignalCascadeV01_13TeV_processMc03_ed01_mH70p0_mSusy1000p0_ratio0p95_splitting1p0/161206_092718/0000/nmssmSignal_AODSIMstep2of2_1.root'),
+    fileNames = cms.untracked.vstring('file:/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_processMc03_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/161231_104507/0000/nmssmSignal_AODSIMstep2of2_1.root'),
 )
 
 # max number of events when running locally
-process.maxEvents.input = 1000
+process.maxEvents.input = 100
 # name of output .root file
 process.out.fileName = 'bTagPatTuple.root'
 # to suppress the long output at the end of the job
@@ -28,17 +28,19 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
 process.out.outputCommands = cms.untracked.vstring( ['drop *',
                                                      'keep recoGenParticles_genParticles_*_*',
                                                      'keep *_selectedPatJets_tagInfos_*',
-                                                     # 'keep *_selectedPatJetsAK4PF_tagInfos_*',
+                                                     'keep *_selectedPatJetsAK4PF_tagInfos_*',
                                                      'keep *_selectedPatJetsAK8PFCHS_tagInfos_*',
-                                                     # 'keep *_selectedPatJetsAK8PFCHSSoftDropSubjets_tagInfos_*',
+                                                     'keep *_selectedPatJetsAK8PFCHSSoftDropSubjets_tagInfos_*',
                                                      # 'keep *_selectedPatJets_caloTowers_*',
                                                      # 'keep *_selectedPatJetsAK4PF_caloTowers_*',
                                                      # 'keep *_selectedPatJetsAK8PFCHS_caloTowers_*',
                                                      # 'keep *_selectedPatJetsAK8PFCHSSoftDropSubjets_caloTowers_*',
                                                      'keep *_selectedPatJets__*',
-                                                     # 'keep *_selectedPatJetsAK4PF__*',
+                                                     'keep *_selectedPatJetsAK4PF__*',
                                                      'keep *_selectedPatJetsAK8PFCHS__*',
-                                                     # 'keep *_selectedPatJetsAK8PFCHSSoftDropSubjets__*',
+                                                     'keep *_selectedPatJetsAK8PFCHSSoftDropSubjets__*',
+                                                     'keep *_selectedPatJetsAK8PFCHSSoftDrop__*',
+                                                     # 'keep *_selectedPatJetsAK8PFCHSPruned__*',
                                                      # 'keep *_selectedPatJets_genJets_*',
                                                      # 'keep *_selectedPatJetsAK4PF_genJets_*',
                                                      # 'keep *_selectedPatJetsAK8PFCHS_genJets_*',
@@ -127,7 +129,7 @@ addJetCollection(
    process,
    labelName = 'AK4PF',
    jetSource = cms.InputTag('ak4PFJets'),
-   jetCorrections = ('AK4PF', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'Type-2'),
+   jetCorrections = ('AK4PF', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'Type-2'), # 'Type-2' is 'None' on online example
    btagDiscriminators = btagDiscriminators
 )
 process.patJetsAK4PF.addTagInfos = True
@@ -137,14 +139,36 @@ addJetCollection(
    process,
    labelName = 'AK8PFCHS',
    jetSource = cms.InputTag('ak8PFJetsCHS'),
-   jetCorrections = ('AK8PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'Type-2'),
+   jetCorrections = ('AK8PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'Type-2'), # 'Type-2' is 'None' on online example
    algo = 'AK',
    rParam = 0.8,
    btagDiscriminators = ['pfBoostedDoubleSecondaryVertexAK8BJetTags']
 )
 process.patJetsAK8PFCHS.addTagInfos = True
 
-# adds subjets of ak8PFJetsCHSSoftDrop with new b-tags to your PAT output
+# # adds ak8PFJetsCHSPruned to your PAT output
+# addJetCollection(
+#    process,
+#    labelName = 'AK8PFCHSPruned',
+#    jetSource = cms.InputTag('ak8PFJetsCHSPruned'),
+#    jetCorrections = ('AK8PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'Type-2'), # 'Type-2' is 'None' on online example
+#    # algo = 'AK',
+#    # rParam = 0.8,
+#    btagDiscriminators = ['None']
+# )
+
+# adds ak8PFJetsCHSSoftDrop to your PAT output
+addJetCollection(
+    process,
+    labelName = 'AK8PFCHSSoftDrop',
+    jetSource = cms.InputTag('ak8PFJetsCHSSoftDrop'),
+    btagDiscriminators = ['None'],
+    jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'Type-2'), # 'Type-2' is 'None' on online example
+    algo = 'AK',
+    rParam = 0.8,
+)
+
+# adds subjets of ak8PFJetsCHSSoftDrop with b-tags to your PAT output
 addJetCollection(
    process,
    labelName = 'AK8PFCHSSoftDropSubjets',
