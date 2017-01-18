@@ -41,11 +41,15 @@ private:
 	std::string outputDirectory;
 
 	void hBbMassDist();
+	void hBbSoftDropMassDist();
 	void deltaRMatchDist();
+	void deltaRMatchSoftDropDist();
 	void deltaRbbDist();
  	void fatJetEtaDist();
  	void fatJetVsHBbPtDist();
+ 	void softDropFatJetVsHBbPtDist();
  	void effComparingWPs();
+ 	void softDropEffComparingWPs();
  	void effComparingWPsFncDR();
 	void effComparingEta();
 	void higgsBbDRdist();
@@ -89,11 +93,15 @@ PlottingDoubleBTaggerEfficiencyStudies::PlottingDoubleBTaggerEfficiencyStudies(s
 
 	// make the .pdfs
  	hBbMassDist();
+ 	hBbSoftDropMassDist();
  	deltaRMatchDist();
+ 	deltaRMatchSoftDropDist();
  	deltaRbbDist();
  	fatJetEtaDist();
  	fatJetVsHBbPtDist();
+ 	softDropFatJetVsHBbPtDist();
  	effComparingWPs();
+ 	softDropEffComparingWPs();
 	effComparingWPsFncDR();
  	effComparingEta();
 	higgsBbDRdist();
@@ -167,6 +175,68 @@ void PlottingDoubleBTaggerEfficiencyStudies::hBbMassDist()
 
 
 
+void PlottingDoubleBTaggerEfficiencyStudies::hBbSoftDropMassDist()
+{
+	std::vector<TH1F*> vecHistos;
+    TLegend * legend = new TLegend(0.60, 0.60, 0.85, 0.85); //(xmin, ymin, xmax, ymax)
+
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+		
+	    TCanvas* c=new TCanvas("c","c"); 	
+		TH1F * h = (TH1F*)f->Get(Form("softDropJetMass_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		h->SetLineWidth(2);
+		// h->SetLineColor(2);
+		// h->GetXaxis()->SetTitle("");
+		h->GetXaxis()->SetTitleSize(0.06);	
+		h->GetXaxis()->SetLabelSize(0.05);
+		// h->GetYaxis()->SetTitle("");
+		h->GetYaxis()->SetTitleSize(0.06);
+		h->GetYaxis()->SetLabelSize(0.05);
+
+		h->Draw();
+		// Add stamps
+		latex->SetTextAlign(11); // align from left
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->DrawLatex(0.22, 0.72, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+		latex->SetTextAlign(31); // align from right
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+		std::string saveName = Form("softDropJetMass_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		// c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));  // DON'T SAVE THIS AT THE MO
+		c->Close();
+
+		// for the combined plot
+		vecHistos.push_back(h);
+		vecHistos[iWP]->SetLineColor(iWP+1);
+		Double_t norm = vecHistos[iWP]->GetEntries();
+		vecHistos[iWP]->Scale(1/norm);
+		legend->AddEntry(h, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
+	} // closes loop through Btag WP labels
+	
+	// put all of them on the same entry
+    TCanvas* c=new TCanvas("c","c");
+    for (int iMass=vecHistos.size()-1; iMass>=0; --iMass){
+	    vecHistos[iMass]->Draw("same");
+	    // if (iMass==0) break;
+	}
+	legend->Draw();
+	// Add stamps
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->SetTextAlign(31); // align from right
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%ssoftDropJetMass_allDoubleBTagWPNormalised.pdf", outputDirectory.c_str()));
+	c->Close();
+} // closes the function 'hBbMassDist'
+
+
+
+
+
 
 void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist()
 {
@@ -225,6 +295,67 @@ void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchDist()
 
 } // closes the function 'deltaRMatchDist'
 
+
+
+
+
+
+void PlottingDoubleBTaggerEfficiencyStudies::deltaRMatchSoftDropDist()
+{
+	std::vector<TH1F*> vecHistos;
+    TLegend * legend = new TLegend(0.60, 0.60, 0.85, 0.85); //(xmin, ymin, xmax, ymax)
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+		
+	    TCanvas* c=new TCanvas("c","c"); 	
+		TH1F * h = (TH1F*)f->Get(Form("softDropJetDeltaR_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		h->SetLineWidth(2);
+		// h->SetLineColor(2);
+		// h->GetXaxis()->SetTitle("");
+		h->GetXaxis()->SetTitleSize(0.06);	
+		h->GetXaxis()->SetLabelSize(0.05);
+		// h->GetYaxis()->SetTitle("");
+		h->GetYaxis()->SetTitleSize(0.06);
+		h->GetYaxis()->SetLabelSize(0.05);
+		h->Draw();
+
+		// Add stamps
+		latex->SetTextAlign(11); // align from left
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->SetTextAlign(31); // align from right
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		latex->DrawLatex(0.88, 0.66, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+
+		std::string saveName = Form("matchSoftDropDeltaR_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		// c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));  // DON'T SAVE THIS AT THE MO
+		c->Close();
+
+		// for the combined plot
+		vecHistos.push_back(h);
+		vecHistos[iWP]->SetLineColor(iWP+1);
+		Double_t norm = vecHistos[iWP]->GetEntries();
+		vecHistos[iWP]->Scale(1/norm);
+		legend->AddEntry(h, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
+	} // closes loop through Btag WP labels
+	
+	// put all of them on the same entry
+    TCanvas* c=new TCanvas("c","c");
+    for (int iDR=vecHistos.size()-1; iDR>=0; --iDR){
+	    vecHistos[iDR]->Draw("same");
+	}
+	legend->Draw();
+	// Add stamps
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->SetTextAlign(31); // align from right
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%smatchSoftDropDeltaR_allDoubleBTagWPNormalised.pdf", outputDirectory.c_str()));
+	c->Close();
+
+} // closes the function 'deltaRMatchDist'
 
 
 
@@ -405,6 +536,51 @@ void PlottingDoubleBTaggerEfficiencyStudies::fatJetVsHBbPtDist()
 
 
 
+void PlottingDoubleBTaggerEfficiencyStudies::softDropFatJetVsHBbPtDist()
+{
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+		
+		TCanvas* c=new TCanvas("c","c");
+		TH2F * h2 = (TH2F*)f->Get(Form("ptScatterSoftDrop_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		// h2->GetXaxis()->SetTitle("");
+		h2->GetXaxis()->SetTitleSize(0.06);
+		h2->GetXaxis()->SetLabelSize(0.05);	
+		// h2->GetYaxis()->SetTitle("");
+		h2->GetYaxis()->SetTitleSize(0.06);
+		h2->GetYaxis()->SetLabelSize(0.05);	
+		
+		h2->Draw("colz");
+
+		// Add diagnol line		
+		c->Update();
+		TLine *line = new TLine(0,0,gPad->GetUxmax(),gPad->GetUymax());
+		line->SetLineStyle(2);
+		line->SetLineWidth(2);
+		line->Draw();
+		// Add stamps
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		latex->DrawLatex(0.85, 0.20, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+
+		std::string saveName = Form("softDropFatJetVsHBbPtScatter_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
+
+	} // closes loop through Btag WP labels
+	tdrStyle->SetPadRightMargin(defaultParam);
+} // closes the function 'fatJetVsHBbDist'
+
+
+
+
+
+
 
 void PlottingDoubleBTaggerEfficiencyStudies::effComparingWPs()
 {
@@ -463,6 +639,65 @@ void PlottingDoubleBTaggerEfficiencyStudies::effComparingWPs()
 		c->Close();
 
 	} // closes loop through eta bins
+
+} // closes the function effComparingWPs
+
+
+
+
+
+
+void PlottingDoubleBTaggerEfficiencyStudies::softDropEffComparingWPs()
+{	
+    TCanvas* c=new TCanvas("c","c");
+    TLegend * legend = new TLegend(0.6, 0.20, 0.91, 0.35); //(xmin, ymin, xmax, ymax)
+    legend->SetLineColor(0);
+    legend-> SetNColumns(2);
+
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+
+		TH1F * hNum = (TH1F*)f->Get( Form("softDropJetEffNumerator_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()) );
+		TH1F * hDen = (TH1F*)f->Get( Form("softDropJetEffDenominator_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()) );
+		TEfficiency * hEff = new TEfficiency(*hNum,*hDen);		
+		TH1F *hEffHist = (TH1F*) hNum->Clone();
+		hEffHist->Divide(hDen);
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT
+		int colour = SetColor(iWP, doubleBtagWPname.size());
+		hEff->SetLineColor(colour);
+		hEff->SetMarkerColor(colour);
+		hEffHist->SetMarkerColor(colour);
+		hEff->SetLineWidth(2);
+		hEffHist->GetXaxis()->SetLabelSize(0.05);
+		hEffHist->GetYaxis()->SetLabelSize(0.05);
+		// hEffHist->GetXaxis()->SetTitle("");
+		hEffHist->GetXaxis()->SetTitleSize(0.06);	
+		hEffHist->GetYaxis()->SetTitle("Efficiency");
+		hEffHist->GetYaxis()->SetTitleSize(0.06);
+		hEffHist->GetYaxis()->SetRangeUser(0,1.11);
+
+		hEffHist->Draw("same, P");
+		hEff->Draw("same");
+		legend->AddEntry(hEff, Form("%s", doubleBtagWPname[iWP].c_str()), "L");
+
+	} // closes loop through WPs
+
+	legend->Draw();
+	// Add Stamps
+	latex->SetTextAlign(11);
+	latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+	latex->SetTextAlign(31);
+	latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+	// Add line across max efficiency		
+	c->Update();
+	TLine *line = new TLine(0,1,gPad->GetUxmax(),1);
+	line->SetLineStyle(2);
+	line->SetLineWidth(2);
+	line->Draw();
+
+	std::string saveName = "softDropMapEfficiency.pdf";
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();
 
 } // closes the function effComparingWPs
 

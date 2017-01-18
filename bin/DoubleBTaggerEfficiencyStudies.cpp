@@ -35,15 +35,17 @@
 watchout...with this toggle the executable can now overwrite outputs!!!
 hacks the original script abit so it can do some things slightly differently
 it does so using the quantity: bool runOnDice
+ALSO...make sure 'inputfiles' does not have a default value!!! It will screw it
 */
 
 
 void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::vector<std::string>, std::vector<double>);
-void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, pat::Jet, reco::GenParticle, double, std::vector<std::string>, std::vector<double>, std::vector<double>);
+void FillHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, bool, bool, pat::Jet, pat::Jet, reco::GenParticle, double, std::vector<std::string>, std::vector<double>, std::vector<double>);
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 void WriteHistogramsDICE(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 std::vector<reco::GenParticle> higgsBbGenParticles(edm::Handle<std::vector<reco::GenParticle>>, std::vector<double> &);
 bool isThereAFatJetMatch(edm::Handle<std::vector<pat::Jet>>, reco::GenParticle, double, pat::Jet&);
+bool isThereSoftDropMapping(edm::Handle<std::vector<pat::Jet>>, pat::Jet &, double, pat::Jet&);
 std::string getOutputDirFromOutputFile(std::string);
 
 
@@ -58,6 +60,7 @@ int main(int argc, char* argv[])
 	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.8, 0.9}; // these WP vectors must correspond to one-another
 	std::vector<std::string> doubleBtagWPname = {"loose", "medium", "tight", "veryTight"};
 	double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
+	double dRMaxMatchJets = 0.4; // max dR between fatJet and fatJetSoftDrop to claim a match
 	// std::vector<double> etaBinning = {0.00, 0.80, 1.60, 2.40};
 	std::vector<double> etaBinning = {0.00, 2.40};
 	/////////////////////
@@ -82,7 +85,7 @@ int main(int argc, char* argv[])
 	// Set defaults //
 	parser.integerValue ("maxevents"      ) = -1; // -1 for all events
 	parser.integerValue ("outputevery"    ) =   100;
-	// parser.stringVector ("inputfiles"    ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_888.root"};
+	// parser.stringVector ("inputfiles"    ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1800p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12MJI_mH70p0_mSusy1800p0_ratio0p99_splitting0p5/bTagPatTuple_888.root"};
 	// parser.stringValue  ("outputfile"     ) = "output_DoubleBTaggerEfficiencyStudies/histos.root";
 	parser.boolValue    ("orderedsecondaryfiles") = false;
 	//////////////////
@@ -153,9 +156,14 @@ int main(int argc, char* argv[])
 				edm::Handle<std::vector<pat::Jet>> fatJets;
 				event.getByLabel(std::string("selectedPatJetsAK8PFCHS"), fatJets);
 
+				// Handle to the groomedFatJet collection
+				edm::Handle<std::vector<pat::Jet>> softDropFatJets;
+				event.getByLabel(std::string("selectedPatJetsAK8PFCHSSoftDrop"), softDropFatJets);
+
 				// Handle to the genParticle collection
 				edm::Handle<std::vector<reco::GenParticle>> genParticles;
 				event.getByLabel(std::string("genParticles"), genParticles);		 
+
 
 
 				// A N A L Y S I S
@@ -170,8 +178,13 @@ int main(int argc, char* argv[])
 
 					// See if there is a fatJet that matches to the higgsBb (closest in dR, must have dR<dRMaxMatch)
 					pat::Jet fatJetMatch; // if there is a matching fatJet, this object will contain it
-					bool isMatch =isThereAFatJetMatch(fatJets, higgsBbParticle, dRMaxMatch, fatJetMatch);
-					FillHistograms(h_, h2_, isMatch, fatJetMatch, higgsBbParticle, dRbbVec[iH] ,doubleBtagWPname, doubleBtagWP, etaBinning);
+					bool isMatch = isThereAFatJetMatch(fatJets, higgsBbParticle, dRMaxMatch, fatJetMatch);
+			
+					pat::Jet softDropFatJetMap; // if there is a softDropFatJet that maps onto the fatJet, this object will contain it
+					bool isJetMapping = false;
+					if (isMatch) isJetMapping = isThereSoftDropMapping(softDropFatJets, fatJetMatch, dRMaxMatchJets, softDropFatJetMap);
+
+					FillHistograms(h_, h2_, isMatch, isJetMapping, fatJetMatch, softDropFatJetMap, higgsBbParticle, dRbbVec[iH], doubleBtagWPname, doubleBtagWP, etaBinning);
 
 				} // closes loop through higgsBb Particles
 				// ------------------------------------------------------------------------------------------------------------//
@@ -218,17 +231,25 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
     // for(double binLowerEdge=  100.0; binLowerEdge< 150.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);
     // for(double binLowerEdge=  150.0; binLowerEdge< 350.0; binLowerEdge+= 25.0) ptBinning.push_back(binLowerEdge);
     for(double binLowerEdge=  0.0; binLowerEdge< 1000.0; binLowerEdge+= 50.0) ptBinning.push_back(binLowerEdge);    	
-    for(double binLowerEdge=  1000.0; binLowerEdge< 1800.1; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  1000.0; binLowerEdge< 2000.1; binLowerEdge+= 100.0) ptBinning.push_back(binLowerEdge);
     // for(double binLowerEdge=  600.0; binLowerEdge< 800.1; binLowerEdge+= 200.0) ptBinning.push_back(binLowerEdge);
 
+    std::vector<double> ptBinningSoftDrop;
+    // for(double binLowerEdge=  0.0; binLowerEdge< 100.0; binLowerEdge+= 50.0) ptBinningSoftDrop.push_back(binLowerEdge);
+    // for(double binLowerEdge=  100.0; binLowerEdge< 150.0; binLowerEdge+= 50.0) ptBinningSoftDrop.push_back(binLowerEdge);
+    // for(double binLowerEdge=  150.0; binLowerEdge< 350.0; binLowerEdge+= 25.0) ptBinningSoftDrop.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 400.1; binLowerEdge+= 10.0) ptBinningSoftDrop.push_back(binLowerEdge);    	
+    // for(double binLowerEdge=  1000.0; binLowerEdge< 2000.1; binLowerEdge+= 100.0) ptBinningSoftDrop.push_back(binLowerEdge);
+    // for(double binLowerEdge=  600.0; binLowerEdge< 800.1; binLowerEdge+= 200.0) ptBinningSoftDrop.push_back(binLowerEdge);
+
     std::vector<double> ptScatXBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 1800.1; binLowerEdge+= 5.0) ptScatXBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 2000.1; binLowerEdge+= 5.0) ptScatXBinning.push_back(binLowerEdge);
 
     std::vector<double> ptScatYBinning = ptScatXBinning;
     // for(double binLowerEdge=  0.0; binLowerEdge< 800.1; binLowerEdge+= 20.0) ptScatYBinning.push_back(binLowerEdge);	
 
     std::vector<double> massBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 200.1; binLowerEdge+= 5.0) massBinning.push_back(binLowerEdge);
+    for(double binLowerEdge=  0.0; binLowerEdge< 200.1; binLowerEdge+= 2.5) massBinning.push_back(binLowerEdge);
 
     std::vector<double> etaDistBinning;
     for(double binLowerEdge=  -4.00; binLowerEdge< 4.0001; binLowerEdge+= 0.20) etaDistBinning.push_back(binLowerEdge);    
@@ -248,13 +269,17 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
     for(double binLowerEdge=  1.70; binLowerEdge< 2.501; binLowerEdge+= 0.40) dREffBinning.push_back(binLowerEdge);
 
 	// create the debugging histograms
-	h_["DEBUG_higgsBbDRpreMatching"] = new TH1F("DEBUG_higgsBbDRpreMatching", ";dR_bb;a.u.", 50, 0, 2.50);
+	h_["DEBUG_higgsBbDRpreMatching"] = new TH1F("DEBUG_higgsBbDRpreMatching", ";MC dR_bb;a.u.", 50, 0, 2.50);
 
     // create the histograms (includes histograms with a fat jet mass cut)
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPnameD.size(); ++iWP){
 
 		h2_[Form("ptScatter_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH2F(
 			Form("ptScatter_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";MC Higgs p_{T} (GeV); doubleBTagJet p_{T} (GeV)",
+			ptScatXBinning.size()-1, &(ptScatXBinning)[0], ptScatYBinning.size()-1, &(ptScatYBinning)[0]);
+
+		h2_[Form("ptScatterSoftDrop_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH2F(
+			Form("ptScatterSoftDrop_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";MC Higgs p_{T} (GeV); softDropFatJet p_{T} (GeV)",
 			ptScatXBinning.size()-1, &(ptScatXBinning)[0], ptScatYBinning.size()-1, &(ptScatYBinning)[0]);
 
 		h_[Form("fatJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
@@ -264,10 +289,22 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 		   Form("fatJetEta_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";doubleBTagJet #eta; a.u.", etaDistBinning.size()-1, &(etaDistBinning)[0]);
 
 		h_[Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
-		   Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR_match; a.u.", matchDeltaRDistBinning.size()-1, &(matchDeltaRDistBinning)[0]);
+		   Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR(higgs,doubleBTagJet); a.u.", matchDeltaRDistBinning.size()-1, &(matchDeltaRDistBinning)[0]);
 
 		h_[Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
 		   Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";MC dR_bb; a.u.", bbDeltaRDistBinning.size()-1, &(bbDeltaRDistBinning)[0]);
+
+		h_[Form("softDropJetEffDenominator_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
+		   Form("softDropJetEffDenominator_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";doubleBTagJet p_{T} (GeV); totalCount", ptBinningSoftDrop.size()-1, &(ptBinningSoftDrop)[0]);
+
+		h_[Form("softDropJetEffNumerator_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
+		   Form("softDropJetEffNumerator_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";doubleBTagJet p_{T} (GeV); matchCount", ptBinningSoftDrop.size()-1, &(ptBinningSoftDrop)[0]);
+
+		h_[Form("softDropJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
+		   Form("softDropJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";mass_softDropFatJet (GeV); a.u.", massBinning.size()-1, &(massBinning)[0]);
+
+		h_[Form("softDropJetDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
+		   Form("softDropJetDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR(doubleBTagJet,SoftDropFatJet); a.u.", 40, 0, 0.4);
 
    		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 
@@ -301,9 +338,8 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 
 
 
-void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, bool isMatch, pat::Jet fatJetMatchD, reco::GenParticle higssBbGenParticleD, double dRbb, std::vector<std::string> doubleBtagWPnameD, std::vector<double> doubleBtagWPD, std::vector<double> etaBinningD)
+void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_, bool isMatch, bool isJetMapping, pat::Jet fatJetMatchD, pat::Jet softDropFatJetMapD, reco::GenParticle higssBbGenParticleD, double dRbb, std::vector<std::string> doubleBtagWPnameD, std::vector<double> doubleBtagWPD, std::vector<double> etaBinningD)
 {
-
 
 	// fill the efficiency denominators
 	for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
@@ -311,6 +347,7 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 		if( fabs(higssBbGenParticleD.eta()) >= etaBinningD[iEtaBin] && fabs(higssBbGenParticleD.eta()) < etaBinningD[iEtaBin+1]){
 			h_[Form("effDenominator_eta%.2f-%.2f", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(higssBbGenParticleD.pt());
 			h_[Form("effDenominator_eta%.2f-%.2f_fcnDR", etaBinningD[iEtaBin], etaBinningD[iEtaBin+1] )]->Fill(dRbb);
+
 		} // closes 'if' eta within the set bin
 	}
 
@@ -328,6 +365,16 @@ void FillHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*
 				h_[Form("bbDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dRbb);
 				double dRmatch = delR( delPhi( fatJetMatchD.phi(),higssBbGenParticleD.phi() ), delEta( fatJetMatchD.eta(),higssBbGenParticleD.eta() ) );
 				h_[Form("matchDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dRmatch);				
+
+				h_[Form("softDropJetEffDenominator_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(fatJetMatchD.pt());
+
+				if (isJetMapping){
+					h2_[Form("ptScatterSoftDrop_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(higssBbGenParticleD.pt(), softDropFatJetMapD.pt());
+					h_[Form("softDropJetEffNumerator_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(fatJetMatchD.pt());
+					h_[Form("softDropJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(softDropFatJetMapD.mass());
+					double dRmatchJet = delR( delPhi( fatJetMatchD.phi(),softDropFatJetMapD.phi() ), delEta( fatJetMatchD.eta(),softDropFatJetMapD.eta() ) );
+					h_[Form("softDropJetDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())]->Fill(dRmatchJet);
+				}
 
 		   		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 
@@ -437,6 +484,35 @@ bool isThereAFatJetMatch(edm::Handle<std::vector<pat::Jet>> fatJetsD, reco::GenP
 
 	else return false;
 } // closes the function 'isThereAFatJetMatch'
+
+
+
+
+
+
+bool isThereSoftDropMapping(edm::Handle<std::vector<pat::Jet>> softDropFatJetsD, pat::Jet & fatJetMatchD, double dRMaxMatchJetsD, pat::Jet & softDropFatJetMap)
+{
+	size_t closestSoftDropFatJetIndex = 999;
+	double dRMin = 9999.99;
+
+	for (size_t iFJSD = 0; iFJSD < softDropFatJetsD->size(); ++iFJSD){
+		const pat::Jet & softDropFatJet = (*softDropFatJetsD)[iFJSD];
+		
+		double dR = delR( delPhi( fatJetMatchD.phi(),softDropFatJet.phi() ), delEta( fatJetMatchD.eta(),softDropFatJet.eta() ) );
+		if (dR < dRMin){
+			dRMin = dR;
+			closestSoftDropFatJetIndex = iFJSD;
+		}
+	} // closes loop through soft drop fatJets
+
+	// if there is a softDropFatJet that matches, update softDropFatJetMap with this object and return 'true' 
+	if (dRMin < dRMaxMatchJetsD){ 
+		softDropFatJetMap = (*softDropFatJetsD)[closestSoftDropFatJetIndex];
+		return true; 
+	}
+
+	else return false;
+} // closes the function 'isThereSoftDropMapping'
 
 
 
