@@ -10,6 +10,8 @@ import sys
 # this is kind of annoying, sorry!
 # make sure you have a valid grid certificate and the correct (for your CMSSW env) crab loaded
 
+# note that if a crab project is old the info disapears and thus you cannot get the publication status!!!
+# ie can't get the files to run over in the next step!!! Need to enter them maually!!!
 #################################################################
 #################################################################
 #################################################################
@@ -23,8 +25,8 @@ mode = 'checkStatus'
 
 # whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 # whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
-whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
-# whichPartOfProcess = 'patTupleAddBTag' # formats the AOD into patTuple form
+# whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
+whichPartOfProcess = 'patTupleAddBTag' # formats the AOD into patTuple form
 
 
 #-----------------------------------------------
@@ -55,6 +57,17 @@ storageSite = 'T2_UK_SGrid_Bristol'
 processMc_cmsswVersion = 'CMSSW_8_0_3_patch1'
 pathTo_processMc_cmsswVersion = '/users/jt15104/' # little hack so patTuple stage (uses different CMSSW) knows how to find info for collecting the input dataset
 patTuple_cmsswVersion = 'CMSSW_8_0_20'
+
+# The default is False. The script finds the dataset to use for you.
+# However if the crab project has expired this will no longer work.
+# You need to set manuallySetData to True
+# And fill in the list dataSetsToUse to correspond to madGraphProjects
+manuallySetData = False
+dataSetsToUse = [
+				# 'DAS_DATASET',
+				# 'DAS_DATASET',
+				# 'etc',
+                ]
 #-----------------------------------------------
 
 #-------------------------------------------
@@ -85,7 +98,7 @@ totalNumberOfFilesPro03 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of patTupleAddBTag
 ##### INFO 'patTupleAddBTag' INFO ########## requires valid editionNamePro03
-editionNamePAT = "ed12"
+editionNamePAT = "ed12MJI"
 
 filesPerJobPAT = 1
 totalNumberOfFilesPAT = -1 # -1 to select them all
@@ -180,7 +193,16 @@ for madGraphProject in madGraphProjects:
 			madGraphProjectsStripOffEvents.append(madGraphProject[:c])
 			break
 
-
+# if one is using Manually set datasets check that dataSetsToUse is same length as madGraphProjects
+if manuallySetData == True and whichPartOfProcess != "processMc01":
+	print "* * * * * * * * * * * * * * * * * * * * * * * * * * *"
+	print "WARNING: you are manually setting the datasets to use"
+	print "* * * * * * * * * * * * * * * * * * * * * * * * * * *"
+	print ""
+	if len(dataSetsToUse) != len(madGraphProjects):
+		print "The number of datasets specified does not match the number of projects to run"
+		print "Sort this out you fool"	
+		sys.exit()
 
 
 #-----------------------------------------------------------#
@@ -277,17 +299,20 @@ if mode == 'submit' and whichPartOfProcess == 'processMc02':
 		partTwoUniqueName = outputPrimaryDatasetIntro + '_processMc02_' + editionNamePro02 + '_' + madGraphProjectsStripOffEvents[i]
 
 		# get the name of the DAS input dataset name
-		inputDataset = []
-		statusLines = os.popen("crab status -d crab_projects/crab_%s" % partOneUniqueName, "r").readlines()
-		for line in statusLines:
-			if line[:15] == "Output dataset:":
-				inputDataset = line.rstrip()
-				for c in range(15,len(inputDataset)):
-					if inputDataset[c] == '/':
-						inputDataset = inputDataset[c:]
-						# print inputDataset # for debugging
-						break
-				break
+		if manuallySetData == False:
+			inputDataset = []
+			statusLines = os.popen("crab status -d crab_projects/crab_%s" % partOneUniqueName, "r").readlines()
+			for line in statusLines:
+				if line[:15] == "Output dataset:":
+					inputDataset = line.rstrip()
+					for c in range(15,len(inputDataset)):
+						if inputDataset[c] == '/':
+							inputDataset = inputDataset[c:]
+							# print inputDataset # for debugging
+							break
+					break
+		if manuallySetData == True:
+			inputDataset = dataSetsToUse[i]
 
 		# create the tempory crab config file to submit
 		f = open("temp_crab3config_processMc02.py", 'w')
@@ -370,17 +395,20 @@ if mode == 'submit' and whichPartOfProcess == 'processMc03':
 		partThreeUniqueName = outputPrimaryDatasetIntro + '_processMc03_' + editionNamePro03 + '_' + madGraphProjectsStripOffEvents[i]
 
 		# get the name of the DAS input dataset name
-		inputDataset = []
-		statusLines = os.popen("crab status -d crab_projects/crab_%s" % partTwoUniqueName, "r").readlines()
-		for line in statusLines:
-			if line[:15] == "Output dataset:":
-				inputDataset = line.rstrip()
-				for c in range(15,len(inputDataset)):
-					if inputDataset[c] == '/':
-						inputDataset = inputDataset[c:]
-						# print inputDataset # for debugging
-						break
-				break
+		if manuallySetData == False:
+			inputDataset = []
+			statusLines = os.popen("crab status -d crab_projects/crab_%s" % partTwoUniqueName, "r").readlines()
+			for line in statusLines:
+				if line[:15] == "Output dataset:":
+					inputDataset = line.rstrip()
+					for c in range(15,len(inputDataset)):
+						if inputDataset[c] == '/':
+							inputDataset = inputDataset[c:]
+							# print inputDataset # for debugging
+							break
+					break
+		if manuallySetData == True:
+			inputDataset = dataSetsToUse[i]
 
 		# create the tempory crab config file to submit
 		f = open("temp_crab3config_processMc03.py", 'w')
@@ -463,18 +491,21 @@ if mode == 'submit' and whichPartOfProcess == 'patTupleAddBTag':
 		patTupleUniqueName = outputPrimaryDatasetIntro + '_patTupleAddBTag_' + editionNamePAT + '_' + madGraphProjectsStripOffEvents[i]
 
 		# get the name of the DAS input dataset name
-		inputDataset = []
-		pathToCrabProjects = os.path.join(pathTo_processMc_cmsswVersion,processMc_cmsswVersion,"src/Analysis/Analysis_boostedNmssmHiggs/crab3/crab_projects") # HACK, sorry
-		statusLines = os.popen("crab status -d %s/crab_%s" % (pathToCrabProjects,partThreeUniqueName), "r").readlines()
-		for line in statusLines:
-			if line[:15] == "Output dataset:":
-				inputDataset = line.rstrip()
-				for c in range(15,len(inputDataset)):
-					if inputDataset[c] == '/':
-						inputDataset = inputDataset[c:]
-						# print inputDataset # for debugging
-						break
-				break
+		if manuallySetData == False:	
+			inputDataset = []
+			pathToCrabProjects = os.path.join(pathTo_processMc_cmsswVersion,processMc_cmsswVersion,"src/Analysis/Analysis_boostedNmssmHiggs/crab3/crab_projects") # HACK, sorry
+			statusLines = os.popen("crab status -d %s/crab_%s" % (pathToCrabProjects,partThreeUniqueName), "r").readlines()
+			for line in statusLines:
+				if line[:15] == "Output dataset:":
+					inputDataset = line.rstrip()
+					for c in range(15,len(inputDataset)):
+						if inputDataset[c] == '/':
+							inputDataset = inputDataset[c:]
+							# print inputDataset # for debugging purposes
+							break
+					break
+		if manuallySetData == True:
+			inputDataset = dataSetsToUse[i]
 
 		# create the tempory crab config file to submit
 		f = open("temp_crab3config_patTuple.py", 'w')
