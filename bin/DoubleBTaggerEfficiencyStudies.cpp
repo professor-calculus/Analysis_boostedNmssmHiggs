@@ -252,13 +252,13 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
     for(double binLowerEdge=  0.0; binLowerEdge< 200.1; binLowerEdge+= 2.5) massBinning.push_back(binLowerEdge);
 
     std::vector<double> etaDistBinning;
-    for(double binLowerEdge=  -4.00; binLowerEdge< 4.0001; binLowerEdge+= 0.20) etaDistBinning.push_back(binLowerEdge);    
+    for(double binLowerEdge=  -4.00; binLowerEdge< 4.0001; binLowerEdge+= 0.10) etaDistBinning.push_back(binLowerEdge);    
 
     std::vector<double> matchDeltaRDistBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 0.8001; binLowerEdge+= 0.02) matchDeltaRDistBinning.push_back(binLowerEdge); 
+    for(double binLowerEdge=  0.0; binLowerEdge< 0.8001; binLowerEdge+= 0.01) matchDeltaRDistBinning.push_back(binLowerEdge); 
 
     std::vector<double> bbDeltaRDistBinning;
-    for(double binLowerEdge=  0.0; binLowerEdge< 2.501; binLowerEdge+= 0.05) bbDeltaRDistBinning.push_back(binLowerEdge); 
+    for(double binLowerEdge=  0.0; binLowerEdge< 2.501; binLowerEdge+= 0.025) bbDeltaRDistBinning.push_back(binLowerEdge); 
 
     std::vector<double> dREffBinning;
     for(double binLowerEdge=  0.0; binLowerEdge< 0.40; binLowerEdge+= 0.10) dREffBinning.push_back(binLowerEdge);
@@ -269,7 +269,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
     for(double binLowerEdge=  1.70; binLowerEdge< 2.501; binLowerEdge+= 0.40) dREffBinning.push_back(binLowerEdge);
 
 	// create the debugging histograms
-	h_["DEBUG_higgsBbDRpreMatching"] = new TH1F("DEBUG_higgsBbDRpreMatching", ";MC dR_bb;a.u.", 50, 0, 2.50);
+	h_["DEBUG_higgsBbDRpreMatching"] = new TH1F("DEBUG_higgsBbDRpreMatching", ";MC dR_bb;a.u.", 100, 0, 2.50);
 
     // create the histograms (includes histograms with a fat jet mass cut)
 	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPnameD.size(); ++iWP){
@@ -304,7 +304,7 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 		   Form("softDropJetMass_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";mass_softDropFatJet (GeV); a.u.", massBinning.size()-1, &(massBinning)[0]);
 
 		h_[Form("softDropJetDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str())] = new TH1F(
-		   Form("softDropJetDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR(doubleBTagJet,SoftDropFatJet); a.u.", 40, 0, 0.4);
+		   Form("softDropJetDeltaR_%sDoubleBTagWP", doubleBtagWPnameD[iWP].c_str()), ";dR(doubleBTagJet,SoftDropFatJet); a.u.", 80, 0, 0.4);
 
    		for (std::vector<double>::size_type iEtaBin=0; iEtaBin<etaBinningD.size()-1; ++iEtaBin){
 
