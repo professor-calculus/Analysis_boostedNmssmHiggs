@@ -69,7 +69,7 @@ dataSetsToUse = [
 
 #-------------------------------------------
 ##### INFO 'processMc01' INFO ##############
-editionNamePro01 = "ed12"
+editionNamePro01 = "ed8021v1"
 
 eventsPerJob = 600
 totalNumberOfEvents = 600000 # -1 to select them all
@@ -79,7 +79,7 @@ pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that 
 
 #------------------------------------------- Note that running submission of processMc02
 ##### INFO 'processMc02' INFO ############## requires valid editionNamePro01
-editionNamePro02 = "ed21"
+editionNamePro02 = "ed8021v1"
 
 filesPerJobPro02 = 5
 totalNumberOfFilesPro02 = -1 # -1 to select them all
@@ -87,7 +87,7 @@ totalNumberOfFilesPro02 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc03
 ##### INFO 'processMc03' INFO ############## requires valid editionNamePro02
-editionNamePro03 = "ed21"
+editionNamePro03 = "ed8021v1"
 
 filesPerJobPro03 = 1
 totalNumberOfFilesPro03 = -1 # -1 to select them all
@@ -95,7 +95,7 @@ totalNumberOfFilesPro03 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc04
 ##### INFO 'processMc04' INFO ############## requires valid editionNamePro03
-editionNamePro04 = "ed21"
+editionNamePro04 = "ed8021v1"
 
 filesPerJobPro04 = 2
 totalNumberOfFilesPro04 = -1 # -1 to select them all
@@ -103,7 +103,7 @@ totalNumberOfFilesPro04 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of patTupleAddBTag
 ##### INFO 'patTupleAddBTag' INFO ########## requires valid editionNamePro03
-editionNamePAT = "ed21"
+editionNamePAT = "ed8021v1"
 
 filesPerJobPAT = 2
 totalNumberOfFilesPAT = -1 # -1 to select them all
@@ -173,7 +173,7 @@ totalNumberOfFilesPAT = -1 # -1 to select them all
 cmsswVersion = os.popen("echo $CMSSW_VERSION", "r").readline()
 cmsswVersion = cmsswVersion.rstrip()
 # check that you are using the correct cmssw version
-if (cmsswVersion != processMc_cmsswVersion:
+if cmsswVersion != processMc_cmsswVersion:
 	print "You are using " + cmsswVersion
 	print "You should be using " + processMc_cmsswVersion
 	print "You Fool"
