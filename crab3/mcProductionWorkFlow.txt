@@ -95,6 +95,13 @@ CMSSW_8_0_21
 Step 1:
 cmsDriver.py step1 --filein file:nmssmSignal_GENSIM.root --fileout file:nmssmSignal_AODSIMstep1of2.root  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISpring15PrePremix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v2-v2/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016 --datamix PreMix --era Run2_2016 --python_filename processMc02_genSimToAOD_step1of2_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
 
+note that there are too many PU files, and the das command can't handle getting them all
+instead create using the first file from
+$ eos ls /store/mc/RunIISpring15PrePremix/Neutrino_E-10_gun/GEN-SIM-DIGI-RAW/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v2-v2/100000/
+= /store/mc/RunIISpring15PrePremix/Neutrino_E-10_gun/GEN-SIM-DIGI-RAW/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v2-v2/100000/001EB167-3781-E611-BE3C-0CC47A4D75F4.root
+and THEN fill in with them all. Which can be found on analysis evernote_034
+
+
 Step 2:
 cmsDriver.py step2 --filein file:nmssmSignal_AODSIMstep1of2.root --fileout file:nmssmSignal_AODSIMstep2of2.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --era Run2_2016 --python_filename processMc03_genSimToAOD_step2of2_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5 
 
