@@ -23,7 +23,7 @@ process.options.wantSummary = False
 
 # global tag information
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_TrancheIV_v6', '')
 
 # what to keep in the output
 process.out.outputCommands = cms.untracked.vstring( ['drop *',
