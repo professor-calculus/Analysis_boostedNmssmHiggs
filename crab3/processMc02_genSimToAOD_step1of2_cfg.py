@@ -22,7 +22,7 @@ process.load('SimGeneral.MixingModule.digi_MixPreMix_cfi')
 process.load('Configuration.StandardSequences.DataMixerPreMix_cff')
 process.load('Configuration.StandardSequences.SimL1EmulatorDM_cff')
 process.load('Configuration.StandardSequences.DigiToRawDM_cff')
-process.load('HLTrigger.Configuration.HLT_25ns10e33_v2_cff')
+process.load('HLTrigger.Configuration.HLT_25ns15e33_v4_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
