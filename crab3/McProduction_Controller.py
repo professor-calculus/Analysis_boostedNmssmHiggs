@@ -2,16 +2,14 @@ import os
 import sys
 
 # 1. select the correct options in this script!!!
-# 2. make sure you are in the Analysis_boostedNmssmHiggs/crab3 repo*
+# 2. make sure you are in the Analysis_boostedNmssmHiggs/crab3 repository
 # 3. run with $ python McProduction_Controller.py
 
-# *for processMc 01,02,03 you need to be in one CMSSW environment
-# *for patTuple you need to be in another CMSSW environment
-# this is kind of annoying, sorry!
-# make sure you have a valid grid certificate and the correct (for your CMSSW env) crab loaded
+# must use one fixed CMSSW version for the full chain. (Can use manual dataset entry to mitigate this)
+# make sure you have a valid grid certificate and the correct (for your CMSSW environment) crab loaded.
 
 # note that if a crab project is old the info disapears and thus you cannot get the publication status!!!
-# ie can't get the files to run over in the next step!!! Need to enter them maually!!!
+# ie can't get the files to run over in the next step!!! Need to enter them maually!!! Sorry:(
 #################################################################
 #################################################################
 #################################################################
@@ -23,10 +21,11 @@ import sys
 # mode = 'resubmit'
 mode = 'checkStatus'
 
-# whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
+whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 # whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
 # whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
-whichPartOfProcess = 'patTupleAddBTag' # formats the AOD into patTuple form
+# whichPartOfProcess = 'processMc04' # turns AOD in MINIAOD
+# whichPartOfProcess = 'patTupleAddBTag' # turns AOD into patTuple form (no longer part of the full workflow)
 
 
 #-----------------------------------------------
@@ -40,7 +39,7 @@ madGraphProjects = [
 						# 'mH125p0_mSusy1400p0_ratio0p99_splitting0p5_600001events',
 						# 'mH125p0_mSusy1800p0_ratio0p99_splitting0p5_600000events',
 						# 'mH125p0_mSusy2200p0_ratio0p99_splitting0p5_600000events',
-						'mH70p0_mSusy1000p0_ratio0p99_splitting0p5_600000events', # tHIS iS gOING sOLO
+						'mH70p0_mSusy1000p0_ratio0p99_splitting0p5_600000events', # PUSH THIS ONE THROUGH
 						# 'mH70p0_mSusy1400p0_ratio0p99_splitting0p5_600000events',
 						# 'mH70p0_mSusy1800p0_ratio0p99_splitting0p5_600001events',
 						# 'mH70p0_mSusy2200p0_ratio0p99_splitting0p5_600001events',
@@ -53,12 +52,10 @@ madGraphProjects = [
 outputPrimaryDatasetIntro = 'nmssmSignalCascadeV05_13TeV'
 
 storageSite = 'T2_UK_SGrid_Bristol'
+processMc_cmsswVersion = 'CMSSW_8_0_21'
 
-processMc_cmsswVersion = 'CMSSW_8_0_3_patch1'
-pathTo_processMc_cmsswVersion = '/users/jt15104/' # little hack so patTuple stage (uses different CMSSW) knows how to find info for collecting the input dataset
-patTuple_cmsswVersion = 'CMSSW_8_0_20'
 
-# The default is False. The script finds the dataset to use for you.
+# This switches default is False. The script finds the dataset to use for you.
 # However if the crab project has expired this will no longer work.
 # You need to set manuallySetData to True
 # And fill in the list dataSetsToUse to correspond to madGraphProjects
@@ -82,25 +79,33 @@ pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that 
 
 #------------------------------------------- Note that running submission of processMc02
 ##### INFO 'processMc02' INFO ############## requires valid editionNamePro01
-editionNamePro02 = "ed12"
+editionNamePro02 = "ed21"
 
-filesPerJobPro02 = 1
+filesPerJobPro02 = 5
 totalNumberOfFilesPro02 = -1 # -1 to select them all
 #-------------------------------------------
 
 #------------------------------------------- Note that running submission of processMc03
 ##### INFO 'processMc03' INFO ############## requires valid editionNamePro02
-editionNamePro03 = "ed12"
+editionNamePro03 = "ed21"
 
 filesPerJobPro03 = 1
 totalNumberOfFilesPro03 = -1 # -1 to select them all
 #-------------------------------------------
 
+#------------------------------------------- Note that running submission of processMc04
+##### INFO 'processMc04' INFO ############## requires valid editionNamePro03
+editionNamePro04 = "ed21"
+
+filesPerJobPro04 = 2
+totalNumberOfFilesPro04 = -1 # -1 to select them all
+#-------------------------------------------
+
 #------------------------------------------- Note that running submission of patTupleAddBTag
 ##### INFO 'patTupleAddBTag' INFO ########## requires valid editionNamePro03
-editionNamePAT = "ed12MJI"
+editionNamePAT = "ed21"
 
-filesPerJobPAT = 1
+filesPerJobPAT = 2
 totalNumberOfFilesPAT = -1 # -1 to select them all
 #-------------------------------------------
 
@@ -113,6 +118,7 @@ totalNumberOfFilesPAT = -1 # -1 to select them all
 # partOneUniqueName = outputPrimaryDatasetIntro + '_processMc01_' + editionNamePro01 + '_' + madGraphProjectsStripOffEvents[i]
 # partTwoUniqueName = outputPrimaryDatasetIntro + '_processMc02_' + editionNamePro02 + '_' + madGraphProjectsStripOffEvents[i]
 # partThreeUniqueName = outputPrimaryDatasetIntro + '_processMc03_' + editionNamePro03 + '_' + madGraphProjectsStripOffEvents[i]
+# partFourUniqueName = outputPrimaryDatasetIntro + '_processMc04_' + editionNamePro04 + '_' + madGraphProjectsStripOffEvents[i]
 # patTupleUniqueName = outputPrimaryDatasetIntro + '_patTupleAddBTag_' + editionNamePAT + '_' + madGraphProjectsStripOffEvents[i]
 # (the unique names must be less than 100 characters)
 #
@@ -120,25 +126,29 @@ totalNumberOfFilesPAT = -1 # -1 to select them all
 # 1. /<outputPrimaryDataset>/taylor-<partOneUniqueName>-<randomHash>/USER
 # 2. /<outputPrimaryDataset>/taylor-<partTwoUniqueName>-<randomHash>/USER
 # 3. /<outputPrimaryDataset>/taylor-<partThreeUniqueName>-<randomHash>/USER
-# 4. /<outputPrimaryDataset>/taylor-<patTupleUniqueName>-<randomHash>/USER
+# 4. /<outputPrimaryDataset>/taylor-<partFourUniqueName>-<randomHash>/USER
+# 5. /<outputPrimaryDataset>/taylor-<patTupleUniqueName>-<randomHash>/USER
 #
 # crab projects will go here:
 # 1. ./crab_projects/crab_<partOneUniqueName>/
 # 2. ./crab_projects/crab_<partTwoUniqueName>/
 # 3. ./crab_projects/crab_<partThreeUniqueName>/
-# 4. ./crab_projects/crab_<patTupleUniqueName>/ *NOTE THAT WE WILL BE IN A DIFFERENT REPO FOR THIS PROCESS
+# 4. ./crab_projects/crab_<partFourUniqueName>/
+# 5. ./crab_projects/crab_<patTupleUniqueName>/
 #
 # output ROOT files will go here:
 # 1. /hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/<outputPrimaryDataset>/<partOneUniqueName>/<dateStamp>/0000/
 # 2. /hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/<outputPrimaryDataset>/<partTwoUniqueName>/<dateStamp>/0000/
 # 3. /hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/<outputPrimaryDataset>/<partThreeUniqueName>/<dateStamp>/0000/
-# 4. /hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/<outputPrimaryDataset>/<patTupleUniqueName>/<dateStamp>/0000/
+# 4. /hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/<outputPrimaryDataset>/<partFourUniqueName>/<dateStamp>/0000/
+# 5. /hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/<outputPrimaryDataset>/<patTupleUniqueName>/<dateStamp>/0000/
 #
 # the names of the output ROOT files will be:
 # 1. nmssmSignal_GENSIM_<jobNum>.root (as stated by the config file processMc01_mgLheToGenSim_cfg.py)
 # 2. nmssmSignal_AODSIMstep1of2_<jobNum>.root (as stated by the config file processMc02_genSimToAOD_step1of2_cfg.py)
 # 3. nmssmSignal_AODSIMstep2of2_<jobNum>.root (as stated by the config file processMc03_genSimToAOD_step1of2_cfg.py)
-# 4. bTagPatTuple_<jobNum>.root (as stated by the config file patTuple_addBTagging_cfg.py)
+# 4. nmssmSignal_MINIAODSIM_<jobNum>.root (as stated by the config file processMc04_AODToMINIAOD_cfg.py)
+# 5. bTagPatTuple_<jobNum>.root (as stated by the config file patTuple_addBTagging_cfg.py)
 ###############################
 
 #################################################################
@@ -163,15 +173,9 @@ totalNumberOfFilesPAT = -1 # -1 to select them all
 cmsswVersion = os.popen("echo $CMSSW_VERSION", "r").readline()
 cmsswVersion = cmsswVersion.rstrip()
 # check that you are using the correct cmssw version
-if (whichPartOfProcess == "processMc01" or whichPartOfProcess == "processMc02" or whichPartOfProcess == "processMc03") and cmsswVersion != processMc_cmsswVersion:
+if (cmsswVersion != processMc_cmsswVersion:
 	print "You are using " + cmsswVersion
-	print "You should be using " + processMc_cmsswVersion + " for this process!!!"
-	print "You Fool"
-	sys.exit()
-
-if whichPartOfProcess == "patTupleAddBTag" and cmsswVersion != patTuple_cmsswVersion:
-	print "You are using " + cmsswVersion
-	print "You should be using " + patTuple_cmsswVersion + " for this process!!!"
+	print "You should be using " + processMc_cmsswVersion
 	print "You Fool"
 	sys.exit()
 
@@ -481,6 +485,102 @@ if mode == 'resubmit' and whichPartOfProcess == 'processMc03':
 
 
 #-----------------------------------------------------------#
+#----------------------processMc04--------------------------#
+#-----------------------------------------------------------#
+
+if mode == 'submit' and whichPartOfProcess == 'processMc04':
+
+	for i in range(0,len(madGraphProjects)):
+		partThreeUniqueName = outputPrimaryDatasetIntro + '_processMc03_' + editionNamePro03 + '_' + madGraphProjectsStripOffEvents[i]
+		partFourUniqueName = outputPrimaryDatasetIntro + '_processMc04_' + editionNamePro04 + '_' + madGraphProjectsStripOffEvents[i]
+
+		# get the name of the DAS input dataset name
+		if manuallySetData == False:
+			inputDataset = []
+			statusLines = os.popen("crab status -d crab_projects/crab_%s" % partThreeUniqueName, "r").readlines()
+			for line in statusLines:
+				if line[:15] == "Output dataset:":
+					inputDataset = line.rstrip()
+					for c in range(15,len(inputDataset)):
+						if inputDataset[c] == '/':
+							inputDataset = inputDataset[c:]
+							# print inputDataset # for debugging
+							break
+					break
+		if manuallySetData == True:
+			inputDataset = dataSetsToUse[i]
+
+		# create the tempory crab config file to submit
+		f = open("temp_crab3config_processMc04.py", 'w')
+		f.write("from CRABClient.UserUtilities import config\n")
+		f.write("config = config()\n")
+		f.write("config.Data.inputDataset = '%s'\n" % inputDataset)
+		f.write("config.Data.unitsPerJob = %d\n" % filesPerJobPro04)
+		f.write("config.Data.totalUnits = %d\n" % totalNumberOfFilesPro04)
+		f.write("config.Data.inputDBS = 'phys03'\n")
+		f.write("config.Data.splitting = 'FileBased'\n")
+		f.write("config.Data.publication = True\n")
+		f.write("config.Data.outputDatasetTag = '%s'\n" % partFourUniqueName)
+		f.write("config.General.requestName = '%s'\n" % partFourUniqueName)
+		f.write("config.General.workArea = 'crab_projects'\n")
+		f.write("config.General.transferOutputs = True\n")
+		f.write("config.General.transferLogs = True\n")
+		f.write("config.JobType.pluginName = 'Analysis'\n")
+		f.write("config.JobType.psetName = 'processMc04_AODtoMINIAOD_cfg.py'\n")
+		f.write("config.Site.storageSite = '%s'\n" % storageSite)
+		f.close()
+		print ""
+		# os.system("cat temp_crab3config_processMc04.py") # for testing
+		os.system("crab submit -c temp_crab3config_processMc04.py") # for the real deal
+		os.system("rm temp_crab3config_processMc04.py")
+		print ""
+
+
+
+if mode == 'checkStatus' and whichPartOfProcess == 'processMc04':
+	print ""
+	print "*** CHECKING STATUS FOR PROCESSMC04 ***"
+	print "NB if no info printed the task is most likely not bootstrapped yet"
+	for i in range(0,len(madGraphProjects)):
+		print ""
+		print ""
+		partFourUniqueName = outputPrimaryDatasetIntro + '_processMc04_' + editionNamePro04 + '_' + madGraphProjectsStripOffEvents[i]
+		statusLines = os.popen("crab status -d crab_projects/crab_%s" % partFourUniqueName, "r").readlines()
+		print partFourUniqueName
+		foundJobLine = False
+		for line in statusLines:
+			if foundJobLine == False and line[:12] == "Jobs status:":
+				print line.rstrip()
+				foundJobLine = True
+				continue
+			if foundJobLine == True:
+				if line == "\n":
+					break
+				print line.rstrip()
+		foundPubLine = False
+		for line in statusLines:
+			if foundPubLine == False and line[:19] == "Publication status:":
+				print line.rstrip()
+				foundPubLine = True
+				continue
+			if foundPubLine == True:
+				if line == "\n":
+					break
+				print line.rstrip()
+	print ""
+
+
+
+if mode == 'resubmit' and whichPartOfProcess == 'processMc04':
+
+	for i in range(0,len(madGraphProjects)):
+		partFourUniqueName = outputPrimaryDatasetIntro + '_processMc04_' + editionNamePro04 + '_' + madGraphProjectsStripOffEvents[i]
+		os.system("crab resubmit -d crab_projects/crab_%s" % partFourUniqueName)
+		print ""
+
+
+
+#-----------------------------------------------------------#
 #----------------------patTupleAddBTag----------------------#
 #-----------------------------------------------------------#
 
@@ -491,17 +591,16 @@ if mode == 'submit' and whichPartOfProcess == 'patTupleAddBTag':
 		patTupleUniqueName = outputPrimaryDatasetIntro + '_patTupleAddBTag_' + editionNamePAT + '_' + madGraphProjectsStripOffEvents[i]
 
 		# get the name of the DAS input dataset name
-		if manuallySetData == False:	
+		if manuallySetData == False:
 			inputDataset = []
-			pathToCrabProjects = os.path.join(pathTo_processMc_cmsswVersion,processMc_cmsswVersion,"src/Analysis/Analysis_boostedNmssmHiggs/crab3/crab_projects") # HACK, sorry
-			statusLines = os.popen("crab status -d %s/crab_%s" % (pathToCrabProjects,partThreeUniqueName), "r").readlines()
+			statusLines = os.popen("crab status -d crab_projects/crab_%s" % partThreeUniqueName, "r").readlines()
 			for line in statusLines:
 				if line[:15] == "Output dataset:":
 					inputDataset = line.rstrip()
 					for c in range(15,len(inputDataset)):
 						if inputDataset[c] == '/':
 							inputDataset = inputDataset[c:]
-							# print inputDataset # for debugging purposes
+							# print inputDataset # for debugging
 							break
 					break
 		if manuallySetData == True:
