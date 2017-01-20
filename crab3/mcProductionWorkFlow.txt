@@ -99,7 +99,7 @@ Step 2:
 cmsDriver.py step2 --filein file:nmssmSignal_AODSIMstep1of2.root --fileout file:nmssmSignal_AODSIMstep2of2.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --era Run2_2016 --python_filename processMc03_genSimToAOD_step2of2_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5 
 
 @@@@@@@@@@@@@
-@MINIAOD-SIM@ (instead of this, previously I was doing PATTUPLE creation)
+@MINIAOD-SIM@ (instead of this, previously I was doing PATTUPLE creation. Note that this still works)
 @@@@@@@@@@@@@
 CMSSW_8_0_21
 
