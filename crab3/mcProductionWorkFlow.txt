@@ -35,11 +35,13 @@ cmsDriver.py step1 --filein file:nmssmSignal_GENSIM.root --fileout file:nmssmSig
 
 cmsDriver.py step2 --filein file:nmssmSignal_AODSIMstep1of2.root --fileout file:nmssmSignal_AODSIMstep2of2.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_v3 --step RAW2DIGI,L1Reco,RECO --era Run2_25ns --python_filename processMc03_genSimToAOD_step2of2_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
 
+...can now run my patTuple stage on output.
 
-can now run my patTuple stage
-...but to fit Mannys framework we require miniAOD
-*the double b tagger only came in for CMSSW_8_0_20
-@@ 2017_01_19 @@
-@@ trying to add MINIAOD stage on top. (In CMSSW_8_0_20)
+
+2017_01_19
+trying to add MINIAOD stage on top.
 
 cmsDriver.py step1 --filein file:nmssmSignal_AODSIMstep2of2.root --fileout file:nmssmSignal_MINIAODSIM.root --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 80X_mcRun2_asymptotic_2016_v3 --step PAT --era Run2_2016 --python_filename processMc04_AODToMINIAOD_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
+
+in CMSSW_8_0_3_patch1. It runs sucessfully if comment out: Flag_globalTightHalo2016Filter & Flag_globalSuperTightHalo2016Filter. This has old version of double b tagger.
+in CMSSW_8_0_20. Does not work.
