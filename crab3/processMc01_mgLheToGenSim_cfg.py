@@ -2,12 +2,10 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: Configuration/Generator/python/Hadronizer_TuneCUETP8M1_13TeV_MLM_5f_max4j_LHE_pythia8_cff.py --filein file:unweighted_events.lhe --fileout nmssmSignal_GENSIM.root --mc --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --era Run2_25ns --datatier GEN-SIM --conditions auto:mc --beamspot Realistic50ns13TeVCollision --step GEN,SIM --magField 38T_PostLS1 --python_filename processMc01_mgLheToGenSim_cfg.py --no_exec -n 5
+# with command line options: Configuration/Generator/python/Hadronizer_TuneCUETP8M1_13TeV_MLM_5f_max4j_LHE_pythia8_cff.py --filein file:unweighted_events.lhe --fileout file:nmssmSignal_GENSIM.root --mc --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --conditions auto:mc --beamspot Realistic50ns13TeVCollision --step GEN,SIM --magField 38T_PostLS1 --python_filename processMc01_mgLheToGenSim_cfg.py --no_exec -n 30
 import FWCore.ParameterSet.Config as cms
 
-from Configuration.StandardSequences.Eras import eras
-
-process = cms.Process('SIM',eras.Run2_25ns)
+process = cms.Process('SIM')
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -26,13 +24,13 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(100)
+    input = cms.untracked.int32(30)
 )
 
 # Input source
 process.source = cms.Source("LHESource",
     dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
-    fileNames = cms.untracked.vstring('file:unweighted_events.lhe'),
+    fileNames = cms.untracked.vstring('file:/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v05/paramCard_type03/mH70p0_mSusy1000p0_ratio0p99_splitting0p5_600000events/Events/run_01/.lhe'),
     inputCommands = cms.untracked.vstring('keep *', 
         'drop LHEXMLStringProduct_*_*_*')
 )
@@ -43,7 +41,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('Configuration/Generator/python/Hadronizer_TuneCUETP8M1_13TeV_MLM_5f_max4j_LHE_pythia8_cff.py nevts:5'),
+    annotation = cms.untracked.string('Configuration/Generator/python/Hadronizer_TuneCUETP8M1_13TeV_MLM_5f_max4j_LHE_pythia8_cff.py nevts:30'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -59,7 +57,7 @@ process.RAWSIMoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
-    fileName = cms.untracked.string('nmssmSignal_GENSIM.root'),
+    fileName = cms.untracked.string('file:nmssmSignal_GENSIM.root'),
     outputCommands = process.RAWSIMEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )

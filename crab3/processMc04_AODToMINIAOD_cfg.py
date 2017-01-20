@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step1 --filein file:nmssmSignal_AODSIMstep2of2.root --fileout file:nmssmSignal_MINIAODSIM.root --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 80X_mcRun2_asymptotic_2016_v3 --step PAT --era Run2_2016 --python_filename processMc04_AODToMINIAOD_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
+# with command line options: step1 --filein file:nmssmSignal_AODSIMstep2of2.root --fileout file:nmssmSignal_MINIAODSIM.root --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step PAT --era Run2_2016 --python_filename processMc04_AODToMINIAOD_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -27,7 +27,7 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('/store/user/taylor/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_processMc03_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/161231_104507/0000/nmssmSignal_AODSIMstep2of2_1.root'),
+    fileNames = cms.untracked.vstring('file:nmssmSignal_AODSIMstep2of2.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
 
@@ -63,7 +63,7 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_v3', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_TrancheIV_v6', '')
 
 # Path and EndPath definitions
 process.Flag_trackingFailureFilter = cms.Path(process.goodVertices+process.trackingFailureFilter)
