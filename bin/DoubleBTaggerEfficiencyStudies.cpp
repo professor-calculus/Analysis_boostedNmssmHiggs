@@ -26,6 +26,8 @@
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/Kinematics.h"
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingDoubleBTaggerEfficiencyStudies.h"
 
+// PAT TUPLE FORMAT ONLY !!!
+
 // preliminary running, compile with scram b and then
 // $ DoubleBTaggerEfficiencyStudies inputfiles=XYZ outputfile=ABC orderedsecondaryfiles=0
 // ($CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies)

@@ -27,6 +27,7 @@
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/Kinematics.h"
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingMcSignalStudiesCMSSW.h"
 
+// PAT TUPLE FORMAT ONLY !!!
 
 // preliminary running, compile with scram b and then
 // $ McSignalStudiesCMSSW inputfiles=XYZ outputfile=ABC orderedsecondaryfiles=0
