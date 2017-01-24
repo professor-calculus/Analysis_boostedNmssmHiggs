@@ -152,16 +152,11 @@ PlottingMcSignalStudiesCMSSW::PlottingMcSignalStudiesCMSSW(std::string inputHist
 	twoDimension_forLogic("detectorLogicAlphaTMinBiasedDeltaPhi", "detectorLogicAlphaTMinBiasedDeltaPhi.pdf");
 	twoDimension_forLogic("detectorLogicMHToverMETmht", "detectorLogicMHToverMETmht.pdf");
 
-
-
-
+	// at end to not mess up the colour scheme
 	oneDimension_fourNormalisedPlotsSeperate("detectorNumAk4JetsOver100GeV", "detectorNumAk4JetsOver40GeV", "detectorNumAk4JetsOver20GeV", "detectorNumAk4JetsOver10GeV", "p_{T} > 100 GeV", "p_{T} > 40 GeV", "p_{T} > 20 GeV", "p_{T} > 10 GeV", "detectorNumAk4Jets.pdf", 0.63, 0.88, 0.68, 0.88);
-
-
 	oneDimension_fourNormalisedPlotsSeperate("fatJetNumberLooseDoubleBTagsNoMatching", "fatJetNumberMediumDoubleBTagsNoMatching", "fatJetNumberTightDoubleBTagsNoMatching", "fatJetNumberVeryTightDoubleBTagsNoMatching", "loose", "medium", "tight", "veryTight", "fatJetNumberDoubleBTagsNoMatching.pdf", 0.66, 0.88, 0.68, 0.88);
 	oneDimension_fourNormalisedPlotsSeperate("fatJetNumberLooseDoubleBTagsWithMatching", "fatJetNumberMediumDoubleBTagsWithMatching", "fatJetNumberTightDoubleBTagsWithMatching", "fatJetNumberVeryTightDoubleBTagsWithMatching", "loose", "medium", "tight", "veryTight", "fatJetNumberDoubleBTagsWithMatching.pdf", 0.66, 0.88, 0.68, 0.88);
 
-	// at end to not mess up the colour scheme
 	oneDimension_threeNormalisedPlotsSeparate("leadingSquarkPt_zeroGluinos", "leadingSquarkPt_oneGluinos", "leadingSquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluLeading.pdf", 0.63, 0.88, 0.73, 0.88);
 	oneDimension_threeNormalisedPlotsSeparate("leadingSquarkEta_zeroGluinos", "leadingSquarkEta_oneGluinos", "leadingSquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluLeading.pdf", 0.63, 0.88, 0.73, 0.88);
 	oneDimension_threeNormalisedPlotsSeparate("secondarySquarkPt_zeroGluinos", "secondarySquarkPt_oneGluinos", "secondarySquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluSecondary.pdf", 0.63, 0.88, 0.73, 0.88);

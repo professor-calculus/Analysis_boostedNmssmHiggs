@@ -603,7 +603,6 @@ return 0;
 
 
 
-
 void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2F*> & h2_)
 {
 	// Gen Particle Histograms
@@ -693,12 +692,8 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["detectorNumAk4JetsOver20GeV"] = new TH1F("detectorNumAk4JetsOver20GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
 	h_["detectorNumAk4JetsOver40GeV"] = new TH1F("detectorNumAk4JetsOver40GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
 	h_["detectorNumAk4JetsOver100GeV"] = new TH1F("detectorNumAk4JetsOver100GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
-
-
 	h2_["detectorLogicAlphaTMinBiasedDeltaPhi"] = new TH2F("detectorLogicAlphaTMinBiasedDeltaPhi", ";Alpha T > 0.52;Biased Delta Phi > 0.50", 2, 0, 2, 2, 0, 2);
 	h2_["detectorLogicMHToverMETmht"] = new TH2F("detectorLogicMHToverMETmht", ";H_{T}^{miss} / E_{T}^{miss} > 1.25;H_{T}^{miss} > 130 (GeV)", 2, 0, 2, 2, 0, 2);
-	// h2_["detectorLogicBbDrHiggsPt"] = new TH2F("logicBbDrHiggsPt", ";higgs p_{T} > 170 (GeV); dR_bb > 0.8", 2, 0, 2, 2, 0, 2);
-
 
 	// fatJet Btag histograms
 	h_["fatJetNumberLooseDoubleBTagsNoMatching"] = new TH1F("fatJetNumberLooseDoubleBTagsNoMatching", ";Number of Double B Tags;a.u.", 6, 0, 6);
