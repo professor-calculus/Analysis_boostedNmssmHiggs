@@ -47,6 +47,7 @@ private:
 	void oneDimension_threeNormalisedPlotsSeparate(std::string, std::string, std::string, std::string, std::string, std::string, std::string, double, double, double, double);
 	void twoDimension_standard(std::string, std::string);
 	void twoDimension_forLogic(std::string, std::string);
+	void twoDimension_forLogic3x3(std::string, std::string);
 	void twoDimension_addPlots(std::string, std::string, std::string);
 
 
@@ -126,7 +127,8 @@ PlottingMcSignalStudiesCMSSW::PlottingMcSignalStudiesCMSSW(std::string inputHist
 	twoDimension_standard("leadingBBbarSeperation_secondaryBBbarSeperation", "leadingBBbarSeperation_secondaryBBbarSeperation.pdf");
 	twoDimension_forLogic("logicBbDr", "logicBbDr.pdf");
 	twoDimension_forLogic("logicHiggsPt", "logicHiggsPt.pdf");
-	twoDimension_forLogic("logicBbDrHiggsPt", "logicBbDrHiggsPtBothArms.pdf");
+	twoDimension_forLogic("logicBbDrHiggsPt", "logicBbDrHiggsPtBothArmsIndividually.pdf");
+	twoDimension_forLogic3x3("logicNumberHiggsPtNumberBbDr", "logicNumberHiggsPtNumberBbDr.pdf");
 
 	oneDimension_twoPlotsSeparate("leadingMatchedFatJetPtTwoLooseTagsMatch", "secondaryMatchedFatJetPtTwoLooseTagsMatch", "Leading", "Secondary", "matchedFatJetPtTwoLooseTagsMatch.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 	oneDimension_twoPlotsSeparate("leadingMatchedFatJetPtTwoMediumTagsMatch", "secondaryMatchedFatJetPtTwoMediumTagsMatch", "Leading", "Secondary", "matchedFatJetPtTwoMediumTagsMatch.pdf", 0.63, 0.88, 0.76, 0.88, 2);
@@ -157,10 +159,10 @@ PlottingMcSignalStudiesCMSSW::PlottingMcSignalStudiesCMSSW(std::string inputHist
 	oneDimension_fourNormalisedPlotsSeperate("fatJetNumberLooseDoubleBTagsNoMatching", "fatJetNumberMediumDoubleBTagsNoMatching", "fatJetNumberTightDoubleBTagsNoMatching", "fatJetNumberVeryTightDoubleBTagsNoMatching", "loose", "medium", "tight", "veryTight", "fatJetNumberDoubleBTagsNoMatching.pdf", 0.66, 0.88, 0.68, 0.88);
 	oneDimension_fourNormalisedPlotsSeperate("fatJetNumberLooseDoubleBTagsWithMatching", "fatJetNumberMediumDoubleBTagsWithMatching", "fatJetNumberTightDoubleBTagsWithMatching", "fatJetNumberVeryTightDoubleBTagsWithMatching", "loose", "medium", "tight", "veryTight", "fatJetNumberDoubleBTagsWithMatching.pdf", 0.66, 0.88, 0.68, 0.88);
 
-	oneDimension_threeNormalisedPlotsSeparate("leadingSquarkPt_zeroGluinos", "leadingSquarkPt_oneGluinos", "leadingSquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluLeading.pdf", 0.63, 0.88, 0.73, 0.88);
-	oneDimension_threeNormalisedPlotsSeparate("leadingSquarkEta_zeroGluinos", "leadingSquarkEta_oneGluinos", "leadingSquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluLeading.pdf", 0.63, 0.88, 0.73, 0.88);
-	oneDimension_threeNormalisedPlotsSeparate("secondarySquarkPt_zeroGluinos", "secondarySquarkPt_oneGluinos", "secondarySquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluSecondary.pdf", 0.63, 0.88, 0.73, 0.88);
-	oneDimension_threeNormalisedPlotsSeparate("secondarySquarkEta_zeroGluinos", "secondarySquarkEta_oneGluinos", "secondarySquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluSecondary.pdf", 0.63, 0.88, 0.73, 0.88);
+	oneDimension_threeNormalisedPlotsSeparate("leadingSquarkPt_zeroGluinos", "leadingSquarkPt_oneGluinos", "leadingSquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluLeading.pdf", 0.65, 0.88, 0.73, 0.88);
+	oneDimension_threeNormalisedPlotsSeparate("leadingSquarkEta_zeroGluinos", "leadingSquarkEta_oneGluinos", "leadingSquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluLeading.pdf", 0.65, 0.88, 0.73, 0.88);
+	oneDimension_threeNormalisedPlotsSeparate("secondarySquarkPt_zeroGluinos", "secondarySquarkPt_oneGluinos", "secondarySquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluSecondary.pdf", 0.65, 0.88, 0.73, 0.88);
+	oneDimension_threeNormalisedPlotsSeparate("secondarySquarkEta_zeroGluinos", "secondarySquarkEta_oneGluinos", "secondarySquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluSecondary.pdf", 0.65, 0.88, 0.73, 0.88);
 
 }
 
@@ -485,6 +487,59 @@ void PlottingMcSignalStudiesCMSSW::twoDimension_forLogic(std::string histoname, 
 	c->Close();
 	tdrStyle->SetPadRightMargin(defaultParam);
 }
+
+
+
+
+
+void PlottingMcSignalStudiesCMSSW::twoDimension_forLogic3x3(std::string histoname, std::string saveName)
+{
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
+    TCanvas* c=new TCanvas("c","c"); 	
+	TH2F * h = (TH2F*)f->Get(Form("%s", histoname.c_str()));
+	Double_t norm = h->GetEntries();
+	h->Scale(1/norm);
+	// h->SetLineWidth(2);
+	// h->SetLineColor(2);
+	h->SetMarkerSize(4);
+	// h->GetXaxis()->SetTitle("");
+	h->GetXaxis()->SetTitleSize(0.06);	
+	h->GetXaxis()->SetLabelSize(0.05);
+	// h->GetYaxis()->SetTitle("");
+	h->GetYaxis()->SetTitleSize(0.06);
+	h->GetYaxis()->SetLabelSize(0.05);
+	h->Draw("colz, TEXT");
+	
+	c->Update();
+	TLine *line = new TLine(0,1,3,1);
+	line->SetLineStyle(2);
+	line->SetLineWidth(3);
+	line->Draw();
+	TLine *line2 = new TLine(0,2,3,2);
+	line2->SetLineStyle(2);
+	line2->SetLineWidth(3);
+	line2->Draw();
+	TLine *line3 = new TLine(1,0,1,3);
+	line3->SetLineStyle(2);
+	line3->SetLineWidth(3);
+	line3->Draw();
+	TLine *line4 = new TLine(2,0,2,3);
+	line4->SetLineStyle(2);
+	line4->SetLineWidth(3);
+	line4->Draw();
+
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,massTitle.c_str());
+	// latex->SetTextAlign(31); // align from right
+	// latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();
+	tdrStyle->SetPadRightMargin(defaultParam);
+}
+
+
 
 
 
