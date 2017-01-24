@@ -365,7 +365,8 @@ void PlottingMcSignalStudiesCMSSW::oneDimension_threeNormalisedPlotsSeparate(std
 	int colour2 = SetColor(1, 3);
 	int colour3 = SetColor(2, 3);
 
-	h1->SetLineWidth(2);
+	h1->SetLineWidth(3);
+	h1->SetLineStyle(1);
 	h1->SetLineColor(colour1);
 	// h1->GetXaxis()->SetTitle("");
 	h1->GetXaxis()->SetTitleSize(0.06);	
@@ -375,8 +376,9 @@ void PlottingMcSignalStudiesCMSSW::oneDimension_threeNormalisedPlotsSeparate(std
 	h1->GetYaxis()->SetLabelSize(0.05);
 	h1->Draw();
 
-	h2->SetLineWidth(2);
+	h2->SetLineWidth(4);
 	h2->SetLineColor(colour2);
+	h2->SetLineStyle(7);
 	// h2->GetXaxis()->SetTitle("");
 	h2->GetXaxis()->SetTitleSize(0.06);	
 	h2->GetXaxis()->SetLabelSize(0.05);
@@ -385,8 +387,9 @@ void PlottingMcSignalStudiesCMSSW::oneDimension_threeNormalisedPlotsSeparate(std
 	h2->GetYaxis()->SetLabelSize(0.05);
 	h2->Draw("same");
 
-	h3->SetLineWidth(2);
+	h3->SetLineWidth(5);
 	h3->SetLineColor(colour3);
+	h3->SetLineStyle(2);
 	// h3->GetXaxis()->SetTitle("");
 	h3->GetXaxis()->SetTitleSize(0.06);	
 	h3->GetXaxis()->SetLabelSize(0.05);
