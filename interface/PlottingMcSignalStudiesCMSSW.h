@@ -46,6 +46,7 @@ private:
 	void oneDimension_twoPlotsSeparate(std::string, std::string, std::string, std::string, std::string, double, double, double, double, int);
 	void oneDimension_threeNormalisedPlotsSeparate(std::string, std::string, std::string, std::string, std::string, std::string, std::string, double, double, double, double);
 	void twoDimension_standard(std::string, std::string);
+	void twoDimension_forLogic(std::string, std::string);
 	void twoDimension_addPlots(std::string, std::string, std::string);
 
 
@@ -110,6 +111,8 @@ PlottingMcSignalStudiesCMSSW::PlottingMcSignalStudiesCMSSW(std::string inputHist
 	twoDimension_standard("leadingHiggsEta_secondaryHiggsEta", "leadingHiggsEta_secondaryHiggsEta.pdf");
 	twoDimension_standard("leadingHiggsPhi_secondaryHiggsPhi", "leadingHiggsPhi_secondaryHiggsPhi.pdf");
 	oneDimension_twoPlotsSeparate("leadingHiggsQjetDphi", "secondaryHiggsQjetDphi", "Leading Arm", "Secondary Arm", "higgsQjetDphi.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	oneDimension_standard("leadingHiggsSecondaryHiggsDphi", "leadingHiggsSecondaryHiggsDphi.pdf");
+	oneDimension_standard("leadingQjetSecondaryQjetDphi", "leadingQjetSecondaryQjetDphi.pdf");
 
 	twoDimension_addPlots("leadingQjetPt_leadingHiggsPt", "secondaryQjetPt_secondaryHiggsPt", "QjetPt_HiggsPt_bothArms.pdf");
 	twoDimension_addPlots("leadingQjetEta_leadingHiggsEta", "secondaryQjetEta_secondaryHiggsEta", "QjetEta_HiggsEta_bothArms.pdf");
@@ -121,18 +124,39 @@ PlottingMcSignalStudiesCMSSW::PlottingMcSignalStudiesCMSSW(std::string inputHist
 
 	oneDimension_twoPlotsSeparate("leadingBBbarSeperation", "secondaryBBbarSeperation", "Leading Arm", "Secondary Arm", "BBbarSeperation.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 	twoDimension_standard("leadingBBbarSeperation_secondaryBBbarSeperation", "leadingBBbarSeperation_secondaryBBbarSeperation.pdf");
+	twoDimension_forLogic("logicBbDr", "logicBbDr.pdf");
+	twoDimension_forLogic("logicHiggsPt", "logicHiggsPt.pdf");
+	twoDimension_forLogic("logicBbDrHiggsPt", "logicBbDrHiggsPtBothArms.pdf");
 
+	oneDimension_twoPlotsSeparate("leadingMatchedFatJetPtTwoLooseTagsMatch", "secondaryMatchedFatJetPtTwoLooseTagsMatch", "Leading", "Secondary", "matchedFatJetPtTwoLooseTagsMatch.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	oneDimension_twoPlotsSeparate("leadingMatchedFatJetPtTwoMediumTagsMatch", "secondaryMatchedFatJetPtTwoMediumTagsMatch", "Leading", "Secondary", "matchedFatJetPtTwoMediumTagsMatch.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	oneDimension_twoPlotsSeparate("leadingMatchedFatJetPtTwoTightTagsMatch", "secondaryMatchedFatJetPtTwoTightTagsMatch", "Leading", "Secondary", "matchedFatJetPtTwoTightTagsMatch.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	oneDimension_twoPlotsSeparate("leadingMatchedFatJetPtTwoVeryTightTagsMatch", "secondaryMatchedFatJetPtTwoVeryTightTagsMatch", "Leading", "Secondary", "matchedFatJetPtTwoVeryTightTagsMatch.pdf", 0.63, 0.88, 0.76, 0.88, 2);
+	twoDimension_standard("leading_secondaryMatchedFatJetPtTwoLooseTagsMatch", "leading_secondaryMatchedFatJetPtTwoLooseTagsMatch.pdf");
+	twoDimension_standard("leading_secondaryMatchedFatJetPtTwoMediumTagsMatch", "leading_secondaryMatchedFatJetPtTwoMediumTagsMatch.pdf");
+	twoDimension_standard("leading_secondaryMatchedFatJetPtTwoTightTagsMatch", "leading_secondaryMatchedFatJetPtTwoTightTagsMatch.pdf");
+	twoDimension_standard("leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch", "leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch.pdf");
 
  	oneDimension_twoPlotsSeparate("detectorLeadingAk4JetPt", "detectorSecondaryAk4JetPt", "Leading", "Secondary", "detectorAk4JetPt.pdf",  0.63, 0.88, 0.76, 0.88, 2);
  	oneDimension_twoPlotsSeparate("detectorLeadingAk4JetEta", "detectorSecondaryAk4JetEta", "Leading", "Secondary", "detectorAk4JetEta.pdf",  0.63, 0.88, 0.76, 0.88, 1);
 	oneDimension_standard("detectorMET", "detectorMET.pdf");
 	oneDimension_standard("detectorHT", "detectorHT.pdf");
 	oneDimension_standard("detectorMHT", "detectorMHT.pdf");
+	oneDimension_standard("detectorMinBiasedDeltaPhi", "detectorMinBiasedDeltaPhi.pdf");
+	oneDimension_standard("detectorAlphaT", "detectorAlphaT.pdf");
+	oneDimension_standard("detectorMHToverMET", "detectorMHToverMET.pdf");
 	twoDimension_standard("detectorMHT_detectorMET", "detectorMHT_detectorMET.pdf"); 
 	twoDimension_standard("detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt", "detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt.pdf");
 	twoDimension_standard("detectorHT_detectorSecondaryAk4JetPt", "detectorHT_detectorSecondaryAk4JetPt.pdf");
 	twoDimension_standard("detectorHT_detectorLeadingAk4JetPt", "detectorHT_detectorLeadingAk4JetPt.pdf");
+	twoDimension_forLogic("detectorLogicAlphaTMinBiasedDeltaPhi", "detectorLogicAlphaTMinBiasedDeltaPhi.pdf");
+	twoDimension_forLogic("detectorLogicMHToverMETmht", "detectorLogicMHToverMETmht.pdf");
+
+
+
+
 	oneDimension_fourNormalisedPlotsSeperate("detectorNumAk4JetsOver100GeV", "detectorNumAk4JetsOver40GeV", "detectorNumAk4JetsOver20GeV", "detectorNumAk4JetsOver10GeV", "p_{T} > 100 GeV", "p_{T} > 40 GeV", "p_{T} > 20 GeV", "p_{T} > 10 GeV", "detectorNumAk4Jets.pdf", 0.63, 0.88, 0.68, 0.88);
+
 
 	oneDimension_fourNormalisedPlotsSeperate("fatJetNumberLooseDoubleBTagsNoMatching", "fatJetNumberMediumDoubleBTagsNoMatching", "fatJetNumberTightDoubleBTagsNoMatching", "fatJetNumberVeryTightDoubleBTagsNoMatching", "loose", "medium", "tight", "veryTight", "fatJetNumberDoubleBTagsNoMatching.pdf", 0.66, 0.88, 0.68, 0.88);
 	oneDimension_fourNormalisedPlotsSeperate("fatJetNumberLooseDoubleBTagsWithMatching", "fatJetNumberMediumDoubleBTagsWithMatching", "fatJetNumberTightDoubleBTagsWithMatching", "fatJetNumberVeryTightDoubleBTagsWithMatching", "loose", "medium", "tight", "veryTight", "fatJetNumberDoubleBTagsWithMatching.pdf", 0.66, 0.88, 0.68, 0.88);
@@ -414,6 +438,49 @@ void PlottingMcSignalStudiesCMSSW::twoDimension_standard(std::string histoname, 
 	h->GetYaxis()->SetLabelSize(0.05);
 	h->Draw("colz");
 	
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,massTitle.c_str());
+	// latex->SetTextAlign(31); // align from right
+	// latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();
+	tdrStyle->SetPadRightMargin(defaultParam);
+}
+
+
+
+
+
+void PlottingMcSignalStudiesCMSSW::twoDimension_forLogic(std::string histoname, std::string saveName)
+{
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
+    TCanvas* c=new TCanvas("c","c"); 	
+	TH2F * h = (TH2F*)f->Get(Form("%s", histoname.c_str()));
+	Double_t norm = h->GetEntries();
+	h->Scale(1/norm);
+	// h->SetLineWidth(2);
+	// h->SetLineColor(2);
+	h->SetMarkerSize(4);
+	// h->GetXaxis()->SetTitle("");
+	h->GetXaxis()->SetTitleSize(0.06);	
+	h->GetXaxis()->SetLabelSize(0.05);
+	// h->GetYaxis()->SetTitle("");
+	h->GetYaxis()->SetTitleSize(0.06);
+	h->GetYaxis()->SetLabelSize(0.05);
+	h->Draw("colz, TEXT");
+	
+	c->Update();
+	TLine *line = new TLine(0,1,2,1);
+	line->SetLineStyle(2);
+	line->SetLineWidth(3);
+	line->Draw();
+	TLine *line2 = new TLine(1,0,1,2);
+	line2->SetLineStyle(2);
+	line2->SetLineWidth(3);
+	line2->Draw();
+
 	latex->SetTextAlign(11); // align from left
 	latex->DrawLatex(0.15,0.92,massTitle.c_str());
 	// latex->SetTextAlign(31); // align from right

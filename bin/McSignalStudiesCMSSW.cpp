@@ -27,6 +27,8 @@
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/Kinematics.h"
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingMcSignalStudiesCMSSW.h"
 
+// TODO: use ak4pfCHS in future when it is available!!!
+
 // PAT TUPLE FORMAT ONLY !!!
 
 // preliminary running, compile with scram b and then
@@ -154,6 +156,7 @@ int main(int argc, char* argv[])
 				// Handle to the ak4Jet collection
 				edm::Handle<std::vector<pat::Jet>> ak4Jets;
 				event.getByLabel(std::string("selectedPatJets"), ak4Jets);
+				// event.getByLabel(std::string("selectedPatJetsAK4PFCHS"), ak4Jets); // TODO: use this in future
 
 				// Handle to the fatJet collection
 				edm::Handle<std::vector<pat::Jet>> fatJets;
@@ -254,6 +257,12 @@ int main(int argc, char* argv[])
 				double dphiSecondaryHiggsQjet = delPhi(higgsVec[1]->phi(),qjetVec[1]->phi());
 				if (dphiSecondaryHiggsQjet < 0) dphiSecondaryHiggsQjet += 2*M_PI;
 				h_["secondaryHiggsQjetDphi"]->Fill(dphiSecondaryHiggsQjet);
+				double dphiLeadingHiggsSecondaryHiggs = delPhi(higgsVec[0]->phi(),higgsVec[1]->phi());
+				if (dphiLeadingHiggsSecondaryHiggs < 0) dphiLeadingHiggsSecondaryHiggs += 2*M_PI;
+				h_["leadingHiggsSecondaryHiggsDphi"]->Fill(dphiLeadingHiggsSecondaryHiggs);
+				double dphiLeadingQjetSecondaryQjet = delPhi(qjetVec[0]->phi(),qjetVec[1]->phi());
+				if (dphiLeadingQjetSecondaryQjet < 0) dphiLeadingQjetSecondaryQjet += 2*M_PI;
+				h_["leadingQjetSecondaryQjetDphi"]->Fill(dphiLeadingQjetSecondaryQjet);
 
 				h_["leadingLspPt"]->Fill(lspVec[0]->pt());
 				h_["leadingLspEta"]->Fill(lspVec[0]->eta());
@@ -264,26 +273,47 @@ int main(int argc, char* argv[])
 				std::vector<double> lspMet = addTwoPtVectors(lspVec[0]->pt(), lspVec[0]->phi(), lspVec[1]->pt(), lspVec[1]->phi());
 				h_["lspMET"]->Fill(lspMet[0]);
 
-
 				double leadingBBbarSeperation = delR( delPhi(bVec[0]->phi(), bbarVec[0]->phi()), delEta(bVec[0]->eta(), bbarVec[0]->eta()) );
 				h_["leadingBBbarSeperation"]->Fill(leadingBBbarSeperation);
 				double secondaryBBbarSeperation = delR( delPhi(bVec[1]->phi(), bbarVec[1]->phi()), delEta(bVec[1]->eta(), bbarVec[1]->eta()) );
 				h_["secondaryBBbarSeperation"]->Fill(secondaryBBbarSeperation);
 				h2_["leadingBBbarSeperation_secondaryBBbarSeperation"]->Fill(secondaryBBbarSeperation,leadingBBbarSeperation);
 
-				// Detector Plots
+				if (leadingBBbarSeperation <= 0.8 && secondaryBBbarSeperation <= 0.8) h2_["logicBbDr"]->Fill(0.1,0.1);
+				if (leadingBBbarSeperation <= 0.8 && secondaryBBbarSeperation > 0.8) h2_["logicBbDr"]->Fill(1.1,0.1);
+				if (leadingBBbarSeperation > 0.8 && secondaryBBbarSeperation <= 0.8) h2_["logicBbDr"]->Fill(0.1,1.1);
+				if (leadingBBbarSeperation > 0.8 && secondaryBBbarSeperation > 0.8) h2_["logicBbDr"]->Fill(1.1,1.1);
+
+				if (higgsVec[0]->pt() <= 170 && higgsVec[1]->pt() <= 170) h2_["logicHiggsPt"]->Fill(0.1,0.1);
+				if (higgsVec[0]->pt() <= 170 && higgsVec[1]->pt() > 170) h2_["logicHiggsPt"]->Fill(1.1,0.1);
+				if (higgsVec[0]->pt() > 170 && higgsVec[1]->pt() <= 170) h2_["logicHiggsPt"]->Fill(0.1,1.1);
+				if (higgsVec[0]->pt() > 170 && higgsVec[1]->pt() > 170) h2_["logicHiggsPt"]->Fill(1.1,1.1);
+
+				if (higgsVec[0]->pt() <= 170 && leadingBBbarSeperation <= 0.8) h2_["logicBbDrHiggsPt"]->Fill(0.1,0.1);
+				if (higgsVec[0]->pt() > 170 && leadingBBbarSeperation <= 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,0.1);
+				if (higgsVec[0]->pt() <= 170 && leadingBBbarSeperation > 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,1.1);
+				if (higgsVec[0]->pt() > 170 && leadingBBbarSeperation > 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,1.1);
+				if (higgsVec[1]->pt() <= 170 && leadingBBbarSeperation <= 0.8) h2_["logicBbDrHiggsPt"]->Fill(0.1,0.1);
+				if (higgsVec[1]->pt() > 170 && leadingBBbarSeperation <= 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,0.1);
+				if (higgsVec[1]->pt() <= 170 && leadingBBbarSeperation > 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,1.1);
+				if (higgsVec[1]->pt() > 170 && leadingBBbarSeperation > 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,1.1);
+
+
+				// Detector Plots //
 
 				// MET
 				const pat::MET & MET = (*METvec)[0];
 				h_["detectorMET"]->Fill(MET.et());
 
-				// ak4 Jets (and HT/MHT) nb: they are not in pt order
+				// ak4 Jets (and HT, MHT & SUSY variables) nb: they are not in pt order
 				unsigned int numAk4JetsOver10GeV = 0;
 				unsigned int numAk4JetsOver20GeV = 0;
 				unsigned int numAk4JetsOver40GeV = 0;
 				unsigned int numAk4JetsOver100GeV = 0;
 				double ht = 0.0;
 				std::vector<double> mhtVec = {0,0}; // first element magnitude, second element phi
+				std::vector<int> indexBiasDeltaPhiJets; // use to index jets valid for biasedDeltaPhi and alphaT calculations
+				double epsilon = 0.0; // a component of the alphaT calculation
 				double leadingAk4JetPt = 0.0;
 				double leadingAk4JetEta = 999.99;
 				double secondaryAk4JetPt = 0.0;
@@ -302,6 +332,9 @@ int main(int argc, char* argv[])
 						//function: adds two pt vectors together in the (2d) transverse plane
 						//output: first element is magnitude, second element is phi
 						mhtVec = addTwoPtVectors(mhtVec[0], mhtVec[1], ak4Jet.pt(), ak4Jet.phi());
+						
+						indexBiasDeltaPhiJets.push_back(iJ); // use to index jets valid for biasedDeltaPhi and alphaT calculations
+						epsilon = epsilon + ak4Jet.et(); // a component of the alphaT calculation
 					}
 
 					if (ak4Jet.pt() > leadingAk4JetPt){
@@ -314,7 +347,63 @@ int main(int argc, char* argv[])
 						secondaryAk4JetPt = ak4Jet.pt();
 						secondaryAk4JetEta = ak4Jet.eta();
 					}
-				} // closes loop through the ak4 jets	
+				} // closes loop through the ak4 jets
+
+				// *** biased delta phi calc ***
+				std::vector<double> biasedDeltaPhiVec;
+				for (size_t i = 0; i < indexBiasDeltaPhiJets.size(); ++i){	
+					const pat::Jet & soloJet = (*ak4Jets)[indexBiasDeltaPhiJets[i]];
+
+					std::vector<double> biasedMhtVec = {0,0}; // first element magnitude, second element phi
+					for (size_t j = 0; j < indexBiasDeltaPhiJets.size(); ++j){
+						const pat::Jet & otherJet = (*ak4Jets)[indexBiasDeltaPhiJets[j]];
+						if (j != i) biasedMhtVec = addTwoPtVectors(biasedMhtVec[0], biasedMhtVec[1], otherJet.pt(), -1*otherJet.phi());
+					}
+					double biasedDeltaPhi = delPhi(soloJet.phi(),biasedMhtVec[1]);
+					if (biasedDeltaPhi > M_PI) biasedDeltaPhi -= 2*M_PI;
+					if (biasedDeltaPhi < -1 * M_PI) biasedDeltaPhi += 2*M_PI;
+					biasedDeltaPhiVec.push_back(fabs(biasedDeltaPhi));
+				}
+				int minindex = min_element(biasedDeltaPhiVec.begin(), biasedDeltaPhiVec.end()) - biasedDeltaPhiVec.begin();
+				double minBiasedDeltaPhi = biasedDeltaPhiVec[minindex];
+
+				// *** alphaT calc ***
+				double alphaT = 999.99; // set to a large value so the event default is to pass cut
+				if (indexBiasDeltaPhiJets.size() > 1){
+					// *** delta epsilon calc *** (part of the general case alpha_t calculation)
+					std::vector<int> bitOnOrOff(indexBiasDeltaPhiJets.size(),1); 
+					std::vector<int> sameBitCount(indexBiasDeltaPhiJets.size(),0);
+					std::vector<double> deltaEpsilonVec;
+
+					for (unsigned int i = 0; i < pow(2,indexBiasDeltaPhiJets.size()) / 2; ++i){
+
+						double pseudoJetOneEnergy = 0.0;
+						double pseudoJetTwoEnergy = 0.0;
+
+						for (size_t j = 0; j < indexBiasDeltaPhiJets.size(); ++j){
+
+							if (bitOnOrOff[j] == 1) pseudoJetOneEnergy += (*ak4Jets)[indexBiasDeltaPhiJets[j]].et();
+							if (bitOnOrOff[j] == 0) pseudoJetTwoEnergy += (*ak4Jets)[indexBiasDeltaPhiJets[j]].et();
+
+							sameBitCount[j] = sameBitCount[j]+1;
+							if (sameBitCount[j] == pow(2,j)){
+
+								sameBitCount[j] = 0;
+								if (bitOnOrOff[j] == 0) bitOnOrOff[j] = 1; 
+								else if (bitOnOrOff[j] == 1) bitOnOrOff[j] = 0;
+							}
+						} // closes loop through jet number index
+
+						deltaEpsilonVec.push_back(fabs(pseudoJetOneEnergy - pseudoJetTwoEnergy));
+					} // closes loop through 2^(numJets) / 2 iterations for delta epsilon calc
+
+					int minindex2 = min_element(deltaEpsilonVec.begin(), deltaEpsilonVec.end()) - deltaEpsilonVec.begin();
+					double minDeltaEpsilon = deltaEpsilonVec[minindex2];
+
+					alphaT = 0.5 * (epsilon - minDeltaEpsilon) / (sqrt(epsilon * epsilon - mhtVec[0] * mhtVec[0]));
+				} // closes 'if' more than one valid jet for the calculation
+				// *** end of alphaT calc ***
+				
 				h_["detectorNumAk4JetsOver10GeV"]->Fill(numAk4JetsOver10GeV);
 				h_["detectorNumAk4JetsOver20GeV"]->Fill(numAk4JetsOver20GeV);
 				h_["detectorNumAk4JetsOver40GeV"]->Fill(numAk4JetsOver40GeV);
@@ -329,8 +418,23 @@ int main(int argc, char* argv[])
 				h_["detectorHT"]->Fill(ht);
 				h_["detectorMHT"]->Fill(mhtVec[0]);
 				h2_["detectorMHT_detectorMET"]->Fill(MET.et(),mhtVec[0]);
+				h_["detectorMinBiasedDeltaPhi"]->Fill(minBiasedDeltaPhi);
+				h_["detectorAlphaT"]->Fill(alphaT);
+				double mhtOverMet = mhtVec[0] / MET.et();
+				h_["detectorMHToverMET"]->Fill(mhtOverMet);
 
-				// BTAGZZZZ fatJets
+				if (alphaT <= 0.52 && minBiasedDeltaPhi <= 0.50) h2_["detectorLogicAlphaTMinBiasedDeltaPhi"]->Fill(0.1, 0.1);
+				if (alphaT > 0.52 && minBiasedDeltaPhi <= 0.50) h2_["detectorLogicAlphaTMinBiasedDeltaPhi"]->Fill(1.1, 0.1);
+				if (alphaT <= 0.52 && minBiasedDeltaPhi > 0.50) h2_["detectorLogicAlphaTMinBiasedDeltaPhi"]->Fill(0.1, 1.1);
+				if (alphaT > 0.52 && minBiasedDeltaPhi > 0.50) h2_["detectorLogicAlphaTMinBiasedDeltaPhi"]->Fill(1.1, 1.1);
+
+				if (mhtOverMet <= 1.25 && mhtVec[0] <= 130) h2_["detectorLogicMHToverMETmht"]->Fill(0.1,0.1);
+				if (mhtOverMet > 1.25 && mhtVec[0] <= 130) h2_["detectorLogicMHToverMETmht"]->Fill(1.1,0.1);
+				if (mhtOverMet <= 1.25 && mhtVec[0] > 130) h2_["detectorLogicMHToverMETmht"]->Fill(0.1,1.1);
+				if (mhtOverMet > 1.25 && mhtVec[0] > 130) h2_["detectorLogicMHToverMETmht"]->Fill(1.1,1.1);
+
+
+				// BTAGZZZZ fatJets //
 				unsigned int numberLooseDoubleBTagsNoMatching = 0;
 				unsigned int numberMediumDoubleBTagsNoMatching = 0;
 				unsigned int numberTightDoubleBTagsNoMatching = 0;
@@ -393,6 +497,58 @@ int main(int argc, char* argv[])
 				h_["fatJetNumberMediumDoubleBTagsWithMatching"]->Fill(numberMediumDoubleBTagsWithMatching);
 				h_["fatJetNumberTightDoubleBTagsWithMatching"]->Fill(numberTightDoubleBTagsWithMatching);
 				h_["fatJetNumberVeryTightDoubleBTagsWithMatching"]->Fill(numberVeryTightDoubleBTagsWithMatching);
+
+				if (numberLooseDoubleBTagsWithMatching == 2){
+					if ( (*fatJets)[dR_fJhiggs0_min_index].pt() > (*fatJets)[dR_fJhiggs1_min_index].pt()){
+						h_["leadingMatchedFatJetPtTwoLooseTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt());
+						h_["secondaryMatchedFatJetPtTwoLooseTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt());
+						h2_["leading_secondaryMatchedFatJetPtTwoLooseTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt(),(*fatJets)[dR_fJhiggs0_min_index].pt());
+					}
+					else {
+						h_["leadingMatchedFatJetPtTwoLooseTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt());
+						h_["secondaryMatchedFatJetPtTwoLooseTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt());				
+						h2_["leading_secondaryMatchedFatJetPtTwoLooseTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt(),(*fatJets)[dR_fJhiggs1_min_index].pt());	
+					}
+				}
+
+				if (numberMediumDoubleBTagsWithMatching == 2){
+					if ( (*fatJets)[dR_fJhiggs0_min_index].pt() > (*fatJets)[dR_fJhiggs1_min_index].pt()){
+						h_["leadingMatchedFatJetPtTwoMediumTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt());
+						h_["secondaryMatchedFatJetPtTwoMediumTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt());
+						h2_["leading_secondaryMatchedFatJetPtTwoMediumTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt(),(*fatJets)[dR_fJhiggs0_min_index].pt());
+					}
+					else {
+						h_["leadingMatchedFatJetPtTwoMediumTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt());
+						h_["secondaryMatchedFatJetPtTwoMediumTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt());					
+						h2_["leading_secondaryMatchedFatJetPtTwoMediumTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt(),(*fatJets)[dR_fJhiggs1_min_index].pt());
+					}
+				}
+
+				if (numberTightDoubleBTagsWithMatching == 2){
+					if ( (*fatJets)[dR_fJhiggs0_min_index].pt() > (*fatJets)[dR_fJhiggs1_min_index].pt()){
+						h_["leadingMatchedFatJetPtTwoTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt());
+						h_["secondaryMatchedFatJetPtTwoTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt());
+						h2_["leading_secondaryMatchedFatJetPtTwoTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt(),(*fatJets)[dR_fJhiggs0_min_index].pt());
+					}
+					else {
+						h_["leadingMatchedFatJetPtTwoTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt());
+						h_["secondaryMatchedFatJetPtTwoTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt());						
+						h2_["leading_secondaryMatchedFatJetPtTwoTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt(),(*fatJets)[dR_fJhiggs1_min_index].pt());
+					}
+				}
+
+				if (numberVeryTightDoubleBTagsWithMatching == 2){
+					if ( (*fatJets)[dR_fJhiggs0_min_index].pt() > (*fatJets)[dR_fJhiggs1_min_index].pt()){
+						h_["leadingMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt());
+						h_["secondaryMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt());
+						h2_["leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt(),(*fatJets)[dR_fJhiggs0_min_index].pt());
+					}
+					else {
+						h_["leadingMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt());
+						h_["secondaryMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt());						
+						h2_["leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt(),(*fatJets)[dR_fJhiggs1_min_index].pt());
+					}
+				}
 
 				// ------------------------------------------------------------------------------------------------------------//
 				// ------------------------------------------------------------------------------------------------------------//
@@ -501,7 +657,13 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h2_["leadingHiggsPhi_secondaryHiggsPhi"] = new TH2F("leadingHiggsPhi_secondaryHiggsPhi", ";secondary higgs Phi;leading higgs Phi", 200, -M_PI, M_PI, 200, -M_PI, M_PI);
 	h_["leadingHiggsQjetDphi"] = new TH1F("leadingHiggsQjetDphi", ";higgs Phi - qjet Phi;a.u.", 50, 0, 2*M_PI);
 	h_["secondaryHiggsQjetDphi"] = new TH1F("secondaryHiggsQjetDphi", ";higgs Phi - qjet Phi;a.u.", 50, 0, 2*M_PI);
+	h_["leadingHiggsSecondaryHiggsDphi"] = new TH1F("leadingHiggsSecondaryHiggsDphi", ";leading higgs Phi - secondary higgs Phi;a.u.", 50, 0, 2*M_PI);
+	h_["leadingQjetSecondaryQjetDphi"] = new TH1F("leadingQjetSecondaryQjetDphi", ";leading qjet Phi - secondary qjet Phi;a.u.", 50, 0, 2*M_PI);
 
+	h2_["logicBbDr"] = new TH2F("logicBbDr", ";secondary arm dR_bb > 0.8;leading arm dR_bb > 0.8", 2, 0, 2, 2, 0, 2);
+	h2_["logicHiggsPt"] = new TH2F("logicHiggsPt", ";secondary arm higgs p_{T} > 170 (GeV);leading arm higgs p_{T} > 170 (GeV)", 2, 0, 2, 2, 0, 2);
+	h2_["logicBbDrHiggsPt"] = new TH2F("logicBbDrHiggsPt", ";higgs p_{T} > 170 (GeV); dR_bb > 0.8", 2, 0, 2, 2, 0, 2);
+	
 	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 100);
 	h_["leadingLspEta"] = new TH1F("leadingLspEta", ";#eta LSP;a.u.", 50, -5, 5);
 	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 100);
@@ -517,17 +679,26 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["detectorHT"] = new TH1F("detectorHT", ";detector H_{T} (GeV);a.u.", 50, 0, 7000);
 	h2_["detectorMHT_detectorMET"] = new TH2F("detectorMHT_detectorMET", ";detector E_{T}^{miss} (GeV);detector H_{T}^{miss} (GeV)", 200, 0, 800, 200, 0, 800);
 	h_["detectorMHT"] = new TH1F("detectorMHT", ";detector H_{T}^{miss} (GeV);a.u.", 50, 0, 800);
+	h_["detectorMinBiasedDeltaPhi"] = new TH1F("detectorMinBiasedDeltaPhi", ";Min Biased Delta Phi; a.u.", 50, 0, M_PI);
+	h_["detectorAlphaT"] = new TH1F("detectorAlphaT", ";Alpha_T; a.u.", 100, 0, 1.0);
+	h_["detectorMHToverMET"] = new TH1F("detectorMHToverMET", ";detector H_{T}^{miss} / E_{T}^{miss}; a.u.", 50, 0, 3.0);
 	h_["detectorLeadingAk4JetPt"] = new TH1F("detectorLeadingAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2500);
 	h_["detectorSecondaryAk4JetPt"] = new TH1F("detectorSecondaryAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2500);
 	h_["detectorLeadingAk4JetEta"] = new TH1F("detectorLeadingAk4JetEta", ";#eta AK4 Jet;a.u.", 50, -5, 5);
 	h_["detectorSecondaryAk4JetEta"] = new TH1F("detectorSecondaryAk4JetEta", ";#eta AK4 Jet;a.u.", 50, -5, 5);
-	h2_["detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt"] = new TH2F("detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt", ";Secondary AK4 Jet p_{T} (GeV);Leading AK4 Jet p_{T} (GeV)", 200, 0, 2500, 200, 0, 2500);
-	h2_["detectorHT_detectorSecondaryAk4JetPt"] = new TH2F("detectorHT_detectorSecondaryAk4JetPt", ";Secondary AK4 Jet p_{T} (GeV);detector H_{T} (GeV)", 200, 0, 2500, 200, 0, 7000);
-	h2_["detectorHT_detectorLeadingAk4JetPt"] = new TH2F("detectorHT_detectorLeadingAk4JetPt", ";Leading AK4 Jet p_{T} (GeV);detector H_{T} (GeV)", 200, 0, 2500, 200, 0, 7000);
-	h_["detectorNumAk4JetsOver10GeV"] = new TH1F("detectorNumAk4JetsOver10GeV", ";Number of Ak4 Jets;a.u.", 25, 0, 25);
-	h_["detectorNumAk4JetsOver20GeV"] = new TH1F("detectorNumAk4JetsOver20GeV", ";Number of Ak4 Jets;a.u.", 25, 0, 25);
-	h_["detectorNumAk4JetsOver40GeV"] = new TH1F("detectorNumAk4JetsOver40GeV", ";Number of Ak4 Jets;a.u.", 25, 0, 25);
-	h_["detectorNumAk4JetsOver100GeV"] = new TH1F("detectorNumAk4JetsOver100GeV", ";Number of Ak4 Jets;a.u.", 25, 0, 25);
+	h2_["detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt"] = new TH2F("detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt", ";secondary AK4 Jet p_{T} (GeV);leading AK4 Jet p_{T} (GeV)", 200, 0, 2500, 200, 0, 2500);
+	h2_["detectorHT_detectorSecondaryAk4JetPt"] = new TH2F("detectorHT_detectorSecondaryAk4JetPt", ";secondary AK4 Jet p_{T} (GeV);detector H_{T} (GeV)", 200, 0, 2500, 200, 0, 7000);
+	h2_["detectorHT_detectorLeadingAk4JetPt"] = new TH2F("detectorHT_detectorLeadingAk4JetPt", ";leading AK4 Jet p_{T} (GeV);detector H_{T} (GeV)", 200, 0, 2500, 200, 0, 7000);
+	h_["detectorNumAk4JetsOver10GeV"] = new TH1F("detectorNumAk4JetsOver10GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
+	h_["detectorNumAk4JetsOver20GeV"] = new TH1F("detectorNumAk4JetsOver20GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
+	h_["detectorNumAk4JetsOver40GeV"] = new TH1F("detectorNumAk4JetsOver40GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
+	h_["detectorNumAk4JetsOver100GeV"] = new TH1F("detectorNumAk4JetsOver100GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
+
+
+	h2_["detectorLogicAlphaTMinBiasedDeltaPhi"] = new TH2F("detectorLogicAlphaTMinBiasedDeltaPhi", ";Alpha T > 0.52;Biased Delta Phi > 0.50", 2, 0, 2, 2, 0, 2);
+	h2_["detectorLogicMHToverMETmht"] = new TH2F("detectorLogicMHToverMETmht", ";H_{T}^{miss} / E_{T}^{miss} > 1.25;H_{T}^{miss} > 130 (GeV)", 2, 0, 2, 2, 0, 2);
+	// h2_["detectorLogicBbDrHiggsPt"] = new TH2F("logicBbDrHiggsPt", ";higgs p_{T} > 170 (GeV); dR_bb > 0.8", 2, 0, 2, 2, 0, 2);
+
 
 	// fatJet Btag histograms
 	h_["fatJetNumberLooseDoubleBTagsNoMatching"] = new TH1F("fatJetNumberLooseDoubleBTagsNoMatching", ";Number of Double B Tags;a.u.", 6, 0, 6);
@@ -538,6 +709,20 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["fatJetNumberMediumDoubleBTagsWithMatching"] = new TH1F("fatJetNumberMediumDoubleBTagsWithMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
 	h_["fatJetNumberTightDoubleBTagsWithMatching"] = new TH1F("fatJetNumberTightDoubleBTagsWithMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
 	h_["fatJetNumberVeryTightDoubleBTagsWithMatching"] = new TH1F("fatJetNumberVeryTightDoubleBTagsWithMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
+
+	h_["leadingMatchedFatJetPtTwoLooseTagsMatch"] = new TH1F("leadingMatchedFatJetPtTwoLooseTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
+	h_["secondaryMatchedFatJetPtTwoLooseTagsMatch"] = new TH1F("secondaryMatchedFatJetPtTwoLooseTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
+	h_["leadingMatchedFatJetPtTwoMediumTagsMatch"] = new TH1F("leadingMatchedFatJetPtTwoMediumTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
+	h_["secondaryMatchedFatJetPtTwoMediumTagsMatch"] = new TH1F("secondaryMatchedFatJetPtTwoMediumTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
+	h_["leadingMatchedFatJetPtTwoTightTagsMatch"] = new TH1F("leadingMatchedFatJetPtTwoTightTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
+	h_["secondaryMatchedFatJetPtTwoTightTagsMatch"] = new TH1F("secondaryMatchedFatJetPtTwoTightTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
+	h_["leadingMatchedFatJetPtTwoVeryTightTagsMatch"] = new TH1F("leadingMatchedFatJetPtTwoVeryTightTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
+	h_["secondaryMatchedFatJetPtTwoVeryTightTagsMatch"] = new TH1F("secondaryMatchedFatJetPtTwoVeryTightTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
+
+	h2_["leading_secondaryMatchedFatJetPtTwoLooseTagsMatch"] = new TH2F("leading_secondaryMatchedFatJetPtTwoLooseTagsMatch", ";secondary doubleBTagJet p_{T} (GeV); leading doubleBTagJet p_{T} (GeV)", 200, 0, 2500, 200, 0, 2500);
+	h2_["leading_secondaryMatchedFatJetPtTwoMediumTagsMatch"] = new TH2F("leading_secondaryMatchedFatJetPtTwoMediumTagsMatch", ";secondary doubleBTagJet p_{T} (GeV); leading doubleBTagJet p_{T} (GeV)", 200, 0, 2500, 200, 0, 2500);
+	h2_["leading_secondaryMatchedFatJetPtTwoTightTagsMatch"] = new TH2F("leading_secondaryMatchedFatJetPtTwoTightTagsMatch", ";secondary doubleBTagJet p_{T} (GeV); leading doubleBTagJet p_{T} (GeV)", 200, 0, 2500, 200, 0, 2500);
+	h2_["leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch"] = new TH2F("leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch", ";secondary doubleBTagJet p_{T} (GeV); leading doubleBTagJet p_{T} (GeV)", 200, 0, 2500, 200, 0, 2500);
 
 } //closes the function 'CreateHistograms'
 
