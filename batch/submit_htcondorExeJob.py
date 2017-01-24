@@ -8,7 +8,8 @@ from htcondorExeJob import *
 # $ python $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/submit_htcondorExeJob.py
 # FROM THE DIRECTORY WHERE YOU WISH TO SAVE THE ROOT FILES!
 
-
+################################################################################################################
+################################################################################################################
 ################################################################################################################
 ################################################################################################################
 ### ## # USER INPUT # ## ###
@@ -23,6 +24,7 @@ executable = "tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/
 code = "src/Analysis/Analysis_boostedNmssmHiggs/bin/McSignalStudiesCMSSW.cpp" # wrt CMSSW location
 inputMotherDir = "/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/" # should be on hdfs
 logLocation = "/storage/jt15104/jobLog_Analysis_boostedNmssmHiggs/McSignalStudiesCMSSW/"
+
 
 # Option A: INPUT FILES ONE AT A TIME BY HAND
 # Note that you can put multiple files in a single element of vecInputFiles by just comma seperating them with no spaces (within the same set of "")
@@ -45,6 +47,8 @@ logLocation = "/storage/jt15104/jobLog_Analysis_boostedNmssmHiggs/McSignalStudie
 filesToUse = "bTagPatTuple_*.root" # get files from '$ls inputMotherDir + filesToUse'
 outputFileBaseName = "histos" # final files will have _101.root added to them
 
+############################################################################################
+############################################################################################
 # # # this now gets the files for us:)
 vecInputFiles = os.popen("ls %s" % os.path.join(inputMotherDir,filesToUse), "r").readlines()
 vecOutputFiles = []
@@ -61,6 +65,8 @@ for i in range (0,len(vecInputFiles)):
 ############################
 ############################
 ############################
+################################################################################################################
+################################################################################################################
 ################################################################################################################
 ################################################################################################################
 
