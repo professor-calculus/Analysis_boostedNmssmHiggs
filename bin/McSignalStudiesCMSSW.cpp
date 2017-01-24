@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
 	////////////////////
 	////////////////////
 	// SET PARAMETERS //
-	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.8, 0.9}; // these WP's correspond to loose, medium, tight, veryTight
+	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.9}; // these WP's correspond to loose, medium, tight, veryTight
 	double dRMaxMatch = 0.5; // max dR between higgs boson and fatJet to claim a match
 	/////////////////////
 	/////////////////////
@@ -448,12 +448,12 @@ int main(int argc, char* argv[])
 				unsigned int numberLooseDoubleBTagsNoMatching = 0;
 				unsigned int numberMediumDoubleBTagsNoMatching = 0;
 				unsigned int numberTightDoubleBTagsNoMatching = 0;
-				unsigned int numberVeryTightDoubleBTagsNoMatching = 0;
+
 
 				unsigned int numberLooseDoubleBTagsWithMatching = 0;
 				unsigned int numberMediumDoubleBTagsWithMatching = 0;
 				unsigned int numberTightDoubleBTagsWithMatching = 0;
-				unsigned int numberVeryTightDoubleBTagsWithMatching = 0;
+
 				
 				double dR_fJhiggs0_min = 99999.99; 
 				double dR_fJhiggs1_min = 99999.99;
@@ -466,7 +466,6 @@ int main(int argc, char* argv[])
 					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[0]) numberLooseDoubleBTagsNoMatching++;
 					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[1]) numberMediumDoubleBTagsNoMatching++; 
 					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[2]) numberTightDoubleBTagsNoMatching++;
-					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[3]) numberVeryTightDoubleBTagsNoMatching++;
 
 					double dR_fJhiggs0 = delR( delPhi( fatJet.phi(),higgsVec[0]->phi() ), delEta( fatJet.eta(),higgsVec[0]->eta() ) );
 					double dR_fJhiggs1 = delR( delPhi( fatJet.phi(),higgsVec[1]->phi() ), delEta( fatJet.eta(),higgsVec[1]->eta() ) );
@@ -487,8 +486,7 @@ int main(int argc, char* argv[])
 					const pat::Jet & fatJet = (*fatJets)[dR_fJhiggs0_min_index];
 					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[0]) numberLooseDoubleBTagsWithMatching++;
 					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[1]) numberMediumDoubleBTagsWithMatching++; 
-					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[2]) numberTightDoubleBTagsWithMatching++;
-					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[3]) numberVeryTightDoubleBTagsWithMatching++;		
+					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[2]) numberTightDoubleBTagsWithMatching++;	
 				}
 
 				if (dR_fJhiggs1_min < dRMaxMatch){
@@ -496,17 +494,14 @@ int main(int argc, char* argv[])
 					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[0]) numberLooseDoubleBTagsWithMatching++;
 					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[1]) numberMediumDoubleBTagsWithMatching++; 
 					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[2]) numberTightDoubleBTagsWithMatching++;
-					if (fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBtagWP[3]) numberVeryTightDoubleBTagsWithMatching++;		
 				}
 
 				h_["fatJetNumberLooseDoubleBTagsNoMatching"]->Fill(numberLooseDoubleBTagsNoMatching);
 				h_["fatJetNumberMediumDoubleBTagsNoMatching"]->Fill(numberMediumDoubleBTagsNoMatching);
 				h_["fatJetNumberTightDoubleBTagsNoMatching"]->Fill(numberTightDoubleBTagsNoMatching);
-				h_["fatJetNumberVeryTightDoubleBTagsNoMatching"]->Fill(numberVeryTightDoubleBTagsNoMatching);
 				h_["fatJetNumberLooseDoubleBTagsWithMatching"]->Fill(numberLooseDoubleBTagsWithMatching);
 				h_["fatJetNumberMediumDoubleBTagsWithMatching"]->Fill(numberMediumDoubleBTagsWithMatching);
 				h_["fatJetNumberTightDoubleBTagsWithMatching"]->Fill(numberTightDoubleBTagsWithMatching);
-				h_["fatJetNumberVeryTightDoubleBTagsWithMatching"]->Fill(numberVeryTightDoubleBTagsWithMatching);
 
 				if (numberLooseDoubleBTagsWithMatching == 2){
 					if ( (*fatJets)[dR_fJhiggs0_min_index].pt() > (*fatJets)[dR_fJhiggs1_min_index].pt()){
@@ -544,19 +539,6 @@ int main(int argc, char* argv[])
 						h_["leadingMatchedFatJetPtTwoTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt());
 						h_["secondaryMatchedFatJetPtTwoTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt());						
 						h2_["leading_secondaryMatchedFatJetPtTwoTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt(),(*fatJets)[dR_fJhiggs1_min_index].pt());
-					}
-				}
-
-				if (numberVeryTightDoubleBTagsWithMatching == 2){
-					if ( (*fatJets)[dR_fJhiggs0_min_index].pt() > (*fatJets)[dR_fJhiggs1_min_index].pt()){
-						h_["leadingMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt());
-						h_["secondaryMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt());
-						h2_["leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt(),(*fatJets)[dR_fJhiggs0_min_index].pt());
-					}
-					else {
-						h_["leadingMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs1_min_index].pt());
-						h_["secondaryMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt());						
-						h2_["leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch"]->Fill((*fatJets)[dR_fJhiggs0_min_index].pt(),(*fatJets)[dR_fJhiggs1_min_index].pt());
 					}
 				}
 
@@ -710,28 +692,20 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["fatJetNumberLooseDoubleBTagsNoMatching"] = new TH1F("fatJetNumberLooseDoubleBTagsNoMatching", ";Number of Double B Tags;a.u.", 6, 0, 6);
 	h_["fatJetNumberMediumDoubleBTagsNoMatching"] = new TH1F("fatJetNumberMediumDoubleBTagsNoMatching", ";Number of Double B Tags;a.u.", 6, 0, 6);
 	h_["fatJetNumberTightDoubleBTagsNoMatching"] = new TH1F("fatJetNumberTightDoubleBTagsNoMatching", ";Number of Double B Tags;a.u.", 6, 0, 6);
-	h_["fatJetNumberVeryTightDoubleBTagsNoMatching"] = new TH1F("fatJetNumberVeryTightDoubleBTagsNoMatching", ";Number of Double B Tags;a.u.", 6, 0, 6);
 	h_["fatJetNumberLooseDoubleBTagsWithMatching"] = new TH1F("fatJetNumberLooseDoubleBTagsWithMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
 	h_["fatJetNumberMediumDoubleBTagsWithMatching"] = new TH1F("fatJetNumberMediumDoubleBTagsWithMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
 	h_["fatJetNumberTightDoubleBTagsWithMatching"] = new TH1F("fatJetNumberTightDoubleBTagsWithMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
-	h_["fatJetNumberVeryTightDoubleBTagsWithMatching"] = new TH1F("fatJetNumberVeryTightDoubleBTagsWithMatching", ";Number of Double B Tags;a.u.", 5, 0, 5);
-
 	h_["leadingMatchedFatJetPtTwoLooseTagsMatch"] = new TH1F("leadingMatchedFatJetPtTwoLooseTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
 	h_["secondaryMatchedFatJetPtTwoLooseTagsMatch"] = new TH1F("secondaryMatchedFatJetPtTwoLooseTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
 	h_["leadingMatchedFatJetPtTwoMediumTagsMatch"] = new TH1F("leadingMatchedFatJetPtTwoMediumTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
 	h_["secondaryMatchedFatJetPtTwoMediumTagsMatch"] = new TH1F("secondaryMatchedFatJetPtTwoMediumTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
 	h_["leadingMatchedFatJetPtTwoTightTagsMatch"] = new TH1F("leadingMatchedFatJetPtTwoTightTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
 	h_["secondaryMatchedFatJetPtTwoTightTagsMatch"] = new TH1F("secondaryMatchedFatJetPtTwoTightTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
-	h_["leadingMatchedFatJetPtTwoVeryTightTagsMatch"] = new TH1F("leadingMatchedFatJetPtTwoVeryTightTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
-	h_["secondaryMatchedFatJetPtTwoVeryTightTagsMatch"] = new TH1F("secondaryMatchedFatJetPtTwoVeryTightTagsMatch", ";doubleBTagJet p_{T} (GeV); a.u.", 50, 0, 2500);
-
 	h2_["leading_secondaryMatchedFatJetPtTwoLooseTagsMatch"] = new TH2F("leading_secondaryMatchedFatJetPtTwoLooseTagsMatch", ";secondary doubleBTagJet p_{T} (GeV); leading doubleBTagJet p_{T} (GeV)", 400, 0, 2500, 400, 0, 2500);
 	h2_["leading_secondaryMatchedFatJetPtTwoMediumTagsMatch"] = new TH2F("leading_secondaryMatchedFatJetPtTwoMediumTagsMatch", ";secondary doubleBTagJet p_{T} (GeV); leading doubleBTagJet p_{T} (GeV)", 400, 0, 2500, 400, 0, 2500);
 	h2_["leading_secondaryMatchedFatJetPtTwoTightTagsMatch"] = new TH2F("leading_secondaryMatchedFatJetPtTwoTightTagsMatch", ";secondary doubleBTagJet p_{T} (GeV); leading doubleBTagJet p_{T} (GeV)", 400, 0, 2500, 400, 0, 2500);
-	h2_["leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch"] = new TH2F("leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch", ";secondary doubleBTagJet p_{T} (GeV); leading doubleBTagJet p_{T} (GeV)", 400, 0, 2500, 400, 0, 2500);
 
 } //closes the function 'CreateHistograms'
-
 
 
 

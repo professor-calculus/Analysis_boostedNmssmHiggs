@@ -40,11 +40,11 @@ private:
 
 	// individual plots
 	void oneDimension_standard(std::string, std::string);
-	void oneDimension_fourNormalisedPlotsSeperate(std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, double, double, double, double);
-
+	void oneDimension_fourNormalisedPlotsSeparate(std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, double, double, double, double);
 	// void oneDimension_twoPlotsAdd();
 	void oneDimension_twoPlotsSeparate(std::string, std::string, std::string, std::string, std::string, double, double, double, double, int);
 	void oneDimension_threeNormalisedPlotsSeparate(std::string, std::string, std::string, std::string, std::string, std::string, std::string, double, double, double, double);
+	void oneDimension_threeNormalisedPlotsSeparateRev(std::string, std::string, std::string, std::string, std::string, std::string, std::string, double, double, double, double);
 	void twoDimension_standard(std::string, std::string);
 	void twoDimension_forLogic(std::string, std::string);
 	void twoDimension_forLogic3x3(std::string, std::string);
@@ -133,11 +133,9 @@ PlottingMcSignalStudiesCMSSW::PlottingMcSignalStudiesCMSSW(std::string inputHist
 	oneDimension_twoPlotsSeparate("leadingMatchedFatJetPtTwoLooseTagsMatch", "secondaryMatchedFatJetPtTwoLooseTagsMatch", "Leading", "Secondary", "matchedFatJetPtTwoLooseTagsMatch.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 	oneDimension_twoPlotsSeparate("leadingMatchedFatJetPtTwoMediumTagsMatch", "secondaryMatchedFatJetPtTwoMediumTagsMatch", "Leading", "Secondary", "matchedFatJetPtTwoMediumTagsMatch.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 	oneDimension_twoPlotsSeparate("leadingMatchedFatJetPtTwoTightTagsMatch", "secondaryMatchedFatJetPtTwoTightTagsMatch", "Leading", "Secondary", "matchedFatJetPtTwoTightTagsMatch.pdf", 0.63, 0.88, 0.76, 0.88, 2);
-	oneDimension_twoPlotsSeparate("leadingMatchedFatJetPtTwoVeryTightTagsMatch", "secondaryMatchedFatJetPtTwoVeryTightTagsMatch", "Leading", "Secondary", "matchedFatJetPtTwoVeryTightTagsMatch.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 	twoDimension_standard("leading_secondaryMatchedFatJetPtTwoLooseTagsMatch", "leading_secondaryMatchedFatJetPtTwoLooseTagsMatch.pdf");
 	twoDimension_standard("leading_secondaryMatchedFatJetPtTwoMediumTagsMatch", "leading_secondaryMatchedFatJetPtTwoMediumTagsMatch.pdf");
 	twoDimension_standard("leading_secondaryMatchedFatJetPtTwoTightTagsMatch", "leading_secondaryMatchedFatJetPtTwoTightTagsMatch.pdf");
-	twoDimension_standard("leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch", "leading_secondaryMatchedFatJetPtTwoVeryTightTagsMatch.pdf");
 
  	oneDimension_twoPlotsSeparate("detectorLeadingAk4JetPt", "detectorSecondaryAk4JetPt", "Leading", "Secondary", "detectorAk4JetPt.pdf",  0.63, 0.88, 0.76, 0.88, 2);
  	oneDimension_twoPlotsSeparate("detectorLeadingAk4JetEta", "detectorSecondaryAk4JetEta", "Leading", "Secondary", "detectorAk4JetEta.pdf",  0.63, 0.88, 0.76, 0.88, 1);
@@ -155,14 +153,14 @@ PlottingMcSignalStudiesCMSSW::PlottingMcSignalStudiesCMSSW(std::string inputHist
 	twoDimension_forLogic("detectorLogicMHToverMETmht", "detectorLogicMHToverMETmht.pdf");
 
 	// at end to not mess up the colour scheme
-	oneDimension_fourNormalisedPlotsSeperate("detectorNumAk4JetsOver100GeV", "detectorNumAk4JetsOver40GeV", "detectorNumAk4JetsOver20GeV", "detectorNumAk4JetsOver10GeV", "p_{T} > 100 GeV", "p_{T} > 40 GeV", "p_{T} > 20 GeV", "p_{T} > 10 GeV", "detectorNumAk4Jets.pdf", 0.63, 0.88, 0.68, 0.88);
-	oneDimension_fourNormalisedPlotsSeperate("fatJetNumberLooseDoubleBTagsNoMatching", "fatJetNumberMediumDoubleBTagsNoMatching", "fatJetNumberTightDoubleBTagsNoMatching", "fatJetNumberVeryTightDoubleBTagsNoMatching", "loose", "medium", "tight", "veryTight", "fatJetNumberDoubleBTagsNoMatching.pdf", 0.66, 0.88, 0.68, 0.88);
-	oneDimension_fourNormalisedPlotsSeperate("fatJetNumberLooseDoubleBTagsWithMatching", "fatJetNumberMediumDoubleBTagsWithMatching", "fatJetNumberTightDoubleBTagsWithMatching", "fatJetNumberVeryTightDoubleBTagsWithMatching", "loose", "medium", "tight", "veryTight", "fatJetNumberDoubleBTagsWithMatching.pdf", 0.66, 0.88, 0.68, 0.88);
+	oneDimension_fourNormalisedPlotsSeparate("detectorNumAk4JetsOver100GeV", "detectorNumAk4JetsOver40GeV", "detectorNumAk4JetsOver20GeV", "detectorNumAk4JetsOver10GeV", "p_{T} > 100 GeV", "p_{T} > 40 GeV", "p_{T} > 20 GeV", "p_{T} > 10 GeV", "detectorNumAk4Jets.pdf", 0.63, 0.88, 0.68, 0.88);
 
-	oneDimension_threeNormalisedPlotsSeparate("leadingSquarkPt_zeroGluinos", "leadingSquarkPt_oneGluinos", "leadingSquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluLeading.pdf", 0.65, 0.88, 0.73, 0.88);
-	oneDimension_threeNormalisedPlotsSeparate("leadingSquarkEta_zeroGluinos", "leadingSquarkEta_oneGluinos", "leadingSquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluLeading.pdf", 0.65, 0.88, 0.73, 0.88);
-	oneDimension_threeNormalisedPlotsSeparate("secondarySquarkPt_zeroGluinos", "secondarySquarkPt_oneGluinos", "secondarySquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluSecondary.pdf", 0.65, 0.88, 0.73, 0.88);
-	oneDimension_threeNormalisedPlotsSeparate("secondarySquarkEta_zeroGluinos", "secondarySquarkEta_oneGluinos", "secondarySquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluSecondary.pdf", 0.65, 0.88, 0.73, 0.88);
+	oneDimension_threeNormalisedPlotsSeparate("fatJetNumberLooseDoubleBTagsNoMatching", "fatJetNumberMediumDoubleBTagsNoMatching", "fatJetNumberTightDoubleBTagsNoMatching", "loose", "medium", "tight", "fatJetNumberDoubleBTagsNoMatching.pdf", 0.66, 0.88, 0.73, 0.88);
+	oneDimension_threeNormalisedPlotsSeparate("fatJetNumberLooseDoubleBTagsWithMatching", "fatJetNumberMediumDoubleBTagsWithMatching", "fatJetNumberTightDoubleBTagsWithMatching", "loose", "medium", "tight", "fatJetNumberDoubleBTagsWithMatching.pdf", 0.66, 0.88, 0.73, 0.88);
+	oneDimension_threeNormalisedPlotsSeparateRev("leadingSquarkPt_zeroGluinos", "leadingSquarkPt_oneGluinos", "leadingSquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluLeading.pdf", 0.65, 0.88, 0.73, 0.88);
+	oneDimension_threeNormalisedPlotsSeparateRev("leadingSquarkEta_zeroGluinos", "leadingSquarkEta_oneGluinos", "leadingSquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluLeading.pdf", 0.65, 0.88, 0.73, 0.88);
+	oneDimension_threeNormalisedPlotsSeparateRev("secondarySquarkPt_zeroGluinos", "secondarySquarkPt_oneGluinos", "secondarySquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluSecondary.pdf", 0.65, 0.88, 0.73, 0.88);
+	oneDimension_threeNormalisedPlotsSeparateRev("secondarySquarkEta_zeroGluinos", "secondarySquarkEta_oneGluinos", "secondarySquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluSecondary.pdf", 0.65, 0.88, 0.73, 0.88);
 
 }
 
@@ -199,7 +197,7 @@ void PlottingMcSignalStudiesCMSSW::oneDimension_standard(std::string histoname, 
 
 
 
-void PlottingMcSignalStudiesCMSSW::oneDimension_fourNormalisedPlotsSeperate(std::string histoname1, std::string histoname2, std::string histoname3, std::string histoname4, std::string legendName1, std::string legendName2, std::string legendName3, std::string legendName4, std::string saveName, double legXmin, double legXmax, double legYmin, double legYmax)
+void PlottingMcSignalStudiesCMSSW::oneDimension_fourNormalisedPlotsSeparate(std::string histoname1, std::string histoname2, std::string histoname3, std::string histoname4, std::string legendName1, std::string legendName2, std::string legendName3, std::string legendName4, std::string saveName, double legXmin, double legXmax, double legYmin, double legYmax)
 {
     TCanvas* c=new TCanvas("c","c"); 	
 	TH1F * h1 = (TH1F*)f->Get(Form("%s", histoname1.c_str()));
@@ -349,7 +347,82 @@ void PlottingMcSignalStudiesCMSSW::oneDimension_twoPlotsSeparate(std::string his
 
 
 
+
 void PlottingMcSignalStudiesCMSSW::oneDimension_threeNormalisedPlotsSeparate(std::string histoname1, std::string histoname2, std::string histoname3, std::string legendName1, std::string legendName2, std::string legendName3, std::string saveName, double legXmin, double legXmax, double legYmin, double legYmax)
+{
+    TCanvas* c=new TCanvas("c","c"); 	
+	TH1F * h1 = (TH1F*)f->Get(Form("%s", histoname1.c_str()));
+	TH1F * h2 = (TH1F*)f->Get(Form("%s", histoname2.c_str()));	
+	TH1F * h3 = (TH1F*)f->Get(Form("%s", histoname3.c_str()));	
+	Double_t norm = h1->GetEntries();
+	h1->Scale(1/norm);
+	norm = h2->GetEntries();
+	h2->Scale(1/norm);
+	norm = h3->GetEntries();
+	h3->Scale(1/norm);
+
+	int colour1 = SetColor(0, 3);
+	int colour2 = SetColor(1, 3);
+	int colour3 = SetColor(2, 3);
+
+	h1->SetLineWidth(2);
+	h1->SetLineColor(colour1);
+	// h1->GetXaxis()->SetTitle("");
+	h1->GetXaxis()->SetTitleSize(0.06);	
+	h1->GetXaxis()->SetLabelSize(0.05);
+	// h1->GetYaxis()->SetTitle("");
+	h1->GetYaxis()->SetTitleSize(0.06);
+	h1->GetYaxis()->SetLabelSize(0.05);
+	h1->Draw();
+
+	h2->SetLineWidth(2);
+	h2->SetLineColor(colour2);
+	// h2->GetXaxis()->SetTitle("");
+	h2->GetXaxis()->SetTitleSize(0.06);	
+	h2->GetXaxis()->SetLabelSize(0.05);
+	// h2->GetYaxis()->SetTitle("");
+	h2->GetYaxis()->SetTitleSize(0.06);
+	h2->GetYaxis()->SetLabelSize(0.05);
+	h2->Draw("same");
+
+	h3->SetLineWidth(2);
+	h3->SetLineColor(colour3);
+	// h3->GetXaxis()->SetTitle("");
+	h3->GetXaxis()->SetTitleSize(0.06);	
+	h3->GetXaxis()->SetLabelSize(0.05);
+	// h3->GetYaxis()->SetTitle("");
+	h3->GetYaxis()->SetTitleSize(0.06);
+	h3->GetYaxis()->SetLabelSize(0.05);
+	h3->Draw("same");
+	
+	TLegend * legend = new TLegend();
+	legend->SetX1NDC(legXmin);
+	legend->SetX2NDC(legXmax);
+	legend->SetY1NDC(legYmin);
+	legend->SetY2NDC(legYmax);
+	legend->AddEntry(h1, legendName1.c_str(), "L");
+	legend->AddEntry(h2, legendName2.c_str(), "L");
+	legend->AddEntry(h3, legendName3.c_str(), "L");
+	legend->Draw("same");
+
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,massTitle.c_str());
+	// latex->SetTextAlign(31); // align from right
+	// latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();
+}
+
+
+
+
+
+
+
+
+
+void PlottingMcSignalStudiesCMSSW::oneDimension_threeNormalisedPlotsSeparateRev(std::string histoname1, std::string histoname2, std::string histoname3, std::string legendName1, std::string legendName2, std::string legendName3, std::string saveName, double legXmin, double legXmax, double legYmin, double legYmax)
 {
     TCanvas* c=new TCanvas("c","c"); 	
 	TH1F * h1 = (TH1F*)f->Get(Form("%s", histoname1.c_str()));
@@ -502,7 +575,7 @@ void PlottingMcSignalStudiesCMSSW::twoDimension_forLogic3x3(std::string histonam
 	h->Scale(1/norm);
 	// h->SetLineWidth(2);
 	// h->SetLineColor(2);
-	h->SetMarkerSize(4);
+	h->SetMarkerSize(3);
 	// h->GetXaxis()->SetTitle("");
 	h->GetXaxis()->SetTitleSize(0.06);	
 	h->GetXaxis()->SetLabelSize(0.05);
