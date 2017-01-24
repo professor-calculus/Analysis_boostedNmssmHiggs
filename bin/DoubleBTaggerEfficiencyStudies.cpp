@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 	////////////////////
 	// Set parameters //
 	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.8, 0.9}; // these WP vectors must correspond to one-another
-	std::vector<std::string> doubleBtagWPname = {"loose", "medium", "tight", "veryTight"};
+	std::vector<std::string> doubleBtagWPname = {"loose", "medium", "tight_1", "tight_2"};
 	double dRMaxMatch = 0.8; // max dR between higgs boson and fatJet to claim a match
 	double dRMaxMatchJets = 0.4; // max dR between fatJet and fatJetSoftDrop to claim a match
 	// std::vector<double> etaBinning = {0.00, 0.80, 1.60, 2.40};
