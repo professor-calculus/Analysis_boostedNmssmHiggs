@@ -13,12 +13,12 @@ import re
 ####################
 ### USER OPTIONS ###
 
-saveBaseDir = "/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/"
+saveBaseDir = "/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_21/signalSamples/"
 
 crabOutputBaseDir = "/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/"
 
 crabOutputProjectList = [
-                        "nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/",
+                        "nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/",
                         ]
 
 ####################

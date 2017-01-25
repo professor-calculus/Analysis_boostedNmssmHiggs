@@ -4,7 +4,7 @@ import os
 ### run with
 ### $ python $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/batch/lxbatch_submitMadGraphJobs.py
 ### (best to run from within a jobs log dir)
-### copies the base madgraph project (have a baseMGR and a testMGR project dir to being with)
+### copies the base madgraph project (have a baseMGR dir to being with)
 ### creates the .txt file instructions for madGraph
 ### submit jobs to lxbatch
 

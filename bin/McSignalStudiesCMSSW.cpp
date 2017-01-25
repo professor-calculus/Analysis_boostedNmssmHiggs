@@ -27,8 +27,6 @@
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/Kinematics.h"
 #include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingMcSignalStudiesCMSSW.h"
 
-// TODO: use ak4pfCHS in future when it is available!!!
-
 // PAT TUPLE FORMAT ONLY !!!
 
 // preliminary running, compile with scram b and then
@@ -155,8 +153,8 @@ int main(int argc, char* argv[])
 
 				// Handle to the ak4Jet collection
 				edm::Handle<std::vector<pat::Jet>> ak4Jets;
-				event.getByLabel(std::string("selectedPatJets"), ak4Jets);
-				// event.getByLabel(std::string("selectedPatJetsAK4PFCHS"), ak4Jets); // TODO: use this in future
+				event.getByLabel(std::string("selectedPatJets"), ak4Jets); // old version
+				// event.getByLabel(std::string("selectedPatJetsAK4PFCHS"), ak4Jets); // TODO: use this in future if possible
 
 				// Handle to the fatJet collection
 				edm::Handle<std::vector<pat::Jet>> fatJets;

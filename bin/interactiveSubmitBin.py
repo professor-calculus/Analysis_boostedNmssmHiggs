@@ -13,14 +13,14 @@ import os
 ### ## # USER INPUTS # ## ###
 
 # the executable you wish to use
-# executable = "$CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/McSignalStudiesCMSSW/McSignalStudiesCMSSW"
-executable = "$CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies"
+executable = "$CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/McSignalStudiesCMSSW/McSignalStudiesCMSSW"
+# executable = "$CMSSW_BASE/tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies"
 
 # input files to run over (the equiv of what you would get back form 'ls', thus can use wildcards (*,?) and multiple arguments)
-filesToUse = "/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1800p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12MJI_mH70p0_mSusy1800p0_ratio0p99_splitting0p5/bTagPatTuple_1*.root"
+filesToUse = "/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1800p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12MJI_mH70p0_mSusy1800p0_ratio0p99_splitting0p5/bTagPatTuple_101.root"
 
 # the NEW output DIR & file in which you wish to create to hold the output
-outputFile = "$CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/testingScript/histos.root"
+outputFile = "$CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/testingScriptB/histos.root"
 
 #############################
 ##########################################################
