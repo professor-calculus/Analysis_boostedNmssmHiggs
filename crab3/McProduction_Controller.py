@@ -97,7 +97,7 @@ totalNumberOfFilesPro03 = -1 # -1 to select them all
 ##### INFO 'processMc04' INFO ############## requires valid editionNamePro03
 editionNamePro04 = "ed8021v1"
 
-filesPerJobPro04 = 2
+filesPerJobPro04 = 4
 totalNumberOfFilesPro04 = -1 # -1 to select them all
 #-------------------------------------------
 
@@ -105,7 +105,7 @@ totalNumberOfFilesPro04 = -1 # -1 to select them all
 ##### INFO 'patTupleAddBTag' INFO ########## requires valid editionNamePro03
 editionNamePAT = "ed8021v1"
 
-filesPerJobPAT = 2
+filesPerJobPAT = 4
 totalNumberOfFilesPAT = -1 # -1 to select them all
 #-------------------------------------------
 
@@ -526,7 +526,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc04':
 		f.write("config.General.transferOutputs = True\n")
 		f.write("config.General.transferLogs = True\n")
 		f.write("config.JobType.pluginName = 'Analysis'\n")
-		f.write("config.JobType.psetName = 'processMc04_AODtoMINIAOD_cfg.py'\n")
+		f.write("config.JobType.psetName = 'processMc04_AODToMINIAOD_cfg.py'\n")
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
 		f.close()
 		print ""
