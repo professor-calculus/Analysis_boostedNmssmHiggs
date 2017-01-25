@@ -291,12 +291,12 @@ int main(int argc, char* argv[])
 
 				if (higgsVec[0]->pt() <= 170 && leadingBBbarSeperation <= 0.8) h2_["logicBbDrHiggsPt"]->Fill(0.1,0.1);
 				if (higgsVec[0]->pt() > 170 && leadingBBbarSeperation <= 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,0.1);
-				if (higgsVec[0]->pt() <= 170 && leadingBBbarSeperation > 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,1.1);
+				if (higgsVec[0]->pt() <= 170 && leadingBBbarSeperation > 0.8) h2_["logicBbDrHiggsPt"]->Fill(0.1,1.1);
 				if (higgsVec[0]->pt() > 170 && leadingBBbarSeperation > 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,1.1);
-				if (higgsVec[1]->pt() <= 170 && leadingBBbarSeperation <= 0.8) h2_["logicBbDrHiggsPt"]->Fill(0.1,0.1);
-				if (higgsVec[1]->pt() > 170 && leadingBBbarSeperation <= 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,0.1);
-				if (higgsVec[1]->pt() <= 170 && leadingBBbarSeperation > 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,1.1);
-				if (higgsVec[1]->pt() > 170 && leadingBBbarSeperation > 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,1.1);
+				if (higgsVec[1]->pt() <= 170 && secondaryBBbarSeperation <= 0.8) h2_["logicBbDrHiggsPt"]->Fill(0.1,0.1);
+				if (higgsVec[1]->pt() > 170 && secondaryBBbarSeperation <= 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,0.1);
+				if (higgsVec[1]->pt() <= 170 && secondaryBBbarSeperation > 0.8) h2_["logicBbDrHiggsPt"]->Fill(0.1,1.1);
+				if (higgsVec[1]->pt() > 170 && secondaryBBbarSeperation > 0.8) h2_["logicBbDrHiggsPt"]->Fill(1.1,1.1);
 
 				double numHiggsHighPt = 0.0;
 				double numHighBbSep = 0.0;
@@ -443,6 +443,8 @@ int main(int argc, char* argv[])
 				if (mhtOverMet <= 1.25 && mhtVec[0] > 130) h2_["detectorLogicMHToverMETmht"]->Fill(0.1,1.1);
 				if (mhtOverMet > 1.25 && mhtVec[0] > 130) h2_["detectorLogicMHToverMETmht"]->Fill(1.1,1.1);
 
+				if (mhtVec[0] > 130 && mhtOverMet < 1.25 && minBiasedDeltaPhi > 0.50 && alphaT > 0.52) h2_["detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52"]->Fill(1.1, 0.1);
+				else h2_["detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52"]->Fill(0.1,0.1);
 
 				// BTAGZZZZ fatJets //
 				unsigned int numberLooseDoubleBTagsNoMatching = 0;
@@ -687,6 +689,8 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["detectorNumAk4JetsOver100GeV"] = new TH1F("detectorNumAk4JetsOver100GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
 	h2_["detectorLogicAlphaTMinBiasedDeltaPhi"] = new TH2F("detectorLogicAlphaTMinBiasedDeltaPhi", ";Alpha T > 0.52;Biased Delta Phi > 0.50", 2, 0, 2, 2, 0, 2);
 	h2_["detectorLogicMHToverMETmht"] = new TH2F("detectorLogicMHToverMETmht", ";H_{T}^{miss} / E_{T}^{miss} > 1.25;H_{T}^{miss} > 130 (GeV)", 2, 0, 2, 2, 0, 2);
+
+	h2_["detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52"] = new TH2F("detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52", ";pass?;", 2, 0, 2, 1, 0, 1);
 
 	// fatJet Btag histograms
 	h_["fatJetNumberLooseDoubleBTagsNoMatching"] = new TH1F("fatJetNumberLooseDoubleBTagsNoMatching", ";Number of Double B Tags;a.u.", 6, 0, 6);

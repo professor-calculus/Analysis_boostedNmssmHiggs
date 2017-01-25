@@ -40,6 +40,7 @@ private:
 
 	// individual plots
 	void oneDimension_standard(std::string, std::string);
+	void twoDimension_normalisedWithText(std::string, std::string);
 	void oneDimension_fourNormalisedPlotsSeparate(std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, double, double, double, double);
 	// void oneDimension_twoPlotsAdd();
 	void oneDimension_twoPlotsSeparate(std::string, std::string, std::string, std::string, std::string, double, double, double, double, int);
@@ -152,6 +153,8 @@ PlottingMcSignalStudiesCMSSW::PlottingMcSignalStudiesCMSSW(std::string inputHist
 	twoDimension_forLogic("detectorLogicAlphaTMinBiasedDeltaPhi", "detectorLogicAlphaTMinBiasedDeltaPhi.pdf");
 	twoDimension_forLogic("detectorLogicMHToverMETmht", "detectorLogicMHToverMETmht.pdf");
 
+	twoDimension_normalisedWithText("detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52", "detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52.pdf");
+
 	// at end to not mess up the colour scheme
 	oneDimension_fourNormalisedPlotsSeparate("detectorNumAk4JetsOver100GeV", "detectorNumAk4JetsOver40GeV", "detectorNumAk4JetsOver20GeV", "detectorNumAk4JetsOver10GeV", "p_{T} > 100 GeV", "p_{T} > 40 GeV", "p_{T} > 20 GeV", "p_{T} > 10 GeV", "detectorNumAk4Jets.pdf", 0.63, 0.88, 0.68, 0.88);
 
@@ -191,6 +194,40 @@ void PlottingMcSignalStudiesCMSSW::oneDimension_standard(std::string histoname, 
 
 	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
 	c->Close();
+}
+
+
+
+
+void PlottingMcSignalStudiesCMSSW::twoDimension_normalisedWithText(std::string histoname, std::string saveName)
+{
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
+
+    TCanvas* c=new TCanvas("c","c"); 	
+
+	TH2F * h = (TH2F*)f->Get(Form("%s", histoname.c_str()));
+	Double_t norm = h->GetEntries();
+	h->Scale(1/norm);
+	h->SetLineWidth(2);
+	h->SetLineColor(kBlue+1);
+	h->SetMarkerSize(4);
+	// h->GetXaxis()->SetTitle("");
+	h->GetXaxis()->SetTitleSize(0.06);	
+	h->GetXaxis()->SetLabelSize(0.05);
+	// h->GetYaxis()->SetTitle("");
+	h->GetYaxis()->SetTitleSize(0.06);
+	h->GetYaxis()->SetLabelSize(0.05);
+	h->Draw("colz, TEXT");
+
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,massTitle.c_str());
+	// latex->SetTextAlign(31); // align from right
+	// latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();
+	tdrStyle->SetPadRightMargin(defaultParam);
 }
 
 
