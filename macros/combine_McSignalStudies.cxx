@@ -22,6 +22,8 @@
 // run with
 // $ root -q -b -l $CMSSW_BASE/src/Analysis/Analysis_boostedNmssmHiggs/macros/combine_McSignalStudies.cxx
 
+// THIS CAN WORK ON BOTH THE OUTPUT FROM macros/McSignalStudies.cxx AND bin/McSignalStudiesCMSSW.cpp
+
 void Plotter_standard(std::string motherDir, std::string outputDir, std::vector<std::string> vecHiggsMassToUse, std::vector<std::string> vecSusyMassToUse, std::string tailArgument, std::string histogramName, std::string baseSaveName, double, double, double, double, bool, bool);
 void Plotter_add(std::string motherDir, std::string outputDir, std::vector<std::string> vecHiggsMassToUse, std::vector<std::string> vecSusyMassToUse, std::string tailArgument, std::string histogramName1, std::string histogramName2, std::string baseSaveName, double legXmin, double legXmax, double legYmin, double legYmax, bool, bool);
 void Plotter_norm(std::string motherDir, std::string outputDir, std::vector<std::string> vecHiggsMassToUse, std::vector<std::string> vecSusyMassToUse, std::string tailArgument, std::string histogramName, std::string baseSaveName, double, double, double, double, bool, bool);
@@ -45,16 +47,16 @@ void combine_McSignalStudies()
 		return;
 	}
 
-
 	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "lspMET", "lspMET", 0.69, 0.88, 0.67, 0.87, true, false);
 	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorHT", "detectorHT", 0.69, 0.88, 0.67, 0.87, true, true);
-	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorLeadingJet", "detectorLeadingJet", 0.69, 0.88, 0.67, 0.87, true, true);
-	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorSecondaryJet", "detectorSecondaryJet", 0.69, 0.88, 0.67, 0.87, true, true);
+	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorMHT", "detectorMHT", 0.69, 0.88, 0.67, 0.87, true, true);
+	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorLeadingAk4JetPt", "detectorLeadingAk4JetPt", 0.69, 0.88, 0.67, 0.87, true, true);
+	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorSecondaryAk4JetPt", "detectorSecondaryAk4JetPt", 0.69, 0.88, 0.67, 0.87, true, true);
+	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorLeadingAk4JetEta", "detectorLeadingAk4JetEta", 0.69, 0.88, 0.67, 0.87, true, true);
+	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorSecondaryAk4JetEta", "detectorSecondaryAk4JetEta", 0.69, 0.88, 0.67, 0.87, true, true);
 	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorMET", "detectorMET", 0.69, 0.88, 0.67, 0.87, true, false);
 	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "numberOfGluinos", "numberOfGluinos", 0.69, 0.88, 0.67, 0.87, false, true);
-	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "numberOfDetectorJets", "numberOfDetectorJets", 0.69, 0.88, 0.67, 0.87, false, true);
-	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "leadingHiggsQjetDphi", "leadingHiggsQjetDphi", 0.69, 0.88, 0.67, 0.87, false, true);
-	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "secondaryHiggsQjetDphi", "secondaryHiggsQjetDphi", 0.69, 0.88, 0.67, 0.87, false, true);
+
 	Plotter_add(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "leadingQjetPt", "secondaryQjetPt", "qjetPtBothArms", 0.69, 0.88, 0.67, 0.87, true, true);
 	Plotter_add(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "leadingQjetEta", "secondaryQjetEta", "qjetEtaBothArms", 0.69, 0.88, 0.67, 0.87, false, true);
 	Plotter_add(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "leadingHiggsPt", "secondaryHiggsPt", "higgsPtBothArms", 0.69, 0.88, 0.67, 0.87, true, true);
@@ -62,14 +64,6 @@ void combine_McSignalStudies()
 	Plotter_add(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "leadingSquarkPt", "secondarySquarkPt", "squarkPtBothArms", 0.69, 0.88, 0.67, 0.87, true, true);
 	Plotter_add(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "leadingSquarkEta", "secondarySquarkEta", "squarkEtaBothArms", 0.69, 0.88, 0.67, 0.87, false, true);
 	Plotter_add(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "leadingBBbarSeperation", "secondaryBBbarSeperation", "BBbarSeperationBothArms", 0.69, 0.88, 0.67, 0.87, false, true);
-
-	Plotter_norm(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "DEBUG_BBbarSeperation_higgsPt500to510", "DEBUG_BBbarSeperation_higgsPt500to510", 0.69, 0.88, 0.67, 0.87, true, true);
-	Plotter_norm(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "DEBUG_BBbarSeperation_higgsPt750to760", "DEBUG_BBbarSeperation_higgsPt750to760", 0.69, 0.88, 0.67, 0.87, true, true);
-	Plotter_norm(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "DEBUG_BBbarSeperation_higgsPt1000to1010", "DEBUG_BBbarSeperation_higgsPt1000to1010", 0.69, 0.88, 0.67, 0.87, true, true);
-	Plotter_norm(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "DEBUG_BBbarSeperation_higgs3mom500to510", "DEBUG_BBbarSeperation_higgs3mom500to510", 0.69, 0.88, 0.67, 0.87, true, true);
-	Plotter_norm(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "DEBUG_BBbarSeperation_higgs3mom750to760", "DEBUG_BBbarSeperation_higgs3mom750to760", 0.69, 0.88, 0.67, 0.87, true, true);
-	Plotter_norm(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "DEBUG_BBbarSeperation_higgs3mom1000to1010", "DEBUG_BBbarSeperation_higgs3mom1000to1010", 0.69, 0.88, 0.67, 0.87, true, true);
-
 
 } // closes function "combine_McSignalStudies"
 
