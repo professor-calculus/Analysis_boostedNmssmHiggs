@@ -304,10 +304,18 @@ void McSignalStudies(std::vector<std::string> inputFiles_, std::string outputFil
 				h_["detectorMET"]->Fill(metDetector->MET);
 
 				// ak4 Jets (and HT, MHT & SUSY variables) nb: they are not in pt order
-				unsigned int numAk4JetsOver10GeV = 0;
+				unsigned int numAk4JetsOver200GeV = 0;
 				unsigned int numAk4JetsOver20GeV = 0;
 				unsigned int numAk4JetsOver40GeV = 0;
 				unsigned int numAk4JetsOver100GeV = 0;
+				unsigned int numCentralAk4JetsOver200GeV = 0;
+				unsigned int numCentralAk4JetsOver20GeV = 0;
+				unsigned int numCentralAk4JetsOver40GeV = 0;
+				unsigned int numCentralAk4JetsOver100GeV = 0;
+				unsigned int numForwardAk4JetsOver200GeV = 0;
+				unsigned int numForwardAk4JetsOver20GeV = 0;
+				unsigned int numForwardAk4JetsOver40GeV = 0;
+				unsigned int numForwardAk4JetsOver100GeV = 0;
 				double ht = 0.0;
 				std::vector<double> mhtVec = {0,0}; // first element magnitude, second element phi
 				std::vector<int> indexBiasDeltaPhiJets; // use to index jets valid for biasedDeltaPhi and alphaT calculations
@@ -319,10 +327,18 @@ void McSignalStudies(std::vector<std::string> inputFiles_, std::string outputFil
 
 				for (size_t iJ = 0; iJ < jetVec.size(); ++iJ){
 					
-					if (jetVec[iJ]->PT > 10.0) numAk4JetsOver10GeV++;
+					if (jetVec[iJ]->PT > 200.0) numAk4JetsOver200GeV++;
 					if (jetVec[iJ]->PT > 20.0) numAk4JetsOver20GeV++;
 					if (jetVec[iJ]->PT > 40.0) numAk4JetsOver40GeV++;
 					if (jetVec[iJ]->PT > 100.0) numAk4JetsOver100GeV++;
+					if (jetVec[iJ]->PT > 200.0 && fabs(jetVec[iJ]->Eta) <= 3.0) numCentralAk4JetsOver200GeV++;
+					if (jetVec[iJ]->PT > 20.0 && fabs(jetVec[iJ]->Eta) <= 3.0) numCentralAk4JetsOver20GeV++;
+					if (jetVec[iJ]->PT > 40.0 && fabs(jetVec[iJ]->Eta) <= 3.0) numCentralAk4JetsOver40GeV++;
+					if (jetVec[iJ]->PT > 100.0 && fabs(jetVec[iJ]->Eta) <= 3.0) numCentralAk4JetsOver100GeV++;
+					if (jetVec[iJ]->PT > 200.0 && fabs(jetVec[iJ]->Eta) > 3.0) numForwardAk4JetsOver200GeV++;
+					if (jetVec[iJ]->PT > 20.0 && fabs(jetVec[iJ]->Eta) > 3.0) numForwardAk4JetsOver20GeV++;
+					if (jetVec[iJ]->PT > 40.0 && fabs(jetVec[iJ]->Eta) > 3.0) numForwardAk4JetsOver40GeV++;
+					if (jetVec[iJ]->PT > 100.0 && fabs(jetVec[iJ]->Eta) > 3.0) numForwardAk4JetsOver100GeV++;
 
 					if (jetVec[iJ]->PT > 40.0 && abs(jetVec[iJ]->Eta)<3.0){ // corresponds to the alpha_t HT definition
 						ht = ht + jetVec[iJ]->PT;
@@ -402,10 +418,18 @@ void McSignalStudies(std::vector<std::string> inputFiles_, std::string outputFil
 				} // closes 'if' more than one valid jet for the calculation
 				// *** end of alphaT calc ***
 				
-				h_["detectorNumAk4JetsOver10GeV"]->Fill(numAk4JetsOver10GeV);
+				h_["detectorNumAk4JetsOver200GeV"]->Fill(numAk4JetsOver200GeV);
 				h_["detectorNumAk4JetsOver20GeV"]->Fill(numAk4JetsOver20GeV);
 				h_["detectorNumAk4JetsOver40GeV"]->Fill(numAk4JetsOver40GeV);
 				h_["detectorNumAk4JetsOver100GeV"]->Fill(numAk4JetsOver100GeV);
+				h_["detectorNumCentralAk4JetsOver200GeV"]->Fill(numCentralAk4JetsOver200GeV);
+				h_["detectorNumCentralAk4JetsOver20GeV"]->Fill(numCentralAk4JetsOver20GeV);
+				h_["detectorNumCentralAk4JetsOver40GeV"]->Fill(numCentralAk4JetsOver40GeV);
+				h_["detectorNumCentralAk4JetsOver100GeV"]->Fill(numCentralAk4JetsOver100GeV);
+				h_["detectorNumForwardAk4JetsOver200GeV"]->Fill(numForwardAk4JetsOver200GeV);
+				h_["detectorNumForwardAk4JetsOver20GeV"]->Fill(numForwardAk4JetsOver20GeV);
+				h_["detectorNumForwardAk4JetsOver40GeV"]->Fill(numForwardAk4JetsOver40GeV);
+				h_["detectorNumForwardAk4JetsOver100GeV"]->Fill(numForwardAk4JetsOver100GeV);
 				h_["detectorLeadingAk4JetPt"]->Fill(leadingAk4JetPt);
 				if (jetVec.size() > 0) h_["detectorLeadingAk4JetEta"]->Fill(leadingAk4JetEta);
 				h_["detectorSecondaryAk4JetPt"]->Fill(secondaryAk4JetPt);
@@ -416,6 +440,7 @@ void McSignalStudies(std::vector<std::string> inputFiles_, std::string outputFil
 				h_["detectorHT"]->Fill(ht);
 				h_["detectorMHT"]->Fill(mhtVec[0]);
 				h2_["detectorMHT_detectorMET"]->Fill(metDetector->MET,mhtVec[0]);
+				h2_["lspMET_detectorMET"]->Fill(metDetector->MET,lspMet[0]);
 				h_["detectorMinBiasedDeltaPhi"]->Fill(minBiasedDeltaPhi);
 				h_["detectorAlphaT"]->Fill(alphaT);
 				double mhtOverMet = mhtVec[0] / metDetector->MET;
@@ -433,6 +458,9 @@ void McSignalStudies(std::vector<std::string> inputFiles_, std::string outputFil
 
 				if (mhtVec[0] > 130 && mhtOverMet < 1.25 && minBiasedDeltaPhi > 0.50 && alphaT > 0.52) h2_["detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52"]->Fill(1.1, 0.1);
 				else h2_["detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52"]->Fill(0.1,0.1);
+
+				if (mhtVec[0] > 130 && mhtOverMet < 1.25 && minBiasedDeltaPhi > 0.50) h2_["detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50"]->Fill(1.1, 0.1);
+				else h2_["detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50"]->Fill(0.1,0.1);
 				// End of Analysis
 				// ------------------------------------------------------------------------------------------------------------//
 				// ------------------------------------------------------------------------------------------------------------//
@@ -493,10 +521,10 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	// Gen Particle Histograms
     h_["numberOfGluinos"] = new TH1F("numberOfGluinos", ";Number of Gluinos;a.u.", 4, 0, 4);
 	
-	h_["leadingSquarkPt"] = new TH1F("leadingSquarkPt", ";squark p_{T} (GeV);a.u.", 100, 0, 2500);
-	h_["leadingSquarkEta"] = new TH1F("leadingSquarkEta", ";#eta squark;a.u.", 100, -5, 5);
-	h_["secondarySquarkPt"] = new TH1F("secondarySquarkPt", ";squark p_{T} (GeV);a.u.", 100, 0, 2500);
-	h_["secondarySquarkEta"] = new TH1F("secondarySquarkEta", ";#eta squark;a.u.", 100, -5, 5);
+	h_["leadingSquarkPt"] = new TH1F("leadingSquarkPt", ";squark p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["leadingSquarkEta"] = new TH1F("leadingSquarkEta", ";#eta squark;a.u.", 50, -5, 5);
+	h_["secondarySquarkPt"] = new TH1F("secondarySquarkPt", ";squark p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["secondarySquarkEta"] = new TH1F("secondarySquarkEta", ";#eta squark;a.u.", 50, -5, 5);
 	h2_["leadingSquarkPt_SecondarySquarkPt"] = new TH2F("leadingSquarkPt_SecondarySquarkPt", ";secondary squark p_{T} (GeV);leading squark p_{T} (GeV)", 400, 0, 2500, 400, 0, 2500);
 	h2_["leadingSquarkEta_SecondarySquarkEta"] = new TH2F("leadingSquarkEta_SecondarySquarkEta", ";#eta secondary squark;#eta leading squark", 400, -5, 5, 400, -5, 5);
 	h2_["leadingSquarkPhi_SecondarySquarkPhi"] = new TH2F("leadingSquarkPhi_SecondarySquarkPhi", ";secondary squark Phi;leading squark Phi", 400, -M_PI, M_PI, 400, -M_PI, M_PI);
@@ -513,23 +541,23 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["secondarySquarkEta_oneGluinos"] = new TH1F("secondarySquarkEta_oneGluinos", ";#eta squark;a.u.", 50, -5, 5);
 	h_["secondarySquarkEta_twoGluinos"] = new TH1F("secondarySquarkEta_twoGluinos", ";#eta squark;a.u.", 50, -5, 5);
 
-	h_["leadingQjetPt"] = new TH1F("leadingQjetPt", ";quark p_{T} (GeV);a.u.", 100, 0, 2500);
-	h_["leadingQjetEta"] = new TH1F("leadingQjetEta", ";#eta quark;a.u.", 100, -5, 5);
-	h_["secondaryQjetPt"] = new TH1F("secondaryQjetPt", ";quark p_{T} (GeV);a.u.", 100, 0, 2500);
-	h_["secondaryQjetEta"] = new TH1F("secondaryQjetEta", ";#eta quark;a.u.", 100, -5, 5);
+	h_["leadingQjetPt"] = new TH1F("leadingQjetPt", ";quark p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["leadingQjetEta"] = new TH1F("leadingQjetEta", ";#eta quark;a.u.", 50, -5, 5);
+	h_["secondaryQjetPt"] = new TH1F("secondaryQjetPt", ";quark p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["secondaryQjetEta"] = new TH1F("secondaryQjetEta", ";#eta quark;a.u.", 50, -5, 5);
 	h2_["leadingQjetPt_secondaryQjetPt"] = new TH2F("leadingQjetPt_secondaryQjetPt", ";secondary quark p_{T} (GeV);leading quark p_{T} (GeV)", 400, 0, 2500, 400, 0, 2500);
 	h2_["leadingQjetEta_secondaryQjetEta"] = new TH2F("leadingQjetEta_secondaryQjetEta", ";#eta secondary quark;#eta leading quark", 400, -5, 5, 400, -5, 5);
 	h2_["leadingQjetPhi_secondaryQjetPhi"] = new TH2F("leadingQjetPhi_secondaryQjetPhi", ";secondary quark Phi;leading quark Phi", 400, -M_PI, M_PI, 400, -M_PI, M_PI);
 
-	h_["leadingNlspPt"] = new TH1F("leadingNlspPt", ";NLSP p_{T} (GeV);a.u.", 100, 0, 2500);
-	h_["leadingNlspEta"] = new TH1F("leadingNlspEta", ";#eta NLSP;a.u.", 100, -5, 5);
-	h_["secondaryNlspPt"] = new TH1F("secondaryNlspPt", ";NLSP p_{T} (GeV);a.u.", 100, 0, 2500);
-	h_["secondaryNlspEta"] = new TH1F("secondaryNlspEta", ";#eta NLSP;a.u.", 100, -5, 5);
+	h_["leadingNlspPt"] = new TH1F("leadingNlspPt", ";NLSP p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["leadingNlspEta"] = new TH1F("leadingNlspEta", ";#eta NLSP;a.u.", 50, -5, 5);
+	h_["secondaryNlspPt"] = new TH1F("secondaryNlspPt", ";NLSP p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["secondaryNlspEta"] = new TH1F("secondaryNlspEta", ";#eta NLSP;a.u.", 50, -5, 5);
 
-	h_["leadingHiggsPt"] = new TH1F("leadingHiggsPt", ";higgs p_{T} (GeV);a.u.", 100, 0, 2500);
-	h_["leadingHiggsEta"] = new TH1F("leadingHiggsEta", "; #eta higgs;a.u.", 100, -5, 5);
-	h_["secondaryHiggsPt"] = new TH1F("secondaryHiggsPt", ";higgs p_{T} (GeV);a.u.", 100, 0, 2500);
-	h_["secondaryHiggsEta"] = new TH1F("secondaryHiggsEta", ";#eta higgs;a.u.", 100, -5, 5);
+	h_["leadingHiggsPt"] = new TH1F("leadingHiggsPt", ";higgs p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["leadingHiggsEta"] = new TH1F("leadingHiggsEta", "; #eta higgs;a.u.", 50, -5, 5);
+	h_["secondaryHiggsPt"] = new TH1F("secondaryHiggsPt", ";higgs p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["secondaryHiggsEta"] = new TH1F("secondaryHiggsEta", ";#eta higgs;a.u.", 50, -5, 5);
 	h2_["leadingQjetPt_leadingHiggsPt"] = new TH2F("leadingQjetPt_leadingHiggsPt", ";higgs p_{T} (GeV);quark p_{T} (GeV)", 400, 0, 2500, 400, 0, 2500);
 	h2_["leadingQjetEta_leadingHiggsEta"] = new TH2F("leadingQjetEta_leadingHiggsEta", ";#eta higgs;#eta quark", 400, -5, 5, 400, -5, 5);
 	h2_["leadingQjetPhi_leadingHiggsPhi"] = new TH2F("leadingQjetPhi_leadingHiggsPhi", ";higgs Phi;quark Phi", 400, -M_PI, M_PI, 400, -M_PI, M_PI);
@@ -549,14 +577,14 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h2_["logicBbDrHiggsPt"] = new TH2F("logicBbDrHiggsPt", ";higgs p_{T} > 170 (GeV); dR_bb > 0.8", 2, 0, 2, 2, 0, 2);
 	h2_["logicNumberHiggsPtNumberBbDr"] = new TH2F("logicNumberHiggsPtNumberBbDr", ";number of higgs with p_{T} > 170 (GeV);number of dR_bb > 0.8", 3, 0, 3, 3, 0, 3);
 	
-	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 100, 0, 100);
-	h_["leadingLspEta"] = new TH1F("leadingLspEta", ";#eta LSP;a.u.", 100, -5, 5);
-	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 100, 0, 100);
-	h_["secondaryLspEta"] = new TH1F("secondaryLspEta", ";#eta LSP;a.u.", 100, -5, 5);
-	h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss} (GeV);a.u.", 100, 0, 100);
+	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 500);
+	h_["leadingLspEta"] = new TH1F("leadingLspEta", ";#eta LSP;a.u.", 50, -5, 5);
+	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 500);
+	h_["secondaryLspEta"] = new TH1F("secondaryLspEta", ";#eta LSP;a.u.", 50, -5, 5);
+	h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss} (GeV);a.u.", 50, 0, 500);
 
-	h_["leadingBBbarSeperation"] = new TH1F("leadingBBbarSeperation", ";dR_bb;a.u.", 100, 0, 2.5);
-	h_["secondaryBBbarSeperation"] = new TH1F("secondaryBBbarSeperation", ";dR_bb;a.u.", 100, 0, 2.5);
+	h_["leadingBBbarSeperation"] = new TH1F("leadingBBbarSeperation", ";dR_bb;a.u.", 50, 0, 2.5);
+	h_["secondaryBBbarSeperation"] = new TH1F("secondaryBBbarSeperation", ";dR_bb;a.u.", 50, 0, 2.5);
 	h2_["leadingBBbarSeperation_secondaryBBbarSeperation"] = new TH2F("leadingBBbarSeperation_secondaryBBbarSeperation", ";secondary dR_bb;leading dR_bb", 400, 0, 2.5, 400, 0, 2.5);	
 	h_["leadingBBbarInvmass"] = new TH1F("leadingBBbarInvmass", ";mass bb (GeV);a.u.", 150, 0, 150);
 	h_["secondaryBBbarInvmass"] = new TH1F("secondaryBBbarInvmass", ";mass bb (GeV);a.u.", 150, 0, 150);
@@ -566,28 +594,38 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h2_["secondaryBBbarSeperation_massHiggsOverP3"] = new TH2F("secondaryBBbarSeperation_massHiggsOverP3",";(higgs) mass / p3;dR_bb", 400, 0, 1.5, 400, 0, 2.5);
 
 	// Detector Histograms
-	h_["detectorMET"] = new TH1F("detectorMET", ";detector E_{T}^{miss} (GeV);a.u.", 100, 0, 800);
-	h_["detectorHT"] = new TH1F("detectorHT", ";detector H_{T} (GeV);a.u.", 100, 0, 7000);
+	h_["detectorMET"] = new TH1F("detectorMET", ";detector E_{T}^{miss} (GeV);a.u.", 50, 0, 800);
+	h_["detectorHT"] = new TH1F("detectorHT", ";detector H_{T} (GeV);a.u.", 50, 0, 7000);
+	h2_["lspMET_detectorMET"] = new TH2F("lspMET_detectorMET", ";detector E_{T}^{miss} (GeV);LSP E_{T}^{miss} (GeV)", 400, 0, 800, 400, 0, 800);
 	h2_["detectorMHT_detectorMET"] = new TH2F("detectorMHT_detectorMET", ";detector E_{T}^{miss} (GeV);detector H_{T}^{miss} (GeV)", 400, 0, 800, 400, 0, 800);
-	h_["detectorMHT"] = new TH1F("detectorMHT", ";detector H_{T}^{miss} (GeV);a.u.", 100, 0, 800);
-	h_["detectorMinBiasedDeltaPhi"] = new TH1F("detectorMinBiasedDeltaPhi", ";Min Biased Delta Phi; a.u.", 100, 0, M_PI);
+	h_["detectorMHT"] = new TH1F("detectorMHT", ";detector H_{T}^{miss} (GeV);a.u.", 50, 0, 800);
+	h_["detectorMinBiasedDeltaPhi"] = new TH1F("detectorMinBiasedDeltaPhi", ";Min Biased Delta Phi; a.u.", 50, 0, M_PI);
 	h_["detectorAlphaT"] = new TH1F("detectorAlphaT", ";Alpha_T; a.u.", 100, 0, 1.0);
-	h_["detectorMHToverMET"] = new TH1F("detectorMHToverMET", ";detector H_{T}^{miss} / E_{T}^{miss}; a.u.", 100, 0, 3.0);
-	h_["detectorLeadingAk4JetPt"] = new TH1F("detectorLeadingAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 100, 0, 2500);
-	h_["detectorSecondaryAk4JetPt"] = new TH1F("detectorSecondaryAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 100, 0, 2500);
-	h_["detectorLeadingAk4JetEta"] = new TH1F("detectorLeadingAk4JetEta", ";#eta AK4 Jet;a.u.", 100, -5, 5);
-	h_["detectorSecondaryAk4JetEta"] = new TH1F("detectorSecondaryAk4JetEta", ";#eta AK4 Jet;a.u.", 100, -5, 5);
+	h_["detectorMHToverMET"] = new TH1F("detectorMHToverMET", ";detector H_{T}^{miss} / E_{T}^{miss}; a.u.", 50, 0, 3.0);
+	h_["detectorLeadingAk4JetPt"] = new TH1F("detectorLeadingAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["detectorSecondaryAk4JetPt"] = new TH1F("detectorSecondaryAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["detectorLeadingAk4JetEta"] = new TH1F("detectorLeadingAk4JetEta", ";#eta AK4 Jet;a.u.", 50, -5, 5);
+	h_["detectorSecondaryAk4JetEta"] = new TH1F("detectorSecondaryAk4JetEta", ";#eta AK4 Jet;a.u.", 50, -5, 5);
 	h2_["detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt"] = new TH2F("detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt", ";secondary AK4 Jet p_{T} (GeV);leading AK4 Jet p_{T} (GeV)", 400, 0, 2500, 400, 0, 2500);
 	h2_["detectorHT_detectorSecondaryAk4JetPt"] = new TH2F("detectorHT_detectorSecondaryAk4JetPt", ";secondary AK4 Jet p_{T} (GeV);detector H_{T} (GeV)", 400, 0, 2500, 400, 0, 7000);
 	h2_["detectorHT_detectorLeadingAk4JetPt"] = new TH2F("detectorHT_detectorLeadingAk4JetPt", ";leading AK4 Jet p_{T} (GeV);detector H_{T} (GeV)", 400, 0, 2500, 400, 0, 7000);
-	h_["detectorNumAk4JetsOver10GeV"] = new TH1F("detectorNumAk4JetsOver10GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
-	h_["detectorNumAk4JetsOver20GeV"] = new TH1F("detectorNumAk4JetsOver20GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
-	h_["detectorNumAk4JetsOver40GeV"] = new TH1F("detectorNumAk4JetsOver40GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
-	h_["detectorNumAk4JetsOver100GeV"] = new TH1F("detectorNumAk4JetsOver100GeV", ";Number of AK4 Jets;a.u.", 25, 0, 25);
+	h_["detectorNumAk4JetsOver200GeV"] = new TH1F("detectorNumAk4JetsOver200GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
+	h_["detectorNumAk4JetsOver20GeV"] = new TH1F("detectorNumAk4JetsOver20GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
+	h_["detectorNumAk4JetsOver40GeV"] = new TH1F("detectorNumAk4JetsOver40GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
+	h_["detectorNumAk4JetsOver100GeV"] = new TH1F("detectorNumAk4JetsOver100GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
+	h_["detectorNumCentralAk4JetsOver200GeV"] = new TH1F("detectorNumCentralAk4JetsOver200GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
+	h_["detectorNumCentralAk4JetsOver20GeV"] = new TH1F("detectorNumCentralAk4JetsOver20GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
+	h_["detectorNumCentralAk4JetsOver40GeV"] = new TH1F("detectorNumCentralAk4JetsOver40GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
+	h_["detectorNumCentralAk4JetsOver100GeV"] = new TH1F("detectorNumCentralAk4JetsOver100GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
+	h_["detectorNumForwardAk4JetsOver200GeV"] = new TH1F("detectorNumForwardAk4JetsOver200GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
+	h_["detectorNumForwardAk4JetsOver20GeV"] = new TH1F("detectorNumForwardAk4JetsOver20GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
+	h_["detectorNumForwardAk4JetsOver40GeV"] = new TH1F("detectorNumForwardAk4JetsOver40GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
+	h_["detectorNumForwardAk4JetsOver100GeV"] = new TH1F("detectorNumForwardAk4JetsOver100GeV", ";Number of AK4 Jets;a.u.", 15, 0, 15);
 	h2_["detectorLogicAlphaTMinBiasedDeltaPhi"] = new TH2F("detectorLogicAlphaTMinBiasedDeltaPhi", ";Alpha T > 0.52;Biased Delta Phi > 0.50", 2, 0, 2, 2, 0, 2);
 	h2_["detectorLogicMHToverMETmht"] = new TH2F("detectorLogicMHToverMETmht", ";H_{T}^{miss} / E_{T}^{miss} > 1.25;H_{T}^{miss} > 130 (GeV)", 2, 0, 2, 2, 0, 2);
 
 	h2_["detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52"] = new TH2F("detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52", ";pass?;", 2, 0, 2, 1, 0, 1);
+	h2_["detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50"] = new TH2F("detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50", ";pass?;", 2, 0, 2, 1, 0, 1);
 
 } //closes the function 'CreateHistograms'
 

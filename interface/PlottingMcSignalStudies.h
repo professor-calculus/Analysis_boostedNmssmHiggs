@@ -40,6 +40,7 @@ private:
 
 	// individual plots
 	void oneDimension_standard(std::string, std::string);
+	void oneDimension_standardLog(std::string, std::string);
 	void twoDimension_normalisedWithText(std::string, std::string);
 	void oneDimension_fourNormalisedPlotsSeparate(std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, std::string, double, double, double, double);
 	// void oneDimension_twoPlotsAdd();
@@ -143,8 +144,10 @@ PlottingMcSignalStudies::PlottingMcSignalStudies(std::string inputHistoFile, std
 	oneDimension_standard("detectorMHT", "detectorMHT.pdf");
 	oneDimension_standard("detectorMinBiasedDeltaPhi", "detectorMinBiasedDeltaPhi.pdf");
 	oneDimension_standard("detectorAlphaT", "detectorAlphaT.pdf");
+	oneDimension_standardLog("detectorAlphaT", "detectorAlphaTlogY.pdf");
 	oneDimension_standard("detectorMHToverMET", "detectorMHToverMET.pdf");
 	twoDimension_standard("detectorMHT_detectorMET", "detectorMHT_detectorMET.pdf"); 
+	twoDimension_standard("lspMET_detectorMET", "lspMET_detectorMET.pdf"); 
 	twoDimension_standard("detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt", "detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt.pdf");
 	twoDimension_standard("detectorHT_detectorSecondaryAk4JetPt", "detectorHT_detectorSecondaryAk4JetPt.pdf");
 	twoDimension_standard("detectorHT_detectorLeadingAk4JetPt", "detectorHT_detectorLeadingAk4JetPt.pdf");
@@ -152,9 +155,12 @@ PlottingMcSignalStudies::PlottingMcSignalStudies(std::string inputHistoFile, std
 	twoDimension_forLogic("detectorLogicMHToverMETmht", "detectorLogicMHToverMETmht.pdf");
 
 	twoDimension_normalisedWithText("detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52", "detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50andAlphaTmoreThan0p52.pdf");
+	twoDimension_normalisedWithText("detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50", "detector_MHTmoreThan130andMHToverMETlessThan1p25andBiasedDeltaPhiMoreThan0p50.pdf");
 	
 	// at end to not mess up the colour scheme
-	oneDimension_fourNormalisedPlotsSeparate("detectorNumAk4JetsOver100GeV", "detectorNumAk4JetsOver40GeV", "detectorNumAk4JetsOver20GeV", "detectorNumAk4JetsOver10GeV", "p_{T} > 100 GeV", "p_{T} > 40 GeV", "p_{T} > 20 GeV", "p_{T} > 10 GeV", "detectorNumAk4Jets.pdf", 0.63, 0.88, 0.68, 0.88);
+	oneDimension_fourNormalisedPlotsSeparate("detectorNumAk4JetsOver200GeV", "detectorNumAk4JetsOver100GeV", "detectorNumAk4JetsOver40GeV", "detectorNumAk4JetsOver20GeV", "p_{T} > 200 GeV", "p_{T} > 100 GeV", "p_{T} > 40 GeV", "p_{T} > 20 GeV", "detectorNumAk4Jets.pdf", 0.63, 0.88, 0.68, 0.88);
+	oneDimension_fourNormalisedPlotsSeparate("detectorNumCentralAk4JetsOver200GeV", "detectorNumCentralAk4JetsOver100GeV", "detectorNumCentralAk4JetsOver40GeV", "detectorNumCentralAk4JetsOver20GeV", "p_{T} > 200 GeV", "p_{T} > 100 GeV", "p_{T} > 40 GeV", "p_{T} > 20 GeV", "detectorNumCentralAk4Jets.pdf", 0.63, 0.88, 0.68, 0.88);
+	oneDimension_fourNormalisedPlotsSeparate("detectorNumForwardAk4JetsOver200GeV", "detectorNumForwardAk4JetsOver100GeV", "detectorNumForwardAk4JetsOver40GeV", "detectorNumForwardAk4JetsOver20GeV", "p_{T} > 200 GeV", "p_{T} > 100 GeV", "p_{T} > 40 GeV", "p_{T} > 20 GeV", "detectorNumForwardAk4Jets.pdf", 0.63, 0.88, 0.68, 0.88);
 
 	oneDimension_threeNormalisedPlotsSeparateRev("leadingSquarkPt_zeroGluinos", "leadingSquarkPt_oneGluinos", "leadingSquarkPt_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkPt_gluLeading.pdf", 0.65, 0.88, 0.73, 0.88);
 	oneDimension_threeNormalisedPlotsSeparateRev("leadingSquarkEta_zeroGluinos", "leadingSquarkEta_oneGluinos", "leadingSquarkEta_twoGluinos", "Zero Gluinos", "One Gluino", "Two Gluinos", "squarkEta_gluLeading.pdf", 0.65, 0.88, 0.73, 0.88);
@@ -191,6 +197,36 @@ void PlottingMcSignalStudies::oneDimension_standard(std::string histoname, std::
 	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
 	c->Close();
 }
+
+
+
+
+
+
+void PlottingMcSignalStudies::oneDimension_standardLog(std::string histoname, std::string saveName)
+{
+    TCanvas* c=new TCanvas("c","c"); 	
+	gPad->SetLogy();
+	TH1F * h = (TH1F*)f->Get(Form("%s", histoname.c_str()));
+	h->SetLineWidth(2);
+	h->SetLineColor(kBlue+1);
+	// h->GetXaxis()->SetTitle("");
+	h->GetXaxis()->SetTitleSize(0.06);	
+	h->GetXaxis()->SetLabelSize(0.05);
+	// h->GetYaxis()->SetTitle("");
+	h->GetYaxis()->SetTitleSize(0.06);
+	h->GetYaxis()->SetLabelSize(0.05);
+	h->Draw();
+
+	latex->SetTextAlign(11); // align from left
+	latex->DrawLatex(0.15,0.92,massTitle.c_str());
+	// latex->SetTextAlign(31); // align from right
+	// latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+
+	c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+	c->Close();
+}
+
 
 
 
