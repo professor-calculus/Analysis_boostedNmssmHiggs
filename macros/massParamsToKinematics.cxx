@@ -65,12 +65,12 @@ void massParamsToKinematics()
 	////////////////////////
 
 	// Setup the outputting
-	std::string motherDir = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_massParamsToKinematics/v02_d7347a/";
+	std::string motherDir = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_massParamsToKinematics/v03_c4a4359_ZOOM/";
 
 	// Setup the mass parameters
-	std::vector<double> mass_squark_vec = {1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0, 2200.0, 2400.0, 2600.0, 2800.0, 3000.0};
-	std::vector<double> mass_higgs_vec = {70.0, 75.0, 80.0, 85.0, 90.0, 95.0, 100.0, 105.0, 110.0, 115.0, 120.0, 125.0, 130.0};
-	double mass_ratio_beginPoint = 0.7; // mass_ratio = mass_higgs / mass_NLSP
+	std::vector<double> mass_squark_vec = {600.0, 800.0, 1000.0, 1200.0, 1400.0, 1600.0, 1800.0, 2000.0, 2200.0, 2400.0, 2600.0, 2800.0, 3000.0};
+	std::vector<double> mass_higgs_vec = {20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0};
+	double mass_ratio_beginPoint = 0.70; // mass_ratio = mass_higgs / mass_NLSP
 	double mass_ratio_stepSize = 0.001; // interval in ratio between each calculation
 	std::vector<double> mass_delta_vec = {1.0, 5.0, 10.0, 15.0, 20.0}; // mass_delta = mass_NLSP - mass_higgs - mass_LSP
 
@@ -376,8 +376,8 @@ void doCalculationsAndGraphs(double mass_squark, double mass_higgs, double mass_
 	drawAndSave(mg_momentum_LSP, legend, Form("%sLSP_momentum.pdf", outputDir.c_str()), "momentum_LSP (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
 	// drawAndSave(mg_energy_higgs, legend, Form("%shiggs_energy.pdf", outputDir.c_str()), "energy_higgs (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.65, 0.86);
 	drawAndSave(mg_momentum_higgs, legend, Form("%shiggs_momentum.pdf", outputDir.c_str()), "momentum_higgs (GeV)", mass_squark, mass_higgs, 0.70, 0.88, 0.25, 0.46);
-	drawAndSave(mg_seperation_bb_min_different3p, legend, Form("%sseperation_bb_min_difference3p.pdf", outputDir.c_str()), "dR_{min} bb", mass_squark, mass_higgs, 0.76, 0.88, 0.65, 0.86);
-	drawAndSave(mg_seperation_bb_minToMean, legend, Form("%sseperation_bb_minToMean.pdf", outputDir.c_str()), "dR bb", mass_squark, mass_higgs, 0.76, 0.88, 0.65, 0.86);
+	drawAndSave(mg_seperation_bb_min_different3p, legend, Form("%sseperation_bb_min_difference3p.pdf", outputDir.c_str()), "dR_{min/mode} bb", mass_squark, mass_higgs, 0.76, 0.88, 0.65, 0.86);
+	// drawAndSave(mg_seperation_bb_minToMean, legend, Form("%sseperation_bb_minToMean.pdf", outputDir.c_str()), "dR bb", mass_squark, mass_higgs, 0.76, 0.88, 0.65, 0.86);
 } // closes the function 'doCalculationsAndGraphs'
 
 
@@ -539,7 +539,7 @@ void createTex(std::vector<double> mass_squark_vec, std::vector<double> mass_hig
 		    tex_sep += "\\centering\n";
 	        // tex_sep += Form("\\footnotesize\n \\textbf{Mass_Squark = %.0fGeV; Mass_Higgs =  %.0fGeV} \\hspace{0.15\\textwidth}", mass_squark_vec[i_squark], mass_higgs_vec[i_higgs]);
 		    tex_sep += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sseperation_bb_min_difference3p.pdf}\n", dirForSlide.c_str());
-		    tex_sep += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sseperation_bb_minToMean.pdf}\n", dirForSlide.c_str());
+		    // tex_sep += Form("\\includegraphics[trim={0 0 0 0cm},clip,width=0.49\\textwidth]{%sseperation_bb_minToMean.pdf}\n", dirForSlide.c_str());
 		    tex_sep += "\\end{figure}\n";
 		    tex_sep += "\\end{frame}\n\n";
 
