@@ -32,10 +32,10 @@ void combine_McSignalStudies()
 {
 	/////////////////////////////
 	// * U S E R * I N P U T * //
-	std::string motherDir = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_02/version_a/"; // needs the forward slash on the end
-	std::vector<std::string> vecHiggsMassToUse = {"70p0", "90p0", "110p0", "130p0"}; // has to match my already defined naming convention
-	std::vector<std::string> vecSusyMassToUse = {"1000p0", "1400p0", "1800p0", "2200p0"}; // has to match my already defined naming convention
-	std::string tailArgument = "_ratio0p95_splitting1p0_25000events"; // needs the dash at the beginning
+	std::string motherDir = "/users/jt15104/local_Analysis_boostedNmssmHiggs/output_McSignalStudies/nmssmCascadeAnalysis_v01/paramCardType_03/version_a/"; // needs the forward slash on the end
+	std::vector<std::string> vecHiggsMassToUse = {"30p0", "50p0", "70p0", "90p0"}; // has to match my already defined naming convention
+	std::vector<std::string> vecSusyMassToUse = {"800p0", "1200p0", "1600p0", "2000p0"}; // has to match my already defined naming convention
+	std::string tailArgument = "_ratio0p99_splitting0p1_25000events"; // needs the dash at the beginning
 	std::string outputDir = motherDir + "combinedPlots_v1/";  // needs the forward slash on the end
 	// * * * * * * * * * * * * //
 	/////////////////////////////
@@ -52,8 +52,8 @@ void combine_McSignalStudies()
 	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorMHT", "detectorMHT", 0.69, 0.88, 0.67, 0.87, true, true);
 	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorLeadingAk4JetPt", "detectorLeadingAk4JetPt", 0.69, 0.88, 0.67, 0.87, true, true);
 	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorSecondaryAk4JetPt", "detectorSecondaryAk4JetPt", 0.69, 0.88, 0.67, 0.87, true, true);
-	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorLeadingAk4JetEta", "detectorLeadingAk4JetEta", 0.69, 0.88, 0.67, 0.87, true, true);
-	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorSecondaryAk4JetEta", "detectorSecondaryAk4JetEta", 0.69, 0.88, 0.67, 0.87, true, true);
+	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorLeadingAk4JetEta", "detectorLeadingAk4JetEta", 0.69, 0.88, 0.67, 0.87, false, true);
+	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorSecondaryAk4JetEta", "detectorSecondaryAk4JetEta", 0.69, 0.88, 0.67, 0.87, false, true);
 	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "detectorMET", "detectorMET", 0.69, 0.88, 0.67, 0.87, true, false);
 	Plotter_standard(motherDir, outputDir, vecHiggsMassToUse, vecSusyMassToUse, tailArgument, "numberOfGluinos", "numberOfGluinos", 0.69, 0.88, 0.67, 0.87, false, true);
 
