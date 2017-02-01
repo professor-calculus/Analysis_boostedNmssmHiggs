@@ -577,14 +577,15 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h2_["logicBbDrHiggsPt"] = new TH2F("logicBbDrHiggsPt", ";higgs p_{T} > 170 (GeV); dR_bb > 0.8", 2, 0, 2, 2, 0, 2);
 	h2_["logicNumberHiggsPtNumberBbDr"] = new TH2F("logicNumberHiggsPtNumberBbDr", ";number of higgs with p_{T} > 170 (GeV);number of dR_bb > 0.8", 3, 0, 3, 3, 0, 3);
 	
-	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 500);
+	h_["leadingLspPt"] = new TH1F("leadingLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 50);
 	h_["leadingLspEta"] = new TH1F("leadingLspEta", ";#eta LSP;a.u.", 50, -5, 5);
-	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 500);
+	h_["secondaryLspPt"] = new TH1F("secondaryLspPt", ";LSP p_{T} (GeV);a.u.", 50, 0, 50);
 	h_["secondaryLspEta"] = new TH1F("secondaryLspEta", ";#eta LSP;a.u.", 50, -5, 5);
-	h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss} (GeV);a.u.", 50, 0, 500);
+	h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss} (GeV);a.u.", 50, 0, 50); // DEFAULT
+	// h_["lspMET"] = new TH1F("lspMET", ";LSP E_{T}^{miss} (GeV);a.u.", 50, 0, 450); // FOR RUNNING WITH LOW_RATIO/LARGER_SPLITTING
 
-	h_["leadingBBbarSeperation"] = new TH1F("leadingBBbarSeperation", ";dR_bb;a.u.", 50, 0, 2.5);
-	h_["secondaryBBbarSeperation"] = new TH1F("secondaryBBbarSeperation", ";dR_bb;a.u.", 50, 0, 2.5);
+	h_["leadingBBbarSeperation"] = new TH1F("leadingBBbarSeperation", ";dR_bb;a.u.", 50, 0, 1.5);
+	h_["secondaryBBbarSeperation"] = new TH1F("secondaryBBbarSeperation", ";dR_bb;a.u.", 50, 0, 1.5);
 	h2_["leadingBBbarSeperation_secondaryBBbarSeperation"] = new TH2F("leadingBBbarSeperation_secondaryBBbarSeperation", ";secondary dR_bb;leading dR_bb", 400, 0, 2.5, 400, 0, 2.5);	
 	h_["leadingBBbarInvmass"] = new TH1F("leadingBBbarInvmass", ";mass bb (GeV);a.u.", 150, 0, 150);
 	h_["secondaryBBbarInvmass"] = new TH1F("secondaryBBbarInvmass", ";mass bb (GeV);a.u.", 150, 0, 150);
@@ -594,16 +595,22 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h2_["secondaryBBbarSeperation_massHiggsOverP3"] = new TH2F("secondaryBBbarSeperation_massHiggsOverP3",";(higgs) mass / p3;dR_bb", 400, 0, 1.5, 400, 0, 2.5);
 
 	// Detector Histograms
-	h_["detectorMET"] = new TH1F("detectorMET", ";detector E_{T}^{miss} (GeV);a.u.", 50, 0, 800);
-	h_["detectorHT"] = new TH1F("detectorHT", ";detector H_{T} (GeV);a.u.", 50, 0, 7000);
+	h_["detectorMET"] = new TH1F("detectorMET", ";detector E_{T}^{miss} (GeV);a.u.", 50, 0, 800); // DEFAULT
+	// h_["detectorMET"] = new TH1F("detectorMET", ";detector E_{T}^{miss} (GeV);a.u.", 50, 0, 600); // FOR RUNNING WITH LOW_RATIO/LARGER_SPLITTING
+	h_["detectorHT"] = new TH1F("detectorHT", ";detector H_{T} (GeV);a.u.", 50, 0, 7000); // DEFAULT
+	// h_["detectorHT"] = new TH1F("detectorHT", ";detector H_{T} (GeV);a.u.", 50, 0, 4500); // FOR RUNNING WITH LOW_RATIO/LARGER_SPLITTING
 	h2_["lspMET_detectorMET"] = new TH2F("lspMET_detectorMET", ";detector E_{T}^{miss} (GeV);LSP E_{T}^{miss} (GeV)", 400, 0, 800, 400, 0, 800);
 	h2_["detectorMHT_detectorMET"] = new TH2F("detectorMHT_detectorMET", ";detector E_{T}^{miss} (GeV);detector H_{T}^{miss} (GeV)", 400, 0, 800, 400, 0, 800);
-	h_["detectorMHT"] = new TH1F("detectorMHT", ";detector H_{T}^{miss} (GeV);a.u.", 50, 0, 800);
+	h_["detectorMHT"] = new TH1F("detectorMHT", ";detector H_{T}^{miss} (GeV);a.u.", 50, 0, 800); // DEFAULT
+	// h_["detectorMHT"] = new TH1F("detectorMHT", ";detector H_{T}^{miss} (GeV);a.u.", 50, 0, 600); // FOR RUNNING WITH LOW_RATIO/LARGER_SPLITTING
 	h_["detectorMinBiasedDeltaPhi"] = new TH1F("detectorMinBiasedDeltaPhi", ";Min Biased Delta Phi; a.u.", 50, 0, M_PI);
 	h_["detectorAlphaT"] = new TH1F("detectorAlphaT", ";Alpha_T; a.u.", 100, 0, 1.0);
 	h_["detectorMHToverMET"] = new TH1F("detectorMHToverMET", ";detector H_{T}^{miss} / E_{T}^{miss}; a.u.", 50, 0, 3.0);
-	h_["detectorLeadingAk4JetPt"] = new TH1F("detectorLeadingAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2500);
-	h_["detectorSecondaryAk4JetPt"] = new TH1F("detectorSecondaryAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2500);
+	h_["detectorLeadingAk4JetPt"] = new TH1F("detectorLeadingAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2500); // DEFAULT
+	h_["detectorSecondaryAk4JetPt"] = new TH1F("detectorSecondaryAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2500); // DEFAULT
+	// h_["detectorLeadingAk4JetPt"] = new TH1F("detectorLeadingAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2000); // FOR RUNNING WITH LOW_RATIO/LARGER_SPLITTING
+	// h_["detectorSecondaryAk4JetPt"] = new TH1F("detectorSecondaryAk4JetPt", ";AK4 Jet p_{T} (GeV);a.u.", 50, 0, 2000); // FOR RUNNING WITH LOW_RATIO/LARGER_SPLITTING
+
 	h_["detectorLeadingAk4JetEta"] = new TH1F("detectorLeadingAk4JetEta", ";#eta AK4 Jet;a.u.", 50, -5, 5);
 	h_["detectorSecondaryAk4JetEta"] = new TH1F("detectorSecondaryAk4JetEta", ";#eta AK4 Jet;a.u.", 50, -5, 5);
 	h2_["detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt"] = new TH2F("detectorLeadingAk4JetPt_detectorSecondaryAk4JetPt", ";secondary AK4 Jet p_{T} (GeV);leading AK4 Jet p_{T} (GeV)", 400, 0, 2500, 400, 0, 2500);
