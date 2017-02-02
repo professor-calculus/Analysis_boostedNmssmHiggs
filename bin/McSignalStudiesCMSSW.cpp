@@ -335,7 +335,7 @@ int main(int argc, char* argv[])
 					if (ak4Jet.pt() > 40.0) numAk4JetsOver40GeV++;
 					if (ak4Jet.pt() > 100.0) numAk4JetsOver100GeV++;
 
-					if (ak4Jet.pt() > 40.0 && abs(ak4Jet.eta())<3.0){ // corresponds to the alpha_t HT definition
+					if (ak4Jet.pt() > 40.0 && fabs(ak4Jet.eta())<3.0){ // corresponds to the alpha_t HT definition
 						ht = ht + ak4Jet.pt();
 						//function: adds two pt vectors together in the (2d) transverse plane
 						//output: first element is magnitude, second element is phi
