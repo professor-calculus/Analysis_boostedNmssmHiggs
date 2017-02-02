@@ -48,6 +48,10 @@ private:
  	void fatJetEtaDist();
  	void fatJetVsHBbPtDist();
  	void softDropFatJetVsHBbPtDist();
+	void softDropJetMassVsBbDeltaR();
+	void fatJetMassVsBbDeltaR();
+	void softDropJetMassVsHiggsPt();
+	void softDropJetMassVsHiggsEta();
  	void effComparingWPs();
  	void softDropEffComparingWPs();
  	void effComparingWPsFncDR();
@@ -100,6 +104,10 @@ PlottingDoubleBTaggerEfficiencyStudies::PlottingDoubleBTaggerEfficiencyStudies(s
  	fatJetEtaDist();
  	fatJetVsHBbPtDist();
  	softDropFatJetVsHBbPtDist();
+ 	softDropJetMassVsBbDeltaR();
+ 	fatJetMassVsBbDeltaR();
+	softDropJetMassVsHiggsPt();
+	softDropJetMassVsHiggsEta();
  	effComparingWPs();
  	softDropEffComparingWPs();
 	effComparingWPsFncDR();
@@ -576,6 +584,190 @@ void PlottingDoubleBTaggerEfficiencyStudies::softDropFatJetVsHBbPtDist()
 	tdrStyle->SetPadRightMargin(defaultParam);
 } // closes the function 'fatJetVsHBbDist'
 
+
+
+
+
+
+
+
+void PlottingDoubleBTaggerEfficiencyStudies::softDropJetMassVsBbDeltaR()
+{
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+		
+		TCanvas* c=new TCanvas("c","c");
+		TH2F * h2 = (TH2F*)f->Get(Form("softDropJetMassVsBbDeltaR_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		// h2->GetXaxis()->SetTitle("");
+		h2->GetXaxis()->SetTitleSize(0.06);
+		h2->GetXaxis()->SetLabelSize(0.05);	
+		// h2->GetYaxis()->SetTitle("");
+		h2->GetYaxis()->SetTitleSize(0.06);
+		h2->GetYaxis()->SetLabelSize(0.05);	
+		
+		h2->Draw("colz");
+
+		// Add diagnol line		
+		c->Update();
+		// TLine *line = new TLine(0,0,gPad->GetUxmax(),gPad->GetUymax());
+		// line->SetLineStyle(2);
+		// line->SetLineWidth(2);
+		// line->Draw();
+		// Add stamps
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		latex->DrawLatex(0.85, 0.75, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+
+		std::string saveName = Form("softDropJetMassVsBbDeltaR_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
+
+	} // closes loop through Btag WP labels
+	tdrStyle->SetPadRightMargin(defaultParam);
+} // closes the function
+
+
+
+
+
+
+
+void PlottingDoubleBTaggerEfficiencyStudies::fatJetMassVsBbDeltaR()
+{
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+		
+		TCanvas* c=new TCanvas("c","c");
+		TH2F * h2 = (TH2F*)f->Get(Form("fatJetMassVsBbDeltaR_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		// h2->GetXaxis()->SetTitle("");
+		h2->GetXaxis()->SetTitleSize(0.06);
+		h2->GetXaxis()->SetLabelSize(0.05);	
+		// h2->GetYaxis()->SetTitle("");
+		h2->GetYaxis()->SetTitleSize(0.06);
+		h2->GetYaxis()->SetLabelSize(0.05);	
+		
+		h2->Draw("colz");
+
+		// Add diagnol line		
+		c->Update();
+		// TLine *line = new TLine(0,0,gPad->GetUxmax(),gPad->GetUymax());
+		// line->SetLineStyle(2);
+		// line->SetLineWidth(2);
+		// line->Draw();
+		// Add stamps
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		latex->DrawLatex(0.85, 0.75, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+
+		std::string saveName = Form("fatJetMassVsBbDeltaR_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
+
+	} // closes loop through Btag WP labels
+	tdrStyle->SetPadRightMargin(defaultParam);
+} // closes the function
+
+
+
+
+
+
+
+void PlottingDoubleBTaggerEfficiencyStudies::softDropJetMassVsHiggsPt()
+{
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+		
+		TCanvas* c=new TCanvas("c","c");
+		TH2F * h2 = (TH2F*)f->Get(Form("softDropJetMassVsHiggsPt_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		// h2->GetXaxis()->SetTitle("");
+		h2->GetXaxis()->SetTitleSize(0.06);
+		h2->GetXaxis()->SetLabelSize(0.05);	
+		// h2->GetYaxis()->SetTitle("");
+		h2->GetYaxis()->SetTitleSize(0.06);
+		h2->GetYaxis()->SetLabelSize(0.05);	
+		
+		h2->Draw("colz");
+
+		// Add diagnol line		
+		c->Update();
+		// TLine *line = new TLine(0,0,gPad->GetUxmax(),gPad->GetUymax());
+		// line->SetLineStyle(2);
+		// line->SetLineWidth(2);
+		// line->Draw();
+		// Add stamps
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		latex->DrawLatex(0.85, 0.75, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+
+		std::string saveName = Form("softDropJetMassVsHiggsPt_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
+
+	} // closes loop through Btag WP labels
+	tdrStyle->SetPadRightMargin(defaultParam);
+} // closes the function
+
+
+
+
+
+
+
+void PlottingDoubleBTaggerEfficiencyStudies::softDropJetMassVsHiggsEta()
+{
+	double defaultParam = tdrStyle->GetPadRightMargin();
+	tdrStyle->SetPadRightMargin(0.10);
+	for (std::vector<std::string>::size_type iWP=0; iWP<doubleBtagWPname.size(); ++iWP){
+		
+		TCanvas* c=new TCanvas("c","c");
+		TH2F * h2 = (TH2F*)f->Get(Form("softDropJetMassVsHiggsEta_%sDoubleBTagWP", doubleBtagWPname[iWP].c_str()));
+
+		// SETUP HOW YOU WOULD LIKE THE PLOT (tdrStyle does most of this)
+		// h2->GetXaxis()->SetTitle("");
+		h2->GetXaxis()->SetTitleSize(0.06);
+		h2->GetXaxis()->SetLabelSize(0.05);	
+		// h2->GetYaxis()->SetTitle("");
+		h2->GetYaxis()->SetTitleSize(0.06);
+		h2->GetYaxis()->SetLabelSize(0.05);	
+		
+		h2->Draw("colz");
+
+		// Add diagnol line		
+		c->Update();
+		// TLine *line = new TLine(0,0,gPad->GetUxmax(),gPad->GetUymax());
+		// line->SetLineStyle(2);
+		// line->SetLineWidth(2);
+		// line->Draw();
+		// Add stamps
+		latex->SetTextAlign(11);
+		latex->DrawLatex(0.15,0.92,"#bf{CMS} #it{Simulation} Work In Progress");
+		latex->SetTextAlign(31);
+		latex->DrawLatex(0.92,0.92,"#sqrt{s} = 13 TeV");
+		latex->DrawLatex(0.85, 0.75, Form("Tag > %s WP", doubleBtagWPname[iWP].c_str()));
+
+		std::string saveName = Form("softDropJetMassVsHiggsEta_%sDoubleBTagWP.pdf", doubleBtagWPname[iWP].c_str());
+		c->SaveAs(Form("%s%s", outputDirectory.c_str(), saveName.c_str()));
+		c->Close();
+
+	} // closes loop through Btag WP labels
+	tdrStyle->SetPadRightMargin(defaultParam);
+} // closes the function
 
 
 
