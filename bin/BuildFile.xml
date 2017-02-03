@@ -11,3 +11,4 @@
 <use   name="PhysicsTools/SelectorUtils"/>
 <bin  name="DoubleBTaggerEfficiencyStudies" file="DoubleBTaggerEfficiencyStudies.cpp"/>
 <bin  name="McSignalStudiesCMSSW" file="McSignalStudiesCMSSW.cpp"/>
+<bin  name="InvestigatePreSelection" file="InvestigatePreSelection.cpp"/>
