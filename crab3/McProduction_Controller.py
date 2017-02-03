@@ -17,12 +17,12 @@ import sys
 ###### @ U S E R @ O P T I O N S @ ##############################
 
 
-# mode = 'submit'
+mode = 'submit'
 # mode = 'resubmit'
-mode = 'checkStatus'
+# mode = 'checkStatus'
 
-whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
-# whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
+# whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
+whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
 # whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
 # whichPartOfProcess = 'processMc04' # turns AOD in MINIAOD
 # whichPartOfProcess = 'patTupleAddBTag' # turns AOD into patTuple form (no longer part of the full workflow)
@@ -31,22 +31,10 @@ whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 #-----------------------------------------------
 ##### INFO constant workflow INFO ##############
 madGraphProjects = [
-						# 'mH110p0_mSusy1000p0_ratio0p99_splitting0p5_600001events',
-						# 'mH110p0_mSusy1400p0_ratio0p99_splitting0p5_600001events',
-						# 'mH110p0_mSusy1800p0_ratio0p99_splitting0p5_600001events',
-						# 'mH110p0_mSusy2200p0_ratio0p99_splitting0p5_600000events',
-						# 'mH125p0_mSusy1000p0_ratio0p99_splitting0p5_600000events',
-						# 'mH125p0_mSusy1400p0_ratio0p99_splitting0p5_600001events',
-						# 'mH125p0_mSusy1800p0_ratio0p99_splitting0p5_600000events',
-						# 'mH125p0_mSusy2200p0_ratio0p99_splitting0p5_600000events',
-						'mH70p0_mSusy1000p0_ratio0p99_splitting0p5_600000events', # PUSH THIS ONE THROUGH
-						# 'mH70p0_mSusy1400p0_ratio0p99_splitting0p5_600000events',
-						# 'mH70p0_mSusy1800p0_ratio0p99_splitting0p5_600001events',
-						# 'mH70p0_mSusy2200p0_ratio0p99_splitting0p5_600001events',
-						# 'mH90p0_mSusy1000p0_ratio0p99_splitting0p5_600000events',
-						# 'mH90p0_mSusy1400p0_ratio0p99_splitting0p5_600002events',
-						# 'mH90p0_mSusy1800p0_ratio0p99_splitting0p5_600000events',
-						# 'mH90p0_mSusy2200p0_ratio0p99_splitting0p5_600000events',
+						'mH30p0_mSusy800p0_ratio0p99_splitting0p1_600000events',
+						'mH50p0_mSusy800p0_ratio0p99_splitting0p1_600000events',
+						'mH70p0_mSusy800p0_ratio0p99_splitting0p1_600000events',
+						'mH90p0_mSusy800p0_ratio0p99_splitting0p1_600000events',
                    ]
 
 outputPrimaryDatasetIntro = 'nmssmSignalCascadeV05_13TeV'
@@ -79,15 +67,15 @@ pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that 
 
 #------------------------------------------- Note that running submission of processMc02
 ##### INFO 'processMc02' INFO ############## requires valid editionNamePro01
-editionNamePro02 = "ed8021v1"
+editionNamePro02 = "ed8021v2"
 
-filesPerJobPro02 = 5
+filesPerJobPro02 = 2
 totalNumberOfFilesPro02 = -1 # -1 to select them all
 #-------------------------------------------
 
 #------------------------------------------- Note that running submission of processMc03
 ##### INFO 'processMc03' INFO ############## requires valid editionNamePro02
-editionNamePro03 = "ed8021v1"
+editionNamePro03 = "ed8021v2"
 
 filesPerJobPro03 = 1
 totalNumberOfFilesPro03 = -1 # -1 to select them all
@@ -95,17 +83,17 @@ totalNumberOfFilesPro03 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc04
 ##### INFO 'processMc04' INFO ############## requires valid editionNamePro03
-editionNamePro04 = "ed8021v1"
+editionNamePro04 = "ed8021v2"
 
-filesPerJobPro04 = 4
+filesPerJobPro04 = 5
 totalNumberOfFilesPro04 = -1 # -1 to select them all
 #-------------------------------------------
 
 #------------------------------------------- Note that running submission of patTupleAddBTag
 ##### INFO 'patTupleAddBTag' INFO ########## requires valid editionNamePro03
-editionNamePAT = "ed8021v1"
+editionNamePAT = "ed8021v2"
 
-filesPerJobPAT = 4
+filesPerJobPAT = 5
 totalNumberOfFilesPAT = -1 # -1 to select them all
 #-------------------------------------------
 
