@@ -12,3 +12,4 @@
 <bin  name="DoubleBTaggerEfficiencyStudies" file="DoubleBTaggerEfficiencyStudies.cpp"/>
 <bin  name="McSignalStudiesCMSSW" file="McSignalStudiesCMSSW.cpp"/>
 <bin  name="InvestigatePreSelection" file="InvestigatePreSelection.cpp"/>
+<bin  name="InvestigateEventSelection" file="InvestigateEventSelection.cpp"/>
