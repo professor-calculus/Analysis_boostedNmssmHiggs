@@ -31,6 +31,9 @@
 // #include "Analysis/Analysis_boostedNmssmHiggs/interface/PlottingInvestigatePreSelection.h"
 
 
+// NOTE THIS IS OUT OF DATE. IT WAS A PRE-CURSOR TO InvestigateEventSelection.cpp
+
+
 /* TODO
 no tau(track?) info for the lepton veto
 */
@@ -89,7 +92,7 @@ int main(int argc, char* argv[])
 	double eta_centralAk4Jet = 3.0;
 	double eta_centralFatJet = 2.4;
 	double dR_Ak4FatIso = 1.25;
-	double looseDoubleBTagWP = 0.3;
+	double doubleBTagWP = 0.3;
 	////////////////////-----------------------
 	////////////////////----------------------------------------------
 	////////////////////---------------------------------------------------------------------
@@ -223,7 +226,7 @@ int main(int argc, char* argv[])
 				for (size_t iFJ = 0; iFJ < fatJets->size(); ++iFJ){
 					const pat::Jet & fatJet = (*fatJets)[iFJ];
 
-					if (fatJet.pt() > leadingCentralDoubleBTagFatJetPt && fabs(fatJet.eta())<eta_centralFatJet && fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > looseDoubleBTagWP){
+					if (fatJet.pt() > leadingCentralDoubleBTagFatJetPt && fabs(fatJet.eta())<eta_centralFatJet && fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBTagWP){
 						
 						secondaryCentralDoubleBTagFatJetPt = leadingCentralDoubleBTagFatJetPt;
 						leadingCentralDoubleBTagFatJetPt = fatJet.pt();
@@ -231,7 +234,7 @@ int main(int argc, char* argv[])
 						indexSecondaryCentralDoubleBTagFatJet = indexLeadingCentralDoubleBTagFatJet;
 						indexLeadingCentralDoubleBTagFatJet = iFJ;
 					}
-					else if (fatJet.pt() > secondaryCentralDoubleBTagFatJetPt && fabs(fatJet.eta())<eta_centralFatJet && fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > looseDoubleBTagWP){
+					else if (fatJet.pt() > secondaryCentralDoubleBTagFatJetPt && fabs(fatJet.eta())<eta_centralFatJet && fatJet.bDiscriminator("pfBoostedDoubleSecondaryVertexAK8BJetTags") > doubleBTagWP){
 						
 						secondaryCentralDoubleBTagFatJetPt = fatJet.pt();
 						indexSecondaryCentralDoubleBTagFatJet = iFJ;	
