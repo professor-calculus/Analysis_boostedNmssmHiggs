@@ -76,8 +76,8 @@ int main(int argc, char* argv[])
 	std::vector<int> step2_htCut = {-1, 1000, 2000, 3000};
 
 	// step3: ak8 jet pt cut stage (with |eta| < eta_centralFatJet) 
-	std::vector<std::string> step3labels = {"STEP3off", "STEP3on_AK8Leading170_AK8Secondary170", "STEP3on_AK8Leading250_AK8Secondary250", "STEP3on_AK8Leading300_AK8Secondary300"};
-	std::vector<std::vector<int>> step3_ak8Cut = {{-1}, {170,170}, {250,250}, {300,300}}; // the sub-vectors correspond to the leading and secondary jet transverse momenta. 170 should always be minimum.
+	std::vector<std::string> step3labels = {"STEP3off", "STEP3on_AK8Leading200_AK8Secondary200", "STEP3on_AK8Leading300_AK8Secondary300", "STEP3on_AK8Leading400_AK8Secondary400"};
+	std::vector<std::vector<int>> step3_ak8Cut = {{-1}, {200,200}, {300,300}, {400,400}}; // the sub-vectors correspond to the leading and secondary jet transverse momenta. 170 should always be absolute minimum.
 
 	// step4: double b tag requirements on ak8 jets
 	std::vector<std::string> step4labels = {"STEP4off", "STEP4on_looseDoubleBTags", "STEP4on_mediumDoubleBTags", "STEP4on_tightDoubleBTags"};
@@ -108,8 +108,8 @@ int main(int argc, char* argv[])
 	// Set defaults // (command line doesn't seem to override these options, in which case make sure they are commented out)
 	parser.integerValue ("maxevents"      ) = -1; // -1 for all events
 	parser.integerValue ("outputevery"    ) = 100;
-	parser.stringVector ("inputfiles"   ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_21/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_10.root"};
-	parser.stringValue  ("outputfile"     ) = "output_InvestigateEventSelection/histos.root";
+	// parser.stringVector ("inputfiles"   ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_21/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_10.root"};
+	// parser.stringValue  ("outputfile"     ) = "output_InvestigateEventSelection/histos.root";
 	parser.boolValue    ("orderedsecondaryfiles") = false;
 	//////////////////
 
@@ -363,7 +363,20 @@ int main(int argc, char* argv[])
 	// // // // // // // // // // // // // // // // // // //
 	// // // // // // // // // // // // // // // // // // //
 	// make the table
-	std::string outputDirectory_ = getOutputDirFromOutputFile(outputFile_);
+	std::string outputDirectoryTable = "";
+	if (justDoPlotting_){
+	 	// get the name of directory holding the .root file, so we can save .pdfs here also
+		for (size_t c = outputFile_.size()-1; c > 0; --c){
+			std::string forwardSlash = "/";
+			if (outputFile_[c] == forwardSlash[0]){
+				outputDirectoryTable = outputFile_.substr(0, c+1);
+				break;
+			}
+		}
+	}
+	else std::string outputDirectoryTable = getOutputDirFromOutputFile(outputFile_);
+	// std::cout << outputDirectoryTable << std::endl;
+
 	TFile * f = TFile::Open(outputFile_.c_str());
 
 	int nCol = (step1labels.size()-1) * (step2labels.size()-1) * (step3labels.size()-1) * (step4labels.size()-1); // number of additional columns
@@ -371,7 +384,7 @@ int main(int argc, char* argv[])
 	int divFactorStep3 = nCol / ((step2labels.size()-1)*(step3labels.size()-1));
 
 	std::ofstream table;
-	table.open(Form("%sselectionTable.csv",outputDirectory_.c_str()));
+	table.open(Form("%sselectionTable.csv",outputDirectoryTable.c_str()));
 	table << titleName << "\n";
 	table << "Number of events surviving," << "\n";
 	
