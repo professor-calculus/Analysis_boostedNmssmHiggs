@@ -15,15 +15,20 @@ from htcondorExeJob import *
 ### ## # USER INPUT # ## ###
 ############################
 ############################
-executable = "tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies" # wrt CMSSW location
-code = "src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies.cpp" # wrt CMSSW location
-inputMotherDir = "/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_21/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/" # should be on hdfs
-logLocation = "/storage/jt15104/jobLog_Analysis_boostedNmssmHiggs/DoubleBTaggerEfficiencyStudies/"
+# executable = "tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies/DoubleBTaggerEfficiencyStudies" # wrt CMSSW location
+# code = "src/Analysis/Analysis_boostedNmssmHiggs/bin/DoubleBTaggerEfficiencyStudies.cpp" # wrt CMSSW location
+# inputMotherDir = "/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_21/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/" # should be on hdfs
+# logLocation = "/storage/jt15104/jobLog_Analysis_boostedNmssmHiggs/DoubleBTaggerEfficiencyStudies/"
 
 # executable = "tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/McSignalStudiesCMSSW/McSignalStudiesCMSSW" # wrt CMSSW location
 # code = "src/Analysis/Analysis_boostedNmssmHiggs/bin/McSignalStudiesCMSSW.cpp" # wrt CMSSW location
 # inputMotherDir = "/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_21/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/" # should be on hdfs
 # logLocation = "/storage/jt15104/jobLog_Analysis_boostedNmssmHiggs/McSignalStudiesCMSSW/"
+
+executable = "tmp/slc6_amd64_gcc530/src/Analysis/Analysis_boostedNmssmHiggs/bin/InvestigateEventSelection/InvestigateEventSelection" # wrt CMSSW location
+code = "src/Analysis/Analysis_boostedNmssmHiggs/bin/InvestigateEventSelection.cpp" # wrt CMSSW location
+inputMotherDir = "/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_20/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy2200p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed12MJI_mH70p0_mSusy2200p0_ratio0p99_splitting0p5/" # should be on hdfs
+logLocation = "/storage/jt15104/jobLog_Analysis_boostedNmssmHiggs/InvestigateEventSelection/"
 
 
 # Option A: INPUT FILES ONE AT A TIME BY HAND
