@@ -72,8 +72,8 @@ int main(int argc, char* argv[])
 	std::vector<std::string> step1labels = {"STEP1off", "STEP1on"};
 
 	// step2: ht cut stage
-	std::vector<std::string> step2labels = {"STEP2off", "STEP2on_HT1000", "STEP2on_HT2000", "STEP2on_HT3000"};
-	std::vector<int> step2_htCut = {-1, 1000, 1250, 1500, 2000, 3000};
+	std::vector<std::string> step2labels = {"STEP2off", "STEP2on_HT1000", "STEP2on_HT1250", "STEP2on_HT1500", "STEP2on_HT2000", "STEP2on_HT3000"};
+	std::vector<int> step2_htCut = {-1,                  1000,             1250,             1500,             2000,             3000};
 
 	// step3: ak8 jet pt cut stage (with |eta| < eta_centralFatJet) 
 	std::vector<std::string> step3labels = {"STEP3off", "STEP3on_AK8Lead200Sec200ThirdOffFourOff", "STEP3on_AK8Lead250Sec250ThirdOffFourOff", "STEP3on_AK8Lead300Sec300ThirdOffFourOff", "STEP3on_AK8Lead200Sec200Third200FourOff", "STEP3on_AK8Lead250Sec2500Third250FourOff", "STEP3on_AK8Lead300Sec300Third300FourOff", "STEP3on_AK8Lead200Sec200Third200Four200", "STEP3on_AK8Lead250Sec250Third250Four250", "STEP3on_AK8Lead300Sec300Third300Four300"};
@@ -81,9 +81,9 @@ int main(int argc, char* argv[])
 
 	// step4: double b tag requirements on ak8 jets (also must have pt's greater than the corresponding leading and secondary ak8 cut)
 	// std::vector<std::string> step4labels = {"STEP4off", "STEP4on_looseDoubleBTags", "STEP4on_mediumDoubleBTags", "STEP4on_tightDoubleBTags"};
-	// std::vector<double> step4_doubleBTagWPs = {-999.99, 0.3, 0.6, 0.9}; // notOn, loose, medium and tight repsectively
+	// std::vector<double> step4_doubleBTagWPs = {-999.99,  0.3,                        0.6,                         0.9}; // notOn, loose, medium and tight repsectively
 	std::vector<std::string> step4labels = {"STEP4off", "STEP4on_tightDoubleBTags"};
-	std::vector<double> step4_doubleBTagWPs = {-999.99, 0.9}; // notOn, loose, medium and tight repsectively
+	std::vector<double> step4_doubleBTagWPs = {-999.99,  0.9}; // notOn, loose, medium and tight repsectively
 
 
 	// additional parameters
@@ -109,11 +109,10 @@ int main(int argc, char* argv[])
 	optutl::CommandLineParser parser ("InvestigateEventSelection ");
 	//////////////////
 	// Set defaults // (command line doesn't seem to override these options, in which case make sure they are commented out)
-	parser.integerValue ("maxevents"      ) = 10000; // -1 for all events
+	parser.integerValue ("maxevents"      ) = 100000; // -1 for all events
 	parser.integerValue ("outputevery"    ) = 100;
 	// parser.stringVector ("inputfiles"   ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_21/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_10.root"};
-	parser.stringVector ("inputfiles"   ) = {"/storage/jt15104/rootFiles/qcdSpring16_patTupleCMSSW_8_0_21/bTagPatTuple.root"};
-	parser.stringValue  ("outputfile"     ) = "output_InvestigateEventSelection/histos.root";
+	// parser.stringValue  ("outputfile"     ) = "output_InvestigateEventSelection/histos.root";
 	parser.boolValue    ("orderedsecondaryfiles") = false;
 	//////////////////
 
@@ -496,8 +495,8 @@ int main(int argc, char* argv[])
 	table << "step4 w/ step3 1st&2nd pt's\n";
 	table << "and NO other w/ pt>170 (GeV)\n";
 	table << "NB:\n";
-	table << "all ak8 jets are central\n";
-	table << "|eta| < " << table << "all ak8 jets are central" << "\n";
+	table << "all ak8 jets are central:\n";
+	table << "|eta| < " << eta_centralFatJet << "\n";
 
 	table.close();
 	// // // // // // // // // // // // // // // // // // //
