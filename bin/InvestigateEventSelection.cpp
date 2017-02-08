@@ -73,15 +73,18 @@ int main(int argc, char* argv[])
 
 	// step2: ht cut stage
 	std::vector<std::string> step2labels = {"STEP2off", "STEP2on_HT1000", "STEP2on_HT2000", "STEP2on_HT3000"};
-	std::vector<int> step2_htCut = {-1, 1000, 2000, 3000};
+	std::vector<int> step2_htCut = {-1, 1000, 1250, 1500, 2000, 3000};
 
 	// step3: ak8 jet pt cut stage (with |eta| < eta_centralFatJet) 
-	std::vector<std::string> step3labels = {"STEP3off", "STEP3on_AK8Leading200_AK8Secondary200", "STEP3on_AK8Leading300_AK8Secondary300", "STEP3on_AK8Leading400_AK8Secondary400"};
-	std::vector<std::vector<int>> step3_ak8Cut = {{-1}, {200,200}, {300,300}, {400,400}}; // the sub-vectors correspond to the leading and secondary jet transverse momenta. 170 should always be absolute minimum.
+	std::vector<std::string> step3labels = {"STEP3off", "STEP3on_AK8Lead200Sec200ThirdOffFourOff", "STEP3on_AK8Lead250Sec250ThirdOffFourOff", "STEP3on_AK8Lead300Sec300ThirdOffFourOff", "STEP3on_AK8Lead200Sec200Third200FourOff", "STEP3on_AK8Lead250Sec2500Third250FourOff", "STEP3on_AK8Lead300Sec300Third300FourOff", "STEP3on_AK8Lead200Sec200Third200Four200", "STEP3on_AK8Lead250Sec250Third250Four250", "STEP3on_AK8Lead300Sec300Third300Four300"};
+	std::vector<std::vector<int>> step3_ak8Cut = {{-1}, {200,200,-1,-1},                            {250,250,-1,-1},                           {300,300,-1,-1},                           {200,200,200,-1},                          {250,250,250,-1},                           {300,300,300,-1},                          {200,200,200,200},                         {250,250,250,250},                         {300,300,300,300}}; // the sub-vectors correspond to the leading and secondary jet transverse momenta. 170 should always be absolute minimum.
 
-	// step4: double b tag requirements on ak8 jets
-	std::vector<std::string> step4labels = {"STEP4off", "STEP4on_looseDoubleBTags", "STEP4on_mediumDoubleBTags", "STEP4on_tightDoubleBTags"};
-	std::vector<double> step4_doubleBTagWPs = {-999.99, 0.3, 0.6, 0.9}; // notOn, loose, medium and tight repsectively
+	// step4: double b tag requirements on ak8 jets (also must have pt's greater than the corresponding leading and secondary ak8 cut)
+	// std::vector<std::string> step4labels = {"STEP4off", "STEP4on_looseDoubleBTags", "STEP4on_mediumDoubleBTags", "STEP4on_tightDoubleBTags"};
+	// std::vector<double> step4_doubleBTagWPs = {-999.99, 0.3, 0.6, 0.9}; // notOn, loose, medium and tight repsectively
+	std::vector<std::string> step4labels = {"STEP4off", "STEP4on_tightDoubleBTags"};
+	std::vector<double> step4_doubleBTagWPs = {-999.99, 0.9}; // notOn, loose, medium and tight repsectively
+
 
 	// additional parameters
 	double eta_centralFatJet = 2.4;
@@ -106,10 +109,11 @@ int main(int argc, char* argv[])
 	optutl::CommandLineParser parser ("InvestigateEventSelection ");
 	//////////////////
 	// Set defaults // (command line doesn't seem to override these options, in which case make sure they are commented out)
-	parser.integerValue ("maxevents"      ) = -1; // -1 for all events
+	parser.integerValue ("maxevents"      ) = 10000; // -1 for all events
 	parser.integerValue ("outputevery"    ) = 100;
 	// parser.stringVector ("inputfiles"   ) = {"/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0_21/signalSamples/nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/bTagPatTuple_10.root"};
-	// parser.stringValue  ("outputfile"     ) = "output_InvestigateEventSelection/histos.root";
+	parser.stringVector ("inputfiles"   ) = {"/storage/jt15104/rootFiles/qcdSpring16_patTupleCMSSW_8_0_21/bTagPatTuple.root"};
+	parser.stringValue  ("outputfile"     ) = "output_InvestigateEventSelection/histos.root";
 	parser.boolValue    ("orderedsecondaryfiles") = false;
 	//////////////////
 
@@ -213,6 +217,8 @@ int main(int argc, char* argv[])
 				// ak8 fatJets
 				std::vector<double> leadingCentralFatJetPt(step4_doubleBTagWPs.size(), 0.0); // doubleBTag: no, loose, medium, tight 
 				std::vector<double> secondaryCentralFatJetPt(step4_doubleBTagWPs.size(), 0.0);  // doubleBTag: no, loose, medium, tight
+				std::vector<double> thirdCentralFatJetPt(step4_doubleBTagWPs.size(), 0.0);  // doubleBTag: no, loose, medium, tight
+				std::vector<double> fourthCentralFatJetPt(step4_doubleBTagWPs.size(), 0.0);  // doubleBTag: no, loose, medium, tight
 
 				for (size_t iFJ = 0; iFJ < fatJets->size(); ++iFJ){
 					const pat::Jet & fatJet = (*fatJets)[iFJ];
@@ -222,12 +228,30 @@ int main(int argc, char* argv[])
 
 							if (fatJet.pt() > leadingCentralFatJetPt[iWP]){
 							
-									secondaryCentralFatJetPt[iWP] = leadingCentralFatJetPt[iWP];
-									leadingCentralFatJetPt[iWP] = fatJet.pt();
+								fourthCentralFatJetPt[iWP] = thirdCentralFatJetPt[iWP];
+								thirdCentralFatJetPt[iWP] = secondaryCentralFatJetPt[iWP];
+								secondaryCentralFatJetPt[iWP] = leadingCentralFatJetPt[iWP];
+								leadingCentralFatJetPt[iWP] = fatJet.pt();
 							}
 
-							else if (fatJet.pt() > secondaryCentralFatJetPt[iWP]) secondaryCentralFatJetPt[iWP] = fatJet.pt();
-						
+							else if (fatJet.pt() > secondaryCentralFatJetPt[iWP]){
+								
+								fourthCentralFatJetPt[iWP] = thirdCentralFatJetPt[iWP];
+								thirdCentralFatJetPt[iWP] = secondaryCentralFatJetPt[iWP];
+								secondaryCentralFatJetPt[iWP] = fatJet.pt();
+							}
+
+							else if (fatJet.pt() > thirdCentralFatJetPt[iWP]){
+								
+								fourthCentralFatJetPt[iWP] = thirdCentralFatJetPt[iWP];
+								thirdCentralFatJetPt[iWP] = fatJet.pt();
+							}
+
+							else if (fatJet.pt() > fourthCentralFatJetPt[iWP]){
+								
+								fourthCentralFatJetPt[iWP] = fatJet.pt();
+							}
+
 						} // closes 'if' fat jet passes doubleBTag cut and is central
 					} // closes loop through the doubleBTag WP's
 				} // closes loop through the fat jets
@@ -296,13 +320,17 @@ int main(int argc, char* argv[])
 
 								if (iStep1 == 0 || eventPassLeptonPhotonVeto){
 									if (iStep2 == 0 || ht > step2_htCut[iStep2]){
-										if (iStep3 == 0 || (leadingCentralFatJetPt[0] > step3_ak8Cut[iStep3][0] && secondaryCentralFatJetPt[0] > step3_ak8Cut[iStep3][1]) ){
-											if (iStep4 == 0 || (leadingCentralFatJetPt[iStep4] > step3_ak8Cut[iStep3][0] && secondaryCentralFatJetPt[iStep4] > step3_ak8Cut[iStep3][1]) ){
+										if (iStep3 == 0 || (leadingCentralFatJetPt[0] > step3_ak8Cut[iStep3][0] && secondaryCentralFatJetPt[0] > step3_ak8Cut[iStep3][1] && thirdCentralFatJetPt[0] > step3_ak8Cut[iStep3][2] && fourthCentralFatJetPt[0] > step3_ak8Cut[iStep3][3]) ){
+											if (iStep4 == 0 || (leadingCentralFatJetPt[iStep4] > step3_ak8Cut[iStep3][0] && secondaryCentralFatJetPt[iStep4] > step3_ak8Cut[iStep3][1] && thirdCentralFatJetPt[iStep4] < 169.99) ){
 
 												h_[Form("ht__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())]->Fill(ht);
 												h_[Form("leadingCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())]->Fill(leadingCentralFatJetPt[iStep4]);
 												h_[Form("secondaryCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())]->Fill(secondaryCentralFatJetPt[iStep4]);
+												h_[Form("thirdCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())]->Fill(thirdCentralFatJetPt[iStep4]);
+												h_[Form("fourthCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())]->Fill(fourthCentralFatJetPt[iStep4]);
 												h2_[Form("leadingVsSecondaryCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())]->Fill(secondaryCentralFatJetPt[iStep4],leadingCentralFatJetPt[iStep4]);
+												h2_[Form("secondaryVsThirdCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())]->Fill(thirdCentralFatJetPt[iStep4],secondaryCentralFatJetPt[iStep4]);
+												h2_[Form("secondaryVsFourthCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())]->Fill(fourthCentralFatJetPt[iStep4],secondaryCentralFatJetPt[iStep4]);
 
 											} // closes 'if' event passes Step4
 										} // closes 'if' event passes Step3
@@ -346,16 +374,15 @@ int main(int argc, char* argv[])
 	
 	plottingLabel:
 	// sketchy hack to get the higgsMass, squarkMass, ratio and mass splitting from the root file path name
-	size_t endNameContainer = 8888;
-	size_t beginNameContainer = 8888;
+	size_t endNameContainer = inputFiles_[0].size()-1;
+	size_t beginNameContainer = 0;
 	std::string forwardSlash = "/";
 	for (size_t c = inputFiles_[0].size()-2; c > 0; --c){
 		
-		if (inputFiles_[0][c] == forwardSlash[0]) endNameContainer = c; 
-		if (inputFiles_[0].substr(c,2) == "mH"){
-			beginNameContainer = c;
+		if (inputFiles_[0][c] == forwardSlash[0]){
+			endNameContainer = c;
 			break;
-		}
+		} 
 	}
 	std::string titleName = inputFiles_[0].substr(beginNameContainer,endNameContainer-beginNameContainer);
 
@@ -374,7 +401,7 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
-	else std::string outputDirectoryTable = getOutputDirFromOutputFile(outputFile_);
+	else outputDirectoryTable = getOutputDirFromOutputFile(outputFile_);
 	// std::cout << outputDirectoryTable << std::endl;
 
 	TFile * f = TFile::Open(outputFile_.c_str());
@@ -394,7 +421,7 @@ int main(int argc, char* argv[])
 	table << "," << h0->GetEntries() << "\n";
 	
 	// Step 1
-	table << "Step 1 (lepton/photon veto):," << "\n";
+	table << "Step 1 (lepton/photon veto):,-," << "\n";
 	TH1F * h1 = (TH1F*)f->Get(Form("ht__%s__%s__%s__%s",step1labels[1].c_str(),step2labels[0].c_str(),step3labels[0].c_str(),step4labels[0].c_str()));
 	table << "," << h1->GetEntries() << "\n";
 
@@ -426,7 +453,7 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < nCol; ++i){
 		if (i % divFactorStep3 == 0){
 			int indexStep3 = ( (i/divFactorStep3) % (step3labels.size()-1) ) + 1;
-			table << step3_ak8Cut[indexStep3][0] << ":" << step3_ak8Cut[indexStep3][1] << " (GeV),";
+			table << step3_ak8Cut[indexStep3][0] << ":" << step3_ak8Cut[indexStep3][1] << ":" << step3_ak8Cut[indexStep3][2] << ":" << step3_ak8Cut[indexStep3][3] << " (GeV),";
 		}
 		else table << ",";
 	}
@@ -447,7 +474,7 @@ int main(int argc, char* argv[])
 	table << ",\n";
 
 	// Step 4
-	table << "Step 4 (doubleBTag cut):,";
+	table << "Step 4 (2 doubleBTag cuts):,";
 	for (int i = 0; i < nCol; ++i){
 
 			int indexStep4 = (i%(step4labels.size()-1)) + 1;
@@ -465,6 +492,12 @@ int main(int argc, char* argv[])
 		table << "," << h4->GetEntries();		
 	}
 	table << ",\n";
+	table << "NB:\n";
+	table << "step4 w/ step3 1st&2nd pt's\n";
+	table << "and NO other w/ pt>170 (GeV)\n";
+	table << "NB:\n";
+	table << "all ak8 jets are central\n";
+	table << "|eta| < " << table << "all ak8 jets are central" << "\n";
 
 	table.close();
 	// // // // // // // // // // // // // // // // // // //
@@ -502,8 +535,20 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 					h_[Form("secondaryCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())] = 				
 					new TH1F(Form("secondaryCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str()), ";secondaryCentralFatJetPt (GeV);a.u.", 100, 0, 2500);
 
+					h_[Form("thirdCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())] = 				
+					new TH1F(Form("thirdCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str()), ";thirdCentralFatJetPt (GeV);a.u.", 100, 0, 2500);
+
+					h_[Form("fourthCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())] = 				
+					new TH1F(Form("fourthCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str()), ";fourthCentralFatJetPt (GeV);a.u.", 100, 0, 2500);
+
 					h2_[Form("leadingVsSecondaryCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())] = 				
 					new TH2F(Form("leadingVsSecondaryCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str()), ";secondaryCentralFatJetPt (GeV);leadingCentralDoubleBTagFatJetPt (GeV)", 200, 0, 2500, 200, 0, 2500);
+
+					h2_[Form("secondaryVsFourthCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())] = 				
+					new TH2F(Form("secondaryVsFourthCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str()), ";fourthCentralFatJetPt (GeV);secondaryCentralDoubleBTagFatJetPt (GeV)", 200, 0, 2500, 200, 0, 2500);
+
+					h2_[Form("secondaryVsThirdCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str())] = 				
+					new TH2F(Form("secondaryVsThirdCentralFatJetPt__%s__%s__%s__%s",step1labels[iStep1].c_str(),step2labels[iStep2].c_str(),step3labels[iStep3].c_str(),step4labels[iStep4].c_str()), ";thirdCentralFatJetPt (GeV);secondaryCentralDoubleBTagFatJetPt (GeV)", 200, 0, 2500, 200, 0, 2500);
 
 					if (iStep3 == 0) break;
 				} // closes loop through Step 4 states
