@@ -49,7 +49,7 @@ void CreateHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&
 void WriteHistograms(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 void WriteHistogramsDICE(std::map<std::string,TH1F*>&, std::map<std::string,TH2F*>&, std::string);
 std::string getOutputDirFromOutputFile(std::string);
-bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>>,int,std::string,unsigned int&,std::vector<reco::GenParticle>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&);
+bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>>,int,std::string,unsigned int&,std::vector<reco::GenParticle>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&,std::vector<const reco::Candidate*>&);
 
 
 int main(int argc, char* argv[]) 
@@ -180,6 +180,7 @@ int main(int argc, char* argv[])
 				// the first element is leading arm version of particle(decay from highest pt squark)
 				// the second element is for the secondary arm version of particle (decay from secondary pt squark)
 				std::vector<reco::GenParticle> squarkVec; // note that this object is slightly different to the others
+				std::vector<const reco::Candidate*> qFromGluinoVec;
 				std::vector<const reco::Candidate*> qjetVec;
 				std::vector<const reco::Candidate*> nlspVec;
 				std::vector<const reco::Candidate*> lspVec;
@@ -187,7 +188,7 @@ int main(int argc, char* argv[])
 				std::vector<const reco::Candidate*> bVec;
 				std::vector<const reco::Candidate*> bbarVec;
 
-				bool gotCascadeParticles = getCascadeParticles(genParticles,ievt,inputFiles_[iFile],gluinoCount,squarkVec,qjetVec,nlspVec,lspVec,higgsVec,bVec,bbarVec);
+				bool gotCascadeParticles = getCascadeParticles(genParticles,ievt,inputFiles_[iFile],gluinoCount,squarkVec,qjetVec,nlspVec,lspVec,higgsVec,bVec,bbarVec,qFromGluinoVec);
 				if (gotCascadeParticles == false) continue;
 
 				//  e.g.
@@ -197,7 +198,12 @@ int main(int argc, char* argv[])
 
 				// Gen Particle Plots
 				h_["numberOfGluinos"]->Fill(gluinoCount);
-				
+
+				if (gluinoCount ==0) h_["qFromGluinoPt_zeroGluino"]->Fill(0.00001);
+				if (gluinoCount == 1) h_["qFromGluinoPt_oneGluino"]->Fill(qFromGluinoVec[0]->pt());
+				if (gluinoCount == 2) h_["qFromGluinoLeadPt_twoGluino"]->Fill(qFromGluinoVec[0]->pt());
+				if (gluinoCount == 2) h_["qFromGluinoSecPt_twoGluino"]->Fill(qFromGluinoVec[1]->pt());
+			
 				h_["leadingSquarkPt"]->Fill(squarkVec[0].pt());
 				if (gluinoCount == 0) h_["leadingSquarkPt_zeroGluinos"]->Fill(squarkVec[0].pt());
 				if (gluinoCount == 1) h_["leadingSquarkPt_oneGluinos"]->Fill(squarkVec[0].pt());
@@ -449,12 +455,10 @@ int main(int argc, char* argv[])
 				unsigned int numberMediumDoubleBTagsNoMatching = 0;
 				unsigned int numberTightDoubleBTagsNoMatching = 0;
 
-
 				unsigned int numberLooseDoubleBTagsWithMatching = 0;
 				unsigned int numberMediumDoubleBTagsWithMatching = 0;
 				unsigned int numberTightDoubleBTagsWithMatching = 0;
-
-				
+		
 				double dR_fJhiggs0_min = 99999.99; 
 				double dR_fJhiggs1_min = 99999.99;
 				unsigned int dR_fJhiggs0_min_index = 99999;
@@ -600,6 +604,11 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	// Gen Particle Histograms
     h_["numberOfGluinos"] = new TH1F("numberOfGluinos", ";Number of Gluinos;a.u.", 4, 0, 4);
 	
+	h_["qFromGluinoPt_zeroGluino"] = new TH1F("qFromGluinoPt_zeroGluino", ";quark p_{T} (GeV);a.u.", 100, 0, 400);
+	h_["qFromGluinoPt_oneGluino"] = new TH1F("qFromGluinoPt_oneGluino", ";quark p_{T} (GeV);a.u.", 100, 0, 400);
+	h_["qFromGluinoLeadPt_twoGluino"] = new TH1F("qFromGluinoLeadPt_twoGluino", ";quark p_{T} (GeV);a.u.", 100, 0, 400);
+	h_["qFromGluinoSecPt_twoGluino"] = new TH1F("qFromGluinoSecPt_twoGluino", ";quark p_{T} (GeV);a.u.", 100, 0, 400);
+
 	h_["leadingSquarkPt"] = new TH1F("leadingSquarkPt", ";squark p_{T} (GeV);a.u.", 100, 0, 2500);
 	h_["leadingSquarkEta"] = new TH1F("leadingSquarkEta", ";#eta squark;a.u.", 100, -5, 5);
 	h_["secondarySquarkPt"] = new TH1F("secondarySquarkPt", ";squark p_{T} (GeV);a.u.", 100, 0, 2500);
@@ -773,21 +782,28 @@ std::string getOutputDirFromOutputFile(std::string outputFile)
 
 
 // function to get the nmssm cascade particles, returns true if does so sucessfully:)
-bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles, int ievt, std::string filename, unsigned int & gluinoCount, std::vector<reco::GenParticle> & squarkVec, std::vector<const reco::Candidate*> & qjetVec, std::vector<const reco::Candidate*> & nlspVec, std::vector<const reco::Candidate*> & lspVec, std::vector<const reco::Candidate*> & higgsVec, std::vector<const reco::Candidate*> & bVec, std::vector<const reco::Candidate*> & bbarVec)
+bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>> genParticles, int ievt, std::string filename, unsigned int & gluinoCount, std::vector<reco::GenParticle> & squarkVec, std::vector<const reco::Candidate*> & qjetVec, std::vector<const reco::Candidate*> & nlspVec, std::vector<const reco::Candidate*> & lspVec, std::vector<const reco::Candidate*> & higgsVec, std::vector<const reco::Candidate*> & bVec, std::vector<const reco::Candidate*> & bbarVec, std::vector<const reco::Candidate*> & qFromGluinoVec)
 {
 	for (size_t iGen=0; iGen<genParticles->size(); ++iGen){
 		const reco::GenParticle & genParticle = (*genParticles)[iGen];
 		
 		// count the gluinos
 		if ( abs(genParticle.pdgId()) == 1000021 && genParticle.numberOfDaughters() == 2){
-			
+
 			int pdgId_0 = abs(genParticle.daughter(0)->pdgId());
 			int pdgId_1 = abs(genParticle.daughter(1)->pdgId());				
 			if (   (pdgId_0 == 1000001 || pdgId_0 == 1000002 || pdgId_0 == 1000003 || pdgId_0 == 1000004 || pdgId_0 == 2000001 || pdgId_0 == 2000002 || pdgId_0 == 2000003 || pdgId_0 == 2000004)
-			    || (pdgId_1 == 1000001 || pdgId_1 == 1000002 || pdgId_1 == 1000003 || pdgId_1 == 1000004 || pdgId_1 == 2000001 || pdgId_1 == 2000002 || pdgId_1 == 2000003 || pdgId_1 == 2000004))
+			    && (pdgId_1 == 1 || pdgId_1 == 2 || pdgId_1 == 3 || pdgId_1 == 4) ){
 				gluinoCount++;
+				qFromGluinoVec.push_back(genParticle.daughter(1));
+			}
+			if (   (pdgId_1 == 1000001 || pdgId_1 == 1000002 || pdgId_1 == 1000003 || pdgId_1 == 1000004 || pdgId_1 == 2000001 || pdgId_1 == 2000002 || pdgId_1 == 2000003 || pdgId_1 == 2000004)
+			    && (pdgId_0 == 1 || pdgId_0 == 2 || pdgId_0 == 3 || pdgId_0 == 4) ){
+				gluinoCount++;
+				qFromGluinoVec.push_back(genParticle.daughter(0));
+			}
 		}
-		
+
 		// get the squarks
 		if ( (abs(genParticle.pdgId()) == 1000001
 		     || abs(genParticle.pdgId()) == 2000001
@@ -887,6 +903,8 @@ bool getCascadeParticles(edm::Handle<std::vector<reco::GenParticle>> genParticle
 		std::swap(bVec[0],bVec[1]);
 		std::swap(bbarVec[0],bbarVec[1]);
 	}
+
+	if (gluinoCount ==2 && qFromGluinoVec[1]->pt() > qFromGluinoVec[0]->pt()) std::swap(qFromGluinoVec[0],qFromGluinoVec[1]);
 
 	return true;
 } // closes the funciton getCascadeParticles

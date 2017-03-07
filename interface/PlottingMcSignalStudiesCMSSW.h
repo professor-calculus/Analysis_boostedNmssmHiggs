@@ -89,6 +89,7 @@ PlottingMcSignalStudiesCMSSW::PlottingMcSignalStudiesCMSSW(std::string inputHist
 
 	// make the .pdfs
 	oneDimension_standard("numberOfGluinos", "numberOfGluinos.pdf");
+	oneDimension_standard("qFromGluinoPt_oneGluino", "qFromGluinoPt_oneGluino.pdf");
 	
 	oneDimension_twoPlotsSeparate("leadingSquarkPt", "secondarySquarkPt", "Leading Arm", "Secondary Arm", "squarkPt.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 	oneDimension_twoPlotsSeparate("leadingSquarkEta", "secondarySquarkEta", "Leading Arm", "Secondary Arm", "squarkEta.pdf", 0.63, 0.88, 0.76, 0.88, 1);
