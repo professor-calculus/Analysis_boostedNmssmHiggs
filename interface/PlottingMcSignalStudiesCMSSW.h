@@ -108,6 +108,8 @@ PlottingMcSignalStudiesCMSSW::PlottingMcSignalStudiesCMSSW(std::string inputHist
 	oneDimension_twoPlotsSeparate("leadingNlspPt", "secondaryNlspPt", "Leading Arm", "Secondary Arm", "nlspPt.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 	oneDimension_twoPlotsSeparate("leadingNlspEta", "secondaryNlspEta", "Leading Arm", "Secondary Arm", "nlspEta.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 
+	oneDimension_twoPlotsSeparate("drLeadingHiggsQjet", "drSecondaryHiggsQjet", "Leading Arm", "Secondary Arm", "drHiggsQjet.pdf", 0.15, 0.35, 0.76, 0.88, 2);
+
 	oneDimension_twoPlotsSeparate("leadingHiggsPt", "secondaryHiggsPt", "Leading Arm", "Secondary Arm", "higgsPt.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 	oneDimension_twoPlotsSeparate("leadingHiggsEta", "secondaryHiggsEta", "Leading Arm", "Secondary Arm", "higgsEta.pdf", 0.63, 0.88, 0.76, 0.88, 2);
 	twoDimension_standard("leadingHiggsPt_secondaryHiggsPt", "leadingHiggsPt_secondaryHiggsPt.pdf");
