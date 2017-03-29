@@ -21,21 +21,21 @@ import sys
 # mode = 'resubmit'
 mode = 'checkStatus'
 
-# whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
+whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 # whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
 # whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
-whichPartOfProcess = 'processMc04' # turns AOD in MINIAOD
+# whichPartOfProcess = 'processMc04' # turns AOD in MINIAOD
 # whichPartOfProcess = 'patTupleAddBTag' # turns AOD into patTuple form (no longer part of the full workflow)
 
 
 #-----------------------------------------------
 ##### INFO constant workflow INFO ##############
 madGraphProjects = [
-						'mH30p0_mSusy800p0_ratio0p99_splitting0p1_600000events',
-						'mH50p0_mSusy800p0_ratio0p99_splitting0p1_600000events',
-						'mH70p0_mSusy800p0_ratio0p99_splitting0p1_600000events',
-						'mH90p0_mSusy800p0_ratio0p99_splitting0p1_600000events',
-                   ]
+						'mH30p0_mSusy2000p0_ratio0p99_splitting0p1_600006events',
+						'mH50p0_mSusy2000p0_ratio0p99_splitting0p1_600003events',
+						'mH70p0_mSusy2000p0_ratio0p99_splitting0p1_600008events',
+						'mH90p0_mSusy2000p0_ratio0p99_splitting0p1_600000events',
+					]
 
 outputPrimaryDatasetIntro = 'nmssmSignalCascadeV05_13TeV'
 
@@ -68,7 +68,7 @@ pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that 
 
 #------------------------------------------- Note that running submission of processMc02
 ##### INFO 'processMc02' INFO ############## requires valid editionNamePro01
-editionNamePro02 = "ed8021v2"
+editionNamePro02 = "ed8021v1"
 
 filesPerJobPro02 = 2
 totalNumberOfFilesPro02 = -1 # -1 to select them all
@@ -76,7 +76,7 @@ totalNumberOfFilesPro02 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc03
 ##### INFO 'processMc03' INFO ############## requires valid editionNamePro02
-editionNamePro03 = "ed8021v3"
+editionNamePro03 = "ed8021v1"
 
 filesPerJobPro03 = 1
 totalNumberOfFilesPro03 = -1 # -1 to select them all
@@ -84,7 +84,7 @@ totalNumberOfFilesPro03 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc04
 ##### INFO 'processMc04' INFO ############## requires valid editionNamePro03
-editionNamePro04 = "ed8021v7"
+editionNamePro04 = "ed8021v1"
 
 filesPerJobPro04 = 5
 totalNumberOfFilesPro04 = -1 # -1 to select them all
@@ -92,7 +92,7 @@ totalNumberOfFilesPro04 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of patTupleAddBTag
 ##### INFO 'patTupleAddBTag' INFO ########## requires valid editionNamePro03
-editionNamePAT = "ed8021v5"
+editionNamePAT = "ed8021v1"
 
 filesPerJobPAT = 5
 totalNumberOfFilesPAT = -1 # -1 to select them all
@@ -219,7 +219,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc01':
 		f.write("config.Data.splitting = 'EventBased'\n")
 		f.write("config.Data.inputDBS = 'global'\n")
 		f.write("config.Data.publication = True\n")
-		f.write("config.Data.ignoreLocality = True\n") # To avoid problems with data being stored on a black_listed site
+		# f.write("config.Data.ignoreLocality = True\n") # To avoid problems with data being stored on a black_listed site
 		f.write("config.Data.outputPrimaryDataset = '%s'\n" % outputPrimaryDataset)
 		f.write("config.Data.outputDatasetTag = '%s'\n" % partOneUniqueName)
 		f.write("config.General.requestName = '%s'\n" % partOneUniqueName)
@@ -318,7 +318,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc02':
 		f.write("config.Data.inputDBS = 'phys03'\n")
 		f.write("config.Data.splitting = 'FileBased'\n")
 		f.write("config.Data.publication = True\n")
-		f.write("config.Data.ignoreLocality = True\n") # To avoid problems with data being stored on a black_listed site
+		# f.write("config.Data.ignoreLocality = True\n") # To avoid problems with data being stored on a black_listed site
 		f.write("config.Data.outputDatasetTag = '%s'\n" % partTwoUniqueName)
 		f.write("config.General.requestName = '%s'\n" % partTwoUniqueName)
 		f.write("config.General.workArea = 'crab_projects'\n")
@@ -415,7 +415,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc03':
 		f.write("config.Data.inputDBS = 'phys03'\n")
 		f.write("config.Data.splitting = 'FileBased'\n")
 		f.write("config.Data.publication = True\n")
-		f.write("config.Data.ignoreLocality = True\n") # To avoid problems with data being stored on a black_listed site
+		# f.write("config.Data.ignoreLocality = True\n") # To avoid problems with data being stored on a black_listed site
 		f.write("config.Data.outputDatasetTag = '%s'\n" % partThreeUniqueName)
 		f.write("config.General.requestName = '%s'\n" % partThreeUniqueName)
 		f.write("config.General.workArea = 'crab_projects'\n")
@@ -512,7 +512,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc04':
 		f.write("config.Data.inputDBS = 'phys03'\n")
 		f.write("config.Data.splitting = 'FileBased'\n")
 		f.write("config.Data.publication = True\n")
-		f.write("config.Data.ignoreLocality = True\n") # To avoid problems with data being stored on a black_listed site		
+		# f.write("config.Data.ignoreLocality = True\n") # To avoid problems with data being stored on a black_listed site		
 		f.write("config.Data.outputDatasetTag = '%s'\n" % partFourUniqueName)
 		f.write("config.General.requestName = '%s'\n" % partFourUniqueName)
 		f.write("config.General.workArea = 'crab_projects'\n")
@@ -609,7 +609,7 @@ if mode == 'submit' and whichPartOfProcess == 'patTupleAddBTag':
 		f.write("config.Data.inputDBS = 'phys03'\n")
 		f.write("config.Data.splitting = 'FileBased'\n")
 		f.write("config.Data.publication = False\n")
-		f.write("config.Data.ignoreLocality = True\n") # To avoid problems with data being stored on a black_listed site
+		# f.write("config.Data.ignoreLocality = True\n") # To avoid problems with data being stored on a black_listed site
 		f.write("config.Data.outputDatasetTag = '%s'\n" % patTupleUniqueName)
 		f.write("config.General.requestName = '%s'\n" % patTupleUniqueName)
 		f.write("config.General.workArea = 'crab_projects'\n")
