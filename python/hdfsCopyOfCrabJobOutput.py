@@ -18,7 +18,10 @@ saveBaseDir = "/hdfs/user/jt15104/Analysis_boostedNmssmHiggs/patTuples/CMSSW_8_0
 crabOutputBaseDir = "/hdfs/dpm/phy.bris.ac.uk/home/cms/store/user/taylor/"
 
 crabOutputProjectList = [
-                        "nmssmSignalCascadeV05_13TeV_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH70p0_mSusy1000p0_ratio0p99_splitting0p5/",
+                        "nmssmSignalCascadeV05_13TeV_mH30p0_mSusy2000p0_ratio0p99_splitting0p1/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH30p0_mSusy2000p0_ratio0p99_splitting0p1/",
+                        "nmssmSignalCascadeV05_13TeV_mH50p0_mSusy2000p0_ratio0p99_splitting0p1/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH50p0_mSusy2000p0_ratio0p99_splitting0p1/",
+                        "nmssmSignalCascadeV05_13TeV_mH70p0_mSusy2000p0_ratio0p99_splitting0p1/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH70p0_mSusy2000p0_ratio0p99_splitting0p1/",
+                        "nmssmSignalCascadeV05_13TeV_mH90p0_mSusy2000p0_ratio0p99_splitting0p1/nmssmSignalCascadeV05_13TeV_patTupleAddBTag_ed8021v1_mH90p0_mSusy2000p0_ratio0p99_splitting0p1/",
                         ]
 
 ####################
