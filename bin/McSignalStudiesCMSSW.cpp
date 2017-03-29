@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 	////////////////////
 	////////////////////
 	// SET PARAMETERS //
-	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.9}; // these WP's correspond to loose, medium, tight, veryTight
+	std::vector<double> doubleBtagWP = {0.3, 0.6, 0.9}; // these WP's correspond to loose, medium, tight
 	double dRMaxMatch = 0.5; // max dR between higgs boson and fatJet to claim a match
 	/////////////////////
 	/////////////////////
@@ -267,6 +267,10 @@ int main(int argc, char* argv[])
 				double dphiLeadingQjetSecondaryQjet = delPhi(qjetVec[0]->phi(),qjetVec[1]->phi());
 				if (dphiLeadingQjetSecondaryQjet < 0) dphiLeadingQjetSecondaryQjet += 2*M_PI;
 				h_["leadingQjetSecondaryQjetDphi"]->Fill(dphiLeadingQjetSecondaryQjet);
+				double drLeadingHiggsQjet = delR( delPhi(higgsVec[0]->phi(), qjetVec[0]->phi()), delEta(higgsVec[0]->eta(), qjetVec[0]->eta()) );
+				h_["drLeadingHiggsQjet"]->Fill(drLeadingHiggsQjet);
+				double drSecondaryHiggsQjet = delR( delPhi(higgsVec[1]->phi(), qjetVec[1]->phi()), delEta(higgsVec[1]->eta(), qjetVec[1]->eta()) );
+				h_["drSecondaryHiggsQjet"]->Fill(drSecondaryHiggsQjet);
 
 				h_["leadingLspPt"]->Fill(lspVec[0]->pt());
 				h_["leadingLspEta"]->Fill(lspVec[0]->eta());
@@ -659,6 +663,8 @@ void CreateHistograms(std::map<std::string,TH1F*> & h_, std::map<std::string,TH2
 	h_["secondaryHiggsQjetDphi"] = new TH1F("secondaryHiggsQjetDphi", ";higgs Phi - qjet Phi;a.u.", 100, 0, 2*M_PI);
 	h_["leadingHiggsSecondaryHiggsDphi"] = new TH1F("leadingHiggsSecondaryHiggsDphi", ";leading higgs Phi - secondary higgs Phi;a.u.", 100, 0, 2*M_PI);
 	h_["leadingQjetSecondaryQjetDphi"] = new TH1F("leadingQjetSecondaryQjetDphi", ";leading qjet Phi - secondary qjet Phi;a.u.", 100, 0, 2*M_PI);
+	h_["drLeadingHiggsQjet"] = new TH1F("drLeadingHiggsQjet", ";dR(higgs,qJet);a.u.", 100, 0, 5.0);
+	h_["drSecondaryHiggsQjet"] = new TH1F("drSecondaryHiggsQjet", ";dR(higgs,qJet);a.u.", 100, 0, 5.0);
 
 	h2_["logicBbDr"] = new TH2F("logicBbDr", ";secondary arm dR_bb > 0.8;leading arm dR_bb > 0.8", 2, 0, 2, 2, 0, 2);
 	h2_["logicHiggsPt"] = new TH2F("logicHiggsPt", ";secondary arm higgs p_{T} > 170 (GeV);leading arm higgs p_{T} > 170 (GeV)", 2, 0, 2, 2, 0, 2);
