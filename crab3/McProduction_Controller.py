@@ -17,12 +17,12 @@ import sys
 ###### @ U S E R @ O P T I O N S @ ##############################
 
 
-# mode = 'submit'
+mode = 'submit'
 # mode = 'resubmit'
-mode = 'checkStatus'
+# mode = 'checkStatus'
 
-whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
-# whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
+# whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
+whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
 # whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
 # whichPartOfProcess = 'processMc04' # turns AOD in MINIAOD
 # whichPartOfProcess = 'patTupleAddBTag' # turns AOD into patTuple form (no longer part of the full workflow)
@@ -31,10 +31,10 @@ whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 #-----------------------------------------------
 ##### INFO constant workflow INFO ##############
 madGraphProjects = [
-						'mH30p0_mSusy2000p0_ratio0p99_splitting0p1_600006events',
-						'mH50p0_mSusy2000p0_ratio0p99_splitting0p1_600003events',
+						# 'mH30p0_mSusy2000p0_ratio0p99_splitting0p1_600006events',
+						# 'mH50p0_mSusy2000p0_ratio0p99_splitting0p1_600003events',
 						'mH70p0_mSusy2000p0_ratio0p99_splitting0p1_600008events',
-						'mH90p0_mSusy2000p0_ratio0p99_splitting0p1_600000events',
+						# 'mH90p0_mSusy2000p0_ratio0p99_splitting0p1_600000events',
 					]
 
 outputPrimaryDatasetIntro = 'nmssmSignalCascadeV05_13TeV'
@@ -58,7 +58,7 @@ dataSetsToUse = [
 
 #-------------------------------------------
 ##### INFO 'processMc01' INFO ##############
-editionNamePro01 = "ed8021v1"
+editionNamePro01 = "ed8021qCut40"
 
 eventsPerJob = 600
 totalNumberOfEvents = 600000 # -1 to select them all
@@ -68,7 +68,7 @@ pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that 
 
 #------------------------------------------- Note that running submission of processMc02
 ##### INFO 'processMc02' INFO ############## requires valid editionNamePro01
-editionNamePro02 = "ed8021v1"
+editionNamePro02 = "ed8021qCut40v2"
 
 filesPerJobPro02 = 2
 totalNumberOfFilesPro02 = -1 # -1 to select them all
@@ -76,7 +76,7 @@ totalNumberOfFilesPro02 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc03
 ##### INFO 'processMc03' INFO ############## requires valid editionNamePro02
-editionNamePro03 = "ed8021v1"
+editionNamePro03 = "ed8021qCut40"
 
 filesPerJobPro03 = 1
 totalNumberOfFilesPro03 = -1 # -1 to select them all
@@ -84,7 +84,7 @@ totalNumberOfFilesPro03 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc04
 ##### INFO 'processMc04' INFO ############## requires valid editionNamePro03
-editionNamePro04 = "ed8021v1"
+editionNamePro04 = "ed8021qCut40"
 
 filesPerJobPro04 = 5
 totalNumberOfFilesPro04 = -1 # -1 to select them all
