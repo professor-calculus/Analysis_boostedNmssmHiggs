@@ -113,7 +113,46 @@ CMSSW_8_0_21
 cmsDriver.py step1 --filein file:nmssmSignal_AODSIMstep2of2.root --fileout file:nmssmSignal_MINIAODSIM.root --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step PAT --era Run2_2016 --python_filename processMc04_AODToMINIAOD_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
 
 
+NEW SET OF CMSSW CONFIGS FOR 2017 WORKFLOW
+**********
+2018_03_09
+**********
 
+IN CMSSW_9_4_0_patch1
+
+cmsDriver.py Configuration/Generator/python/Hadronizer_TuneCUETP8M1_13TeV_MLM_5f_max4j_LHE_pythia8_cff.py --filein file:unweighted_events.lhe --fileout file:nmssmSignal_GENSIM.root --mc --eventcontent RAWSIM --datatier GEN-SIM --conditions 94X_mc2017_realistic_v10 --beamspot Realistic25ns13TeVEarly2017Collision --step GEN,SIM --geometry DB:Extended --era Run2_2017 --python_filename processMc01_mgLheToGenSim_2017_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 20
+
+-------------------------
+--change1 (matching params) 
+
+'JetMatching:qCut = 20.', 
+'JetMatching:nQmatch = 5', 
+'JetMatching:nJetMax = 4', 
+TO THE FOLLOWING 
+'JetMatching:qCut = 80.', # this was 20. after cmsDriver.py 
+'JetMatching:nQmatch = 5', 
+'JetMatching:nJetMax = 1', # this was 4 after cmsDriver.py 
+------------------------- 
+--change 2 (read in info) 
+
+'SLHA:keepSM = on', 
+'SLHA:minMassSM = 1000.', 
+TO THE FOLLOWING 
+'SLHA:keepSM = on', # default = on 
+'SLHA:minMassSM = 10.', # default = 100. cmsswDefault = 1000. 
+'SLHA:useDecayTable = on', # default = on 
+'SLHA:meMode = 100' # default = 100 
+'SLHA:NMSSM = on', # default = off 
+'SLHA:verbose = 3', # default = 1 
+
+cmsDriver.py step1 --filein file:nmssmSignal_GENSIM.root --fileout file:nmssmSignal_AODSIMstep1of2.root  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MC_v2_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v10 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --datamix PreMix --era Run2_2017 --python_filename processMc02_genSimToAOD_step1of2_2017_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
+
+***might have a problem with the huge amount of min bias events/files
+>>> it does actually work…. the file is big though !
+
+cmsDriver.py step2 --filein file:nmssmSignal_AODSIMstep1of2.root --fileout file:nmssmSignal_AODSIMstep2of2.root --mc --eventcontent AODSIM runUnscheduled --datatier AODSIM --conditions 94X_mc2017_realistic_v10 --step RAW2DIGI,RECO,RECOSIM,EI --era Run2_2017 --python_filename processMc03_genSimToAOD_step2of2_2017_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
+
+cmsDriver.py step1 --filein file:nmssmSignal_AODSIMstep2of2.root --fileout file:nmssmSignal_MINIAODSIM.root --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mc2017_realistic_v10 --step PAT --era Run2_2017 --python_filename processMc04_AODToMINIAOD_2017_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 5
 
 
 

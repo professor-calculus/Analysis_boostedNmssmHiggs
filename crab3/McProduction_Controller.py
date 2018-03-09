@@ -21,8 +21,8 @@ mode = 'submit'
 # mode = 'resubmit'
 # mode = 'checkStatus'
 
-# whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
-whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
+whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
+# whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
 # whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
 # whichPartOfProcess = 'processMc04' # turns AOD in MINIAOD
 # whichPartOfProcess = 'patTupleAddBTag' # turns AOD into patTuple form (no longer part of the full workflow)
@@ -37,11 +37,11 @@ madGraphProjects = [
 						# 'mH90p0_mSusy2000p0_ratio0p99_splitting0p1_600000events',
 					]
 
-outputPrimaryDatasetIntro = 'nmssmSignalCascadeV05_13TeV'
+outputPrimaryDatasetIntro = 'nmssmSignalCascadeV05_13TeV2017'
 
 storageSite = 'T2_UK_SGrid_Bristol'
-processMc_cmsswVersion = 'CMSSW_8_0_21'
-
+processMc_cmsswVersion = 'CMSSW_9_4_0_patch1'
+simulationYear = 2017
 
 # This switches default is False. The script finds the dataset to use for you.
 # However if the crab project has expired this will no longer work.
@@ -58,7 +58,7 @@ dataSetsToUse = [
 
 #-------------------------------------------
 ##### INFO 'processMc01' INFO ##############
-editionNamePro01 = "ed8021qCut40"
+editionNamePro01 = "ed94Xv1"
 
 eventsPerJob = 600
 totalNumberOfEvents = 600000 # -1 to select them all
@@ -68,7 +68,7 @@ pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that 
 
 #------------------------------------------- Note that running submission of processMc02
 ##### INFO 'processMc02' INFO ############## requires valid editionNamePro01
-editionNamePro02 = "ed8021qCut40v2"
+editionNamePro02 = "ed94Xv1"
 
 filesPerJobPro02 = 2
 totalNumberOfFilesPro02 = -1 # -1 to select them all
@@ -76,7 +76,7 @@ totalNumberOfFilesPro02 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc03
 ##### INFO 'processMc03' INFO ############## requires valid editionNamePro02
-editionNamePro03 = "ed8021qCut40"
+editionNamePro03 = "ed94Xv1"
 
 filesPerJobPro03 = 1
 totalNumberOfFilesPro03 = -1 # -1 to select them all
@@ -84,7 +84,7 @@ totalNumberOfFilesPro03 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc04
 ##### INFO 'processMc04' INFO ############## requires valid editionNamePro03
-editionNamePro04 = "ed8021qCut40"
+editionNamePro04 = "ed94Xv1"
 
 filesPerJobPro04 = 5
 totalNumberOfFilesPro04 = -1 # -1 to select them all
@@ -92,7 +92,7 @@ totalNumberOfFilesPro04 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of patTupleAddBTag
 ##### INFO 'patTupleAddBTag' INFO ########## requires valid editionNamePro03
-editionNamePAT = "ed8021v1"
+editionNamePAT = "ed94Xv1"
 
 filesPerJobPAT = 5
 totalNumberOfFilesPAT = -1 # -1 to select them all
@@ -158,6 +158,11 @@ totalNumberOfFilesPAT = -1 # -1 to select them all
 #################################################################
 #################################################################
 
+if (simulationYear != 2016 and simulationYear != 2017):
+	print "You have not set a correct year of simulation"
+	print "You should be using 2016 or 2017"
+	print "You fool"
+	sys.exit()
 
 cmsswVersion = os.popen("echo $CMSSW_VERSION", "r").readline()
 cmsswVersion = cmsswVersion.rstrip()
@@ -227,7 +232,10 @@ if mode == 'submit' and whichPartOfProcess == 'processMc01':
 		f.write("config.General.transferOutputs = True\n")
 		f.write("config.General.transferLogs    = True\n")
 		f.write("config.JobType.pluginName = 'PrivateMC'\n")
-		f.write("config.JobType.psetName = 'processMc01_mgLheToGenSim_cfg.py'\n")
+		if (simulationYear == 2016):
+			f.write("config.JobType.psetName = 'processMc01_mgLheToGenSim_cfg.py'\n")
+		elif (simulationYear == 2017):
+			f.write("config.JobType.psetName = 'processMc01_mgLheToGenSim_2017_cfg.py'\n")
 		f.write("config.JobType.inputFiles = ['%s']\n" % inputFiles)
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
 		f.close()
@@ -325,7 +333,10 @@ if mode == 'submit' and whichPartOfProcess == 'processMc02':
 		f.write("config.General.transferOutputs = True\n")
 		f.write("config.General.transferLogs = True\n")
 		f.write("config.JobType.pluginName = 'Analysis'\n")
-		f.write("config.JobType.psetName = 'processMc02_genSimToAOD_step1of2_cfg.py'\n")
+		if (simulationYear == 2016):
+			f.write("config.JobType.psetName = 'processMc02_genSimToAOD_step1of2_cfg.py'\n")
+		elif (simulationYear == 2017):
+			f.write("config.JobType.psetName = 'processMc02_genSimToAOD_step1of2_2017_cfg.py'\n")
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
 		f.close()
 		print ""
@@ -422,7 +433,10 @@ if mode == 'submit' and whichPartOfProcess == 'processMc03':
 		f.write("config.General.transferOutputs = True\n")
 		f.write("config.General.transferLogs = True\n")
 		f.write("config.JobType.pluginName = 'Analysis'\n")
-		f.write("config.JobType.psetName = 'processMc03_genSimToAOD_step2of2_cfg.py'\n")
+		if (simulationYear == 2016):
+			f.write("config.JobType.psetName = 'processMc03_genSimToAOD_step2of2_cfg.py'\n")
+		elif (simulationYear == 2017):
+			f.write("config.JobType.psetName = 'processMc03_genSimToAOD_step2of2_2017_cfg.py'\n")
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
 		f.close()
 		print ""
@@ -519,7 +533,10 @@ if mode == 'submit' and whichPartOfProcess == 'processMc04':
 		f.write("config.General.transferOutputs = True\n")
 		f.write("config.General.transferLogs = True\n")
 		f.write("config.JobType.pluginName = 'Analysis'\n")
-		f.write("config.JobType.psetName = 'processMc04_AODToMINIAOD_cfg.py'\n")
+		if (simulationYear == 2016):
+			f.write("config.JobType.psetName = 'processMc04_AODToMINIAOD_cfg.py'\n")
+		elif (simulationYear == 2017):
+			f.write("config.JobType.psetName = 'processMc04_AODToMINIAOD_2017_cfg.py'\n")
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
 		f.close()
 		print ""
@@ -598,6 +615,10 @@ if mode == 'submit' and whichPartOfProcess == 'patTupleAddBTag':
 					break
 		if manuallySetData == True:
 			inputDataset = dataSetsToUse[i]
+
+		if (simulationYear != 2016):
+			print "Only have a PatTuple config for 2016, exiting..."
+			sys.exit()
 
 		# create the tempory crab config file to submit
 		f = open("temp_crab3config_patTuple.py", 'w')
