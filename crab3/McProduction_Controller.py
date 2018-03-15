@@ -42,6 +42,7 @@ outputPrimaryDatasetIntro = 'nmssmSignalCascadeV05_13TeV2017'
 storageSite = 'T2_UK_SGrid_Bristol'
 processMc_cmsswVersion = 'CMSSW_9_4_0_patch1'
 simulationYear = 2017
+blacklist = ['T3_US_UMiss']
 
 # This switches default is False. The script finds the dataset to use for you.
 # However if the crab project has expired this will no longer work.
@@ -58,9 +59,9 @@ dataSetsToUse = [
 
 #-------------------------------------------
 ##### INFO 'processMc01' INFO ##############
-editionNamePro01 = "ed94Xv1"
+editionNamePro01 = "ed94Xv3"
 
-eventsPerJob = 600
+eventsPerJob = 300
 totalNumberOfEvents = 600000 # -1 to select them all
 localMadGraphProjectStore = '/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v05/paramCard_type03/'
 pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that you have unzipped these files using python/unzipMadgraphLhe.py
@@ -238,6 +239,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc01':
 			f.write("config.JobType.psetName = 'processMc01_mgLheToGenSim_2017_cfg.py'\n")
 		f.write("config.JobType.inputFiles = ['%s']\n" % inputFiles)
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
+		f.write("config.Site.blacklist = %s\n" % str(blacklist) )
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_processMc01.py") # for testing
@@ -338,6 +340,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc02':
 		elif (simulationYear == 2017):
 			f.write("config.JobType.psetName = 'processMc02_genSimToAOD_step1of2_2017_cfg.py'\n")
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
+		f.write("config.Site.blacklist = %s\n" % str(blacklist) )
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_processMc02.py") # for testing
@@ -438,6 +441,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc03':
 		elif (simulationYear == 2017):
 			f.write("config.JobType.psetName = 'processMc03_genSimToAOD_step2of2_2017_cfg.py'\n")
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
+		f.write("config.Site.blacklist = %s\n" % str(blacklist) )
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_processMc03.py") # for testing
@@ -538,6 +542,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc04':
 		elif (simulationYear == 2017):
 			f.write("config.JobType.psetName = 'processMc04_AODToMINIAOD_2017_cfg.py'\n")
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
+		f.write("config.Site.blacklist = %s\n" % str(blacklist) )
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_processMc04.py") # for testing
@@ -639,6 +644,7 @@ if mode == 'submit' and whichPartOfProcess == 'patTupleAddBTag':
 		f.write("config.JobType.pluginName = 'Analysis'\n")
 		f.write("config.JobType.psetName = 'patTuple_addBTagging_cfg.py'\n")
 		f.write("config.Site.storageSite = '%s'\n" % storageSite)
+		f.write("config.Site.blacklist = %s\n" % str(blacklist) )
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_patTuple.py") # for testing
