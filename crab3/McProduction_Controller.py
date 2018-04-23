@@ -31,15 +31,14 @@ whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 #-----------------------------------------------
 ##### INFO constant workflow INFO ##############
 madGraphProjects = [
-						# 'mH30p0_mSusy2000p0_ratio0p99_splitting0p1_600006events',
-						# 'mH50p0_mSusy2000p0_ratio0p99_splitting0p1_600003events',
+						'mH70p0_mSusy1200p0_ratio0p99_splitting0p1_600001events',
 						'mH70p0_mSusy2000p0_ratio0p99_splitting0p1_600008events',
-						# 'mH90p0_mSusy2000p0_ratio0p99_splitting0p1_600000events',
+						'mH70p0_mSusy2600p0_ratio0p99_splitting0p1_600002events',
 					]
 
 outputPrimaryDatasetIntro = 'nmssmSignalCascadeV05_13TeV2017'
 
-storageSite = 'T2_UK_SGrid_Bristol'
+storageSite = 'T2_UK_SGrid_RALPP'
 processMc_cmsswVersion = 'CMSSW_9_4_0_patch1'
 simulationYear = 2017
 blacklist = ['T3_US_UMiss']
@@ -59,9 +58,9 @@ dataSetsToUse = [
 
 #-------------------------------------------
 ##### INFO 'processMc01' INFO ##############
-editionNamePro01 = "ed94Xv3"
+editionNamePro01 = "ed94Xv1"
 
-eventsPerJob = 300
+eventsPerJob = 450
 totalNumberOfEvents = 600000 # -1 to select them all
 localMadGraphProjectStore = '/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v05/paramCard_type03/'
 pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that you have unzipped these files using python/unzipMadgraphLhe.py
@@ -71,7 +70,7 @@ pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that 
 ##### INFO 'processMc02' INFO ############## requires valid editionNamePro01
 editionNamePro02 = "ed94Xv1"
 
-filesPerJobPro02 = 2
+filesPerJobPro02 = 4
 totalNumberOfFilesPro02 = -1 # -1 to select them all
 #-------------------------------------------
 
@@ -87,7 +86,7 @@ totalNumberOfFilesPro03 = -1 # -1 to select them all
 ##### INFO 'processMc04' INFO ############## requires valid editionNamePro03
 editionNamePro04 = "ed94Xv1"
 
-filesPerJobPro04 = 5
+filesPerJobPro04 = 3
 totalNumberOfFilesPro04 = -1 # -1 to select them all
 #-------------------------------------------
 
@@ -335,6 +334,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc02':
 		f.write("config.General.transferOutputs = True\n")
 		f.write("config.General.transferLogs = True\n")
 		f.write("config.JobType.pluginName = 'Analysis'\n")
+                f.write("config.JobType.maxMemoryMB = 2500\n")
 		if (simulationYear == 2016):
 			f.write("config.JobType.psetName = 'processMc02_genSimToAOD_step1of2_cfg.py'\n")
 		elif (simulationYear == 2017):
@@ -436,7 +436,8 @@ if mode == 'submit' and whichPartOfProcess == 'processMc03':
 		f.write("config.General.transferOutputs = True\n")
 		f.write("config.General.transferLogs = True\n")
 		f.write("config.JobType.pluginName = 'Analysis'\n")
-		if (simulationYear == 2016):
+                f.write("config.JobType.maxMemoryMB = 2500\n")
+                if (simulationYear == 2016):
 			f.write("config.JobType.psetName = 'processMc03_genSimToAOD_step2of2_cfg.py'\n")
 		elif (simulationYear == 2017):
 			f.write("config.JobType.psetName = 'processMc03_genSimToAOD_step2of2_2017_cfg.py'\n")
