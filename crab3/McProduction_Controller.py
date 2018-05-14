@@ -31,9 +31,10 @@ whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 #-----------------------------------------------
 ##### INFO constant workflow INFO ##############
 madGraphProjects = [
-						'mH70p0_mSusy1200p0_ratio0p99_splitting0p1_600001events',
-						'mH70p0_mSusy2000p0_ratio0p99_splitting0p1_600008events',
-						'mH70p0_mSusy2600p0_ratio0p99_splitting0p1_600002events',
+						'mH70p0_mSusy800p0_ratio0p99_splitting0p1_600000events',
+						'mH70p0_mSusy1600p0_ratio0p99_splitting0p1_600000events',
+						'mH70p0_mSusy2200p0_ratio0p99_splitting0p1_600000events',
+						'mH70p0_mSusy2400p0_ratio0p99_splitting0p1_600000events',
 					]
 
 outputPrimaryDatasetIntro = 'nmssmSignalCascadeV05_13TeV2017'
@@ -42,6 +43,7 @@ storageSite = 'T2_UK_SGrid_RALPP'
 processMc_cmsswVersion = 'CMSSW_9_4_0_patch1'
 simulationYear = 2017
 blacklist = ['T3_US_UMiss']
+dryRun = False
 
 # This switches default is False. The script finds the dataset to use for you.
 # However if the crab project has expired this will no longer work.
@@ -70,7 +72,7 @@ pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that 
 ##### INFO 'processMc02' INFO ############## requires valid editionNamePro01
 editionNamePro02 = "ed94Xv1"
 
-filesPerJobPro02 = 4
+filesPerJobPro02 = 3
 totalNumberOfFilesPro02 = -1 # -1 to select them all
 #-------------------------------------------
 
@@ -94,7 +96,7 @@ totalNumberOfFilesPro04 = -1 # -1 to select them all
 ##### INFO 'patTupleAddBTag' INFO ########## requires valid editionNamePro03
 editionNamePAT = "ed94Xv1"
 
-filesPerJobPAT = 5
+filesPerJobPAT = 3
 totalNumberOfFilesPAT = -1 # -1 to select them all
 #-------------------------------------------
 
@@ -242,7 +244,8 @@ if mode == 'submit' and whichPartOfProcess == 'processMc01':
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_processMc01.py") # for testing
-		os.system("crab submit -c temp_crab3config_processMc01.py") # for the real deal
+		if (dryRun == False): os.system("crab submit -c temp_crab3config_processMc01.py") # for the real deal
+		if (dryRun == True): os.system("crab submit -c temp_crab3config_processMc01.py --dryrun") # does a dryRun test
 		os.system("rm temp_crab3config_processMc01.py")
 		print ""
 
@@ -334,7 +337,7 @@ if mode == 'submit' and whichPartOfProcess == 'processMc02':
 		f.write("config.General.transferOutputs = True\n")
 		f.write("config.General.transferLogs = True\n")
 		f.write("config.JobType.pluginName = 'Analysis'\n")
-                f.write("config.JobType.maxMemoryMB = 2500\n")
+		f.write("config.JobType.maxMemoryMB = 2500\n")
 		if (simulationYear == 2016):
 			f.write("config.JobType.psetName = 'processMc02_genSimToAOD_step1of2_cfg.py'\n")
 		elif (simulationYear == 2017):
@@ -344,7 +347,8 @@ if mode == 'submit' and whichPartOfProcess == 'processMc02':
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_processMc02.py") # for testing
-		os.system("crab submit -c temp_crab3config_processMc02.py") # for the real deal
+		if (dryRun == False): os.system("crab submit -c temp_crab3config_processMc02.py") # for the real deal
+		if (dryRun == True): os.system("crab submit -c temp_crab3config_processMc02.py --dryrun") # does a dryRun test
 		os.system("rm temp_crab3config_processMc02.py")
 		print ""
 
@@ -436,8 +440,8 @@ if mode == 'submit' and whichPartOfProcess == 'processMc03':
 		f.write("config.General.transferOutputs = True\n")
 		f.write("config.General.transferLogs = True\n")
 		f.write("config.JobType.pluginName = 'Analysis'\n")
-                f.write("config.JobType.maxMemoryMB = 2500\n")
-                if (simulationYear == 2016):
+		f.write("config.JobType.maxMemoryMB = 2500\n")
+		if (simulationYear == 2016):
 			f.write("config.JobType.psetName = 'processMc03_genSimToAOD_step2of2_cfg.py'\n")
 		elif (simulationYear == 2017):
 			f.write("config.JobType.psetName = 'processMc03_genSimToAOD_step2of2_2017_cfg.py'\n")
@@ -446,7 +450,8 @@ if mode == 'submit' and whichPartOfProcess == 'processMc03':
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_processMc03.py") # for testing
-		os.system("crab submit -c temp_crab3config_processMc03.py") # for the real deal
+		if (dryRun == False): os.system("crab submit -c temp_crab3config_processMc03.py") # for the real deal
+		if (dryRun == True): os.system("crab submit -c temp_crab3config_processMc03.py --dryrun") # does a dryRun test
 		os.system("rm temp_crab3config_processMc03.py")
 		print ""
 
@@ -547,7 +552,8 @@ if mode == 'submit' and whichPartOfProcess == 'processMc04':
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_processMc04.py") # for testing
-		os.system("crab submit -c temp_crab3config_processMc04.py") # for the real deal
+		if (dryRun == False): os.system("crab submit -c temp_crab3config_processMc04.py") # for the real deal
+		if (dryRun == True): os.system("crab submit -c temp_crab3config_processMc04.py --dryrun") # does a dryRun test
 		os.system("rm temp_crab3config_processMc04.py")
 		print ""
 
@@ -649,7 +655,8 @@ if mode == 'submit' and whichPartOfProcess == 'patTupleAddBTag':
 		f.close()
 		print ""
 		# os.system("cat temp_crab3config_patTuple.py") # for testing
-		os.system("crab submit -c temp_crab3config_patTuple.py") # for the real deal
+		if (dryRun == False): os.system("crab submit -c temp_crab3config_patTuple.py") # for the real deal
+		if (dryRun == True): os.system("crab submit -c temp_crab3config_patTuple.py --dryrun") # does a dryRun test
 		os.system("rm temp_crab3config_patTuple.py")
 		print ""
 
