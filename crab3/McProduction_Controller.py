@@ -31,17 +31,14 @@ whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 #-----------------------------------------------
 ##### INFO constant workflow INFO ##############
 madGraphProjects = [
-						'mH70p0_mSusy800p0_ratio0p99_splitting0p1_600000events',
-						'mH70p0_mSusy1600p0_ratio0p99_splitting0p1_600000events',
-						'mH70p0_mSusy2200p0_ratio0p99_splitting0p1_600000events',
-						'mH70p0_mSusy2400p0_ratio0p99_splitting0p1_600000events',
+                    '1200sq_1210go_130X2',
 					]
 
-outputPrimaryDatasetIntro = 'nmssmSignalCascadeV05_13TeV2017'
+outputPrimaryDatasetIntro = 'nmssmP1SignalCascadeV05_13TeV2016'
 
 storageSite = 'T2_UK_SGrid_RALPP'
-processMc_cmsswVersion = 'CMSSW_9_4_0_patch1'
-simulationYear = 2017
+processMc_cmsswVersion = 'CMSSW_8_0_29'
+simulationYear = 2016
 blacklist = ['T3_US_UMiss']
 dryRun = False
 
@@ -64,7 +61,7 @@ editionNamePro01 = "ed94Xv1"
 
 eventsPerJob = 450
 totalNumberOfEvents = 600000 # -1 to select them all
-localMadGraphProjectStore = '/storage/jt15104/madGraphProjects/nmssmCascadeAnalysis_v05/paramCard_type03/'
+localMadGraphProjectStore = '/storage/at1062/Joe_Analysis_test/'
 pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that you have unzipped these files using python/unzipMadgraphLhe.py
 #-------------------------------------------
 
