@@ -31,7 +31,7 @@ whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 #-----------------------------------------------
 ##### INFO constant workflow INFO ##############
 madGraphProjects = [
-                    '1000sq_1010go_130X2',
+					'1000sq_1010go_130X2',
 					'1000sq_1010go_140X2',
 					'1000sq_1010go_150X2',
 					'1000sq_1010go_160X2',
