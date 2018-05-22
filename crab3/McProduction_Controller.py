@@ -17,14 +17,14 @@ import sys
 ###### @ U S E R @ O P T I O N S @ ##############################
 
 
-#mode = 'submit'
+mode = 'submit'
 #mode = 'resubmit'
-mode = 'checkStatus'
+#mode = 'checkStatus'
 
-#whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
+whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
 #whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
 #whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
-whichPartOfProcess = 'processMc04' # turns AOD in MINIAOD
+#whichPartOfProcess = 'processMc04' # turns AOD in MINIAOD
 # whichPartOfProcess = 'patTupleAddBTag' # turns AOD into patTuple form (no longer part of the full workflow)
 
 
@@ -34,7 +34,7 @@ madGraphProjects = [
                     '1200sq_1210go_130X2',
 					]
 
-outputPrimaryDatasetIntro = 'nmssmP1SignalCascadeV05_13TeV2016'
+outputPrimaryDatasetIntro = 'nmssmP1SignalCascadeV01_13TeV2016'
 
 storageSite = 'T2_UK_SGrid_RALPP'
 processMc_cmsswVersion = 'CMSSW_8_0_29'
@@ -57,7 +57,7 @@ dataSetsToUse = [
 
 #-------------------------------------------
 ##### INFO 'processMc01' INFO ##############
-editionNamePro01 = "ed80Xv1"
+editionNamePro01 = "ed80X_P1_v1"
 
 eventsPerJob = 450
 totalNumberOfEvents = 500000 # -1 to select them all
@@ -67,7 +67,7 @@ pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that 
 
 #------------------------------------------- Note that running submission of processMc02
 ##### INFO 'processMc02' INFO ############## requires valid editionNamePro01
-editionNamePro02 = "ed94Xv1"
+editionNamePro02 = "ed80X_P1_v1"
 
 filesPerJobPro02 = 3
 totalNumberOfFilesPro02 = -1 # -1 to select them all
@@ -75,7 +75,7 @@ totalNumberOfFilesPro02 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc03
 ##### INFO 'processMc03' INFO ############## requires valid editionNamePro02
-editionNamePro03 = "ed94Xv1"
+editionNamePro03 = "ed80X_P1_v1"
 
 filesPerJobPro03 = 1
 totalNumberOfFilesPro03 = -1 # -1 to select them all
@@ -83,7 +83,7 @@ totalNumberOfFilesPro03 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of processMc04
 ##### INFO 'processMc04' INFO ############## requires valid editionNamePro03
-editionNamePro04 = "ed94Xv1"
+editionNamePro04 = "ed80X_P1_v1"
 
 filesPerJobPro04 = 3
 totalNumberOfFilesPro04 = -1 # -1 to select them all
@@ -91,7 +91,7 @@ totalNumberOfFilesPro04 = -1 # -1 to select them all
 
 #------------------------------------------- Note that running submission of patTupleAddBTag
 ##### INFO 'patTupleAddBTag' INFO ########## requires valid editionNamePro03
-editionNamePAT = "ed94Xv1"
+editionNamePAT = "ed80X_P1_v1"
 
 filesPerJobPAT = 3
 totalNumberOfFilesPAT = -1 # -1 to select them all
@@ -187,7 +187,7 @@ madGraphProjectsStripOffEvents = []
 for madGraphProject in madGraphProjects:
 	for c in range(len(madGraphProject)-1, 0, -1):
 		if madGraphProject[c] == '_':
-			madGraphProjectsStripOffEvents.append(madGraphProject[:c])
+			madGraphProjectsStripOffEvents.append(madGraphProject)
 			break
 
 # if one is using Manually set datasets check that dataSetsToUse is same length as madGraphProjects
