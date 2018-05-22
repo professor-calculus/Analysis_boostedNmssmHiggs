@@ -17,14 +17,14 @@ import sys
 ###### @ U S E R @ O P T I O N S @ ##############################
 
 
-mode = 'submit'
-# mode = 'resubmit'
-# mode = 'checkStatus'
+#mode = 'submit'
+#mode = 'resubmit'
+mode = 'checkStatus'
 
-whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
-# whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
-# whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
-# whichPartOfProcess = 'processMc04' # turns AOD in MINIAOD
+#whichPartOfProcess = 'processMc01' # turns madgraph LHE into cmssw GENSIM
+#whichPartOfProcess = 'processMc02' # step one of GENSIM into AOD
+#whichPartOfProcess = 'processMc03' # step two of GENSIM into AOD
+whichPartOfProcess = 'processMc04' # turns AOD in MINIAOD
 # whichPartOfProcess = 'patTupleAddBTag' # turns AOD into patTuple form (no longer part of the full workflow)
 
 
@@ -57,11 +57,11 @@ dataSetsToUse = [
 
 #-------------------------------------------
 ##### INFO 'processMc01' INFO ##############
-editionNamePro01 = "ed94Xv1"
+editionNamePro01 = "ed80Xv1"
 
 eventsPerJob = 450
-totalNumberOfEvents = 600000 # -1 to select them all
-localMadGraphProjectStore = '/storage/at1062/Joe_Analysis_test/'
+totalNumberOfEvents = 500000 # -1 to select them all
+localMadGraphProjectStore = '/opt/ppd/scratch/titterton/Joe_Analysis_test/'
 pathWithinMadgraphProject = 'Events/run_01/unweighted_events.lhe' # ensure that you have unzipped these files using python/unzipMadgraphLhe.py
 #-------------------------------------------
 
