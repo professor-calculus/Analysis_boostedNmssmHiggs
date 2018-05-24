@@ -79,10 +79,10 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
             'JetMatching:etaJetMax = 5.', 
             'JetMatching:coneRadius = 1.', 
             'JetMatching:slowJetPower = 1', 
-            'JetMatching:qCut = 180.', # this was 20. after cmsDriver.py 
+            'JetMatching:qCut = 140.', # this was 20. after cmsDriver.py 
             'JetMatching:nQmatch = 5', 
             'JetMatching:nJetMax = 2', # this was 4 after cmsDriver.py
-            'JetMatching:doShowerKt = off'),
+            'JetMatching:doShowerKt = on'),
         parameterSets = cms.vstring('pythia8CommonSettings', 
             'pythia8CUEP8M1Settings', 
             'JetMatchingParameters'),
